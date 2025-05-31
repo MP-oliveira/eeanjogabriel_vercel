@@ -14,7 +14,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api": {
-        target: "https://back-eeanjogabriel-vercel.vercel.app",
+        target: "https://back-eeanjogabriel-vercel-nine.vercel.app",
         changeOrigin: true,
         secure: false,
       },
