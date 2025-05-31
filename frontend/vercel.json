@@ -11,7 +11,7 @@
   ],
   "routes": [
     {
-      "src": "/.*",
+      "src": "/src/services/.*",
       "dest": "/dist/index.html"
     }
   ]
