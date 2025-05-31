@@ -36,36 +36,5 @@ router.use("/financeiro", financeiro)
 router.use("/pagamentos", pagamentos)  
 router.use("/contas", contas)  
 
-  // const routes = [
-//   { path: '/api/auth', router: require('./routes/authRoutes') },
-//   { path: '/api/admins', router: require('./routes/adminRoutes') },
-//   { path: '/api/alunos', router: require('./routes/alunoRoutes') },
-//   { path: '/api/cursos', router: require('./routes/cursoRoutes') },
-//   { path: '/api/disciplinas', router: require('./routes/disciplinaRoutes') },
-//   { path: '/api/diplomas', router: require('./routes/diplomaRoutes') },
-//   { path: '/api/professores', router: require('./routes/professorRoutes') },
-//   { path: '/api/materialeutensilios', router: require('./routes/materialEUtensilio') },
-//   { path: '/api/turnos', router: require('./routes/turnoRoutes') },
-//   { path: '/api/registroacademico', router: require('./routes/registroAcademicoRoutes') },
-//   { path: '/api/financeiro', router: require('./routes/transacaoFinanceiraRoutes') },
-//   { path: '/api/pagamentos', router: require('./routes/pagamentoRoutes') },
-//   { path: '/api/contas', router: require('./routes/contaRoutes') }
-// ];
-
-// routes.forEach(route => {
-//   try {
-//     app.use(route.path, route.router);
-//     console.log(`[ROTA] ${route.path} carregada com sucesso`);
-//   } catch (err) {
-//     console.error(`[ERRO] Falha ao carregar rota ${route.path}:`, err);
-//     app.use(route.path, (req, res) => {
-//       res.status(503).json({
-//         error: 'Serviço temporariamente indisponível',
-//         route: route.path,
-//         message: process.env.NODE_ENV === 'development' ? err.message : 'Tente novamente mais tarde'
-//       });
-//     });
-//   }
-// });
 
 module.exports = router
