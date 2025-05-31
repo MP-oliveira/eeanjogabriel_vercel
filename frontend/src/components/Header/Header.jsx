@@ -74,7 +74,7 @@ const Header = () => {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  console.log(user)
+  console.log("header",user)
 
   return (
     <header
