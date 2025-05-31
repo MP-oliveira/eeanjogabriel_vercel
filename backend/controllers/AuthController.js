@@ -125,6 +125,7 @@ module.exports = class AuthController {
         token: data.session.access_token,
         user: {
           id: data.user.id,
+          nome: data.user.nome,
           email: data.user.email,
           role: userRole
         }
