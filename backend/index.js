@@ -20,7 +20,7 @@ const supabase = createClient(
 // =============================================
 
 const allowedOrigins = [
-  'https://front-eeanjogabriel-vercel.vercel.app',
+  'https://front-eeanjogabriel-vercel-gamma.vercel.app',
   'http://localhost:5173',
   'http://localhost:3001'
 ];
