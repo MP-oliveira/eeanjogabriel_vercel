@@ -152,7 +152,7 @@ const Header = () => {
               Dashboard
             </NavLink>
             <div className="dropdown-menu">
-              {user && user.role === "admin" ? (
+              {user && user === "admin" ? (
                 <>
                   <NavLink
                     to="/admins"
@@ -212,7 +212,7 @@ const Header = () => {
                     Financeiro
                   </NavLink>
                 </>
-              ) : user && user.role === "professor" ? (
+              ) : user && user === "professor" ? (
                 <>
                   <NavLink
                     to="/alunos"
