@@ -23,7 +23,7 @@ function Login() {
         role,
       });
 
-      console.log(response.data.user)
+      console.log("response data", response.data)
       // Salvar token e informações do usuário
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data));
