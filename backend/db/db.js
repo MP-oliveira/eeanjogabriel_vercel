@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production") {
 
   // Opcional: Configuração específica do Supabase
   if (process.env.SUPABASE_URL) {
-    config.dialectOptions.connection = {
+    dbConfig.dialectOptions.connection = {
       options: `project=${process.env.SUPABASE_URL.split("/").pop()}`
     };
   }
