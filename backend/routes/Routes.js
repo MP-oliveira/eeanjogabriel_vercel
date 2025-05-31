@@ -10,7 +10,7 @@ const professores = require("./professorRoutes.js")
 const materialEUtensilios = require("./materialEUtensilio.js")
 const turnos = require("./turnoRoutes.js")
 const registroAcademico = require("./registroAcademicoRoutes.js")
-const financeiro = require("./financialRoutes.js")
+const financeiro = require("./transacaoFinanceiraRoutes.js")
 const pagamentos = require("./pagamentoRoutes.js")
 const contas = require("./contaRoutes.js")
 

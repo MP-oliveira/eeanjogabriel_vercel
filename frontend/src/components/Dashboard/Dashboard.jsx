@@ -50,7 +50,8 @@ function Dashboard() {
     setLoading(true);
     try {
       // Buscar transações
-      const url = `http://localhost:3001/api/financeiro?dataInicio=${filtroData.dataInicio}&dataFim=${filtroData.dataFim}`;
+      const url = `/financeiro?dataInicio=${filtroData.dataInicio}&dataFim=${filtroData.dataFim}`;
+      // const url = `http://localhost:3001/financeiro?dataInicio=${filtroData.dataInicio}&dataFim=${filtroData.dataFim}`;
       const responseTransacoes = await api.get(url);
       
       // Buscar contas
