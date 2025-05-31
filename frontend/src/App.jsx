@@ -53,7 +53,7 @@ import Pagamento from './components/Pagamento/Pagamento';
 function App() {
   const { user } = useContext(UserContext);
   const role = user;
-  console.log(user, role)
+  console.log("user",user, "role",role)
   return (
     <>
       <BrowserRouter>
