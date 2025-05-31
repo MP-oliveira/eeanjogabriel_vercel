@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configurando a URL base do backend
 const api = axios.create({
-  baseURL: 'url backend /api',
+  baseURL: 'https://back-eeanjogabriel-vercel.vercel.app/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
