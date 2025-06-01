@@ -103,6 +103,7 @@
 }
 
 .sectionOne-right {
+  margin-top: 100px;
   width: 100%;
   max-width: 100%;
 }
@@ -118,7 +119,7 @@
 }
 
 /* Responsividade para MacBook 13" (1280x800) */
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1280px) {
 
   .sectionOne-container {
     padding: 70px 10px;
@@ -140,10 +141,15 @@
     text-align: center;
   }
 
+  .sectionOne-right {
+    margin-top: 50px;
+  }
+
   .sectionOne-right img {
     max-width: 680px;
     height: auto;
   }
+
 }
 
 /* iPad 10 (820x1180) */
