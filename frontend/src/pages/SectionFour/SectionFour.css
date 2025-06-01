@@ -354,6 +354,13 @@
   .footer-item {
     justify-content: center;
   }
+  /* Ajuste de largura com mais especificidade e !important */
+  .form-container .form-group input,
+  .form-container .form-group textarea {
+    width: 90% !important;
+    max-width: 90% !important;
+    min-width: 600px !important;
+  }
 }
 
 @media screen and (max-width: 430px) {

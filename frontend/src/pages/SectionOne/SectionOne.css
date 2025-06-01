@@ -138,6 +138,9 @@
 
 /* iPad 10 (820x1180) */
 @media screen and (max-width: 820px) {
+  .sectionOne-content {
+    padding-bottom: 60px;
+  }
 
   .sectionOne-h1 {
     font-size: 23px;
@@ -165,18 +168,20 @@
 
   .features {
     justify-content: center;
+    margin-left: 35px;
+    margin-top: 10px;
   }
 
   .sectionOne-right img {
     max-width: 880px;
-    height: auto;
+    height: 320px;
   }
 }
 
 /* iPhone 15 Pro Max (430x932) */
 @media screen and (max-width: 430px) {
   .sectionOne-content {
-    padding-bottom: 680px;
+    padding-bottom: 0;
   }
 
 
