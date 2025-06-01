@@ -415,4 +415,15 @@
     flex-direction: column;
     text-align: center;
   }
+  
+  .service-content h3 {
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .service-content p {
+    font-size: 12px;
+    line-height: 1.27;
+  }
+  
 } 
