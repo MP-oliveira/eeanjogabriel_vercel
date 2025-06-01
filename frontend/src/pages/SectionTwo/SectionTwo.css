@@ -292,20 +292,29 @@
 
 /* iPhone 15 Pro Max (430x932) */
 @media screen and (max-width: 430px) {
+  .services-grid .service-card:nth-child(2) .service-content {
+    padding-top: 40px;
+  }
+  
   .services-section {
-    padding: 24px;
+    margin-top: 0px;
   }
   
   .services-header h2 {
-    font-size: 32px;
+    font-size: 36px;
   }
   
   .service-card {
-    padding: 24px;
+    margin-bottom: 10px;
   }
-  
-  .emergency-cta h3 {
-    font-size: 24px;
+
+  .service-content h3 {
+    font-size: 22px;
+  }
+
+  .service-content p {
+    font-size: 14px;
+    line-height: 1.27;
   }
 }
 

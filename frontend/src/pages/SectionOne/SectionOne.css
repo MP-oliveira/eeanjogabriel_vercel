@@ -3,6 +3,9 @@
   background-color: #1E56B8;
   max-height: 100vh;
   align-items: center;
+  padding-bottom: 80px;
+  overflow-x: hidden;
+  padding-top: 70px;
 }
 
 .sectionOne-container {
@@ -16,6 +19,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
 }
 
 .sectionOne-h1 {
@@ -97,14 +102,19 @@
   color: #FBD064;
 }
 
+.sectionOne-right {
+  width: 100%;
+  max-width: 100%;
+}
+
 .sectionOne-right img {
-  width: 400px;
-  max-width: 500px;
-  height: 470px;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 0px;
   object-fit: cover;
   border-radius: 24px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  margin-top: 60px;
 }
 
 /* Responsividade para MacBook 13" (1280x800) */
@@ -179,12 +189,31 @@
 /* iPhone 15 Pro Max (430x932) */
 @media screen and (max-width: 430px) {
   .sectionOne-content {
-    padding-bottom: 20px;
+    overflow-x: hidden;
+    padding-top: 70px;
   }
 
+  html, body {
+    overflow-x: hidden;
+    width: 100vw;
+    position: relative;
+  }
 
   .sectionOne-container {
+    flex-direction: column;
+    align-items: center;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    padding: 0 10px;
+    margin: 0;
+  }
+
+  .sectionOne-left,
+  .sectionOne-right {
+    width: 100%;
+    max-width: 100%;
   }
 
   .sectionOne-h1 {
@@ -201,9 +230,16 @@
     align-items: center;
     margin-top: 10px;
   }
-.sectionOne-right img {
-  margin-top: 0px;
-}
+
+  .sectionOne-right img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-top: 0px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
 }
 
 /* iPhone (375x667) */
