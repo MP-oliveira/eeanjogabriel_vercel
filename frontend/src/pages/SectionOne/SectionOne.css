@@ -168,20 +168,18 @@
 
   .features {
     justify-content: center;
-    margin-left: 35px;
-    margin-top: 10px;
   }
 
   .sectionOne-right img {
     max-width: 880px;
-    height: 320px;
+    height: auto;
   }
 }
 
 /* iPhone 15 Pro Max (430x932) */
 @media screen and (max-width: 430px) {
   .sectionOne-content {
-    padding-bottom: 0;
+    padding-bottom: 20px;
   }
 
 
