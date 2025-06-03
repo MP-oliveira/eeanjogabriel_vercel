@@ -1,6 +1,8 @@
 /* Aplica grid nas linhas da tabela */
-.disable button{
-  display: none;
+.disable button {
+  background-color: rgba(0, 123, 255, 0.4); /* azul do botão ativo, porém mais transparente */
+  color: #fff;
+  cursor: not-allowed;
 }
 
 .tabela-form-lista-aluno {
@@ -284,7 +286,7 @@
     transition: all 0.2s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    min-width: 180px;
+    min-width: 140px;
   }
 
   .edit-btn-aluno button:hover {
@@ -293,8 +295,8 @@
   }
 
   .edit-btn-aluno button:disabled {
-    background-color: #e9ecef;
-    color: #6c757d;
+    background-color: #007bff91;
+    color: white;
     cursor: not-allowed;
     transform: none;
   }

@@ -8,7 +8,6 @@ import Edit from "../../assets/pencil.svg";
 
 const Alunos = () => {
   const { user } = useContext(UserContext); // Obter o estado do usuário
-  const role = user;
   const [alunos, setAlunos] = useState([]);
   const [filteredAlunos, setFilteredAlunos] = useState([]);
   const [search, setSearch] = useState("");
@@ -110,46 +109,46 @@ const Alunos = () => {
                         <button>Reg Aca</button>
                       </Link>
 
-                      {user && role.role === "admin" ? (
+                      {user?.role === "admin" ? (
                         <>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno"
                             to={`/mensalidade/${aluno.id}`}
                           >
-                            <button>Mensalidade</button>
+                            <button className="edit-btn-aluno">Mensalidade</button>
                           </Link>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno"
                             to={`/boletim/${aluno.id}`}
                           >
-                            <button>Boletim</button>
+                            <button className="edit-btn-aluno">Boletim</button>
                           </Link>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno"
                             to={`/diplomas/${aluno.id}`}
                           >
-                            <button>Diploma</button>
-                          </Link>{" "}
+                            <button className="edit-btn-aluno">Diploma</button>
+                          </Link>
                         </>
                       ) : (
                         <>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno disable"
                             to={`/mensalidade/${aluno.id}`}
                           >
-                            <button disabled>Mensalidade</button>
+                            <button className="edit-btn-aluno" disabled>Mensalidade</button>
                           </Link>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno disable"
                             to={`/boletim/${aluno.id}`}
                           >
-                            <button disabled>Boletim</button>
+                            <button className="edit-btn-aluno" disabled>Boletim</button>
                           </Link>
                           <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                            className="edit-btn-aluno disable"
                             to={`/diplomas/${aluno.id}`}
                           >
-                            <button disabled>Diploma</button>
+                            <button className="edit-btn-aluno" disabled>Diploma</button>
                           </Link>
                         </>
                       )}
