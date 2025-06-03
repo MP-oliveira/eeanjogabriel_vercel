@@ -40,7 +40,7 @@ module.exports = class AdminsController {
     }
   }
 
-  static async createAdmin(req, res) {
+   static async createAdmin(req, res) {
     const {
       nome,
       email,
@@ -71,21 +71,27 @@ module.exports = class AdminsController {
         password: hashedPassword,
       };
 
+      console.log("Senha hasheada:", hashedPassword);
+
       // Converter para minúsculas com exceções
       const adminLowercase = Object.fromEntries(
         Object.entries(admin).map(([key, value]) => [
           key,
           typeof value === "string" &&
-            key !== "nome"
+            key !== "nome" &&
+            key !== "password"  // Não converter a senha para minúsculas
             ? value.toLowerCase()
             : value,
         ])
       );
-      console.log(adminLowercase, 'antes do await');
+      console.log("Dados do admin antes de criar:", {
+        ...adminLowercase,
+        password: adminLowercase.password ? "exists" : "missing"
+      });
 
       const createdAdmin = await Admin.create(adminLowercase);
       console.log('depois do create', createdAdmin)
-      await createSupabaseUser(adminLowercase.nome, adminLowercase.email, adminLowercase.password, "admin");
+      await createSupabaseUser(adminLowercase.nome, adminLowercase.email, password, "admin");
 
       const newAdmin = await Admin.findOne({
         where: { id: createdAdmin.id }
@@ -97,7 +103,6 @@ module.exports = class AdminsController {
       res.status(500).json({ error: "Erro ao criar admin" });
     }
   }
-
   static async getAdminById(req, res) {
     const { id } = req.params;
 
@@ -117,7 +122,7 @@ module.exports = class AdminsController {
     }
   }
 
-  static async updateAdmin(req, res) {
+    static async updateAdmin(req, res) {
     const { id } = req.params;
     const {
       nome,
@@ -155,6 +160,19 @@ module.exports = class AdminsController {
         password: hashedPassword
       });
 
+      // Atualizar senha no Supabase se foi fornecida
+      if (password) {
+        const { error: supabaseError } = await supabase.auth.admin.updateUserById(
+          admin.id,
+          { password: password }
+        );
+
+        if (supabaseError) {
+          console.error("Erro ao atualizar senha no Supabase:", supabaseError);
+          return res.status(500).json({ error: "Erro ao atualizar senha no Supabase" });
+        }
+      }
+
       const updatedAdmin = await Admin.findOne({
         where: { id: id },
       });
@@ -165,7 +183,6 @@ module.exports = class AdminsController {
       res.status(500).json({ error: "Erro ao atualizar admin" });
     }
   }
-
   static async deleteAdmin(req, res) {
     const { id } = req.params;
 
