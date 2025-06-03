@@ -59,7 +59,7 @@ const Cursos = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista-aluno">
           <thead>
             <tr>
               <th>Nome</th>
@@ -71,13 +71,15 @@ const Cursos = () => {
               filteredCursos.map((curso) => (
                 <tr key={curso.id}>
                   <td>{curso.nome}</td>
-                  <td className="for-list-acoes">
+                  <td className="for-list-acoes-aluno">
+                    <div className="for-list-acoes-aluno-icons">
                     <Link to={`/cursos/edit/${curso.id}`}>
                       <img src={Edit} alt="" />
                     </Link>
                     <Link onClick={() => handleDelete(curso.id)}>
                       <img src={Delete} alt="" />
                     </Link>
+                    </div>
                   </td>
                 </tr>
               ))
