@@ -1,6 +1,7 @@
 
 const Admin = require("../models/admin.js");
 const supabase = require("../db/supabaseCilent");
+const bcrypt = require("bcrypt");
 
 // Função para criar um usuário no Supabase Auth
 async function createSupabaseUser(nome, email, password, role) {
@@ -48,6 +49,9 @@ module.exports = class AdminsController {
       password
     } = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     try {
       const adminExists = await Admin.findOne({
         where: { email: email },
@@ -64,7 +68,7 @@ module.exports = class AdminsController {
         email,
         telefone,
         role,
-        password,
+        password: hashedPassword,
       };
 
       // Converter para minúsculas com exceções
@@ -123,6 +127,9 @@ module.exports = class AdminsController {
       password
     } = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     try {
       const admin = await Admin.findByPk(id);
 
@@ -145,7 +152,7 @@ module.exports = class AdminsController {
         email,
         telefone,
         role,
-        password
+        password: hashedPassword
       });
 
       const updatedAdmin = await Admin.findOne({
