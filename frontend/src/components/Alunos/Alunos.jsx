@@ -58,6 +58,8 @@ const Alunos = () => {
     }
   };
 
+  const isAdmin = user === "admin" || user?.role === "admin";
+
   return (
     <div className="form-container">
       <div className="form-list-content">
@@ -109,7 +111,7 @@ const Alunos = () => {
                         <button>Reg Aca</button>
                       </Link>
 
-                      {user?.role === "admin" ? (
+                      {isAdmin ? (
                         <>
                           <Link
                             className="edit-btn-aluno"
