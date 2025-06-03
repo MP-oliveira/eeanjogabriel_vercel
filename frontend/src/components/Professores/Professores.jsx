@@ -58,7 +58,7 @@ const Professores = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista-aluno">
           <thead>
             <tr>
               <th>Nome</th>
@@ -78,13 +78,15 @@ const Professores = () => {
                   <td>{professor.email}</td>
                   <td>{professor.telefone}</td>
                   <td>{professor.status}</td>
-                  <td className="for-list-acoes">
+                  <td className="for-list-acoes-aluno">
+                  <div className="for-list-acoes-aluno-icons">
                     <Link to={`/professores/edit/${professor.id}`}>
                       <img src={Edit} alt="Editar" />
                     </Link>
                     <Link onClick={() => handleDelete(professor.id)}>
                       <img src={Delete} alt="Deletar" />
                     </Link>
+                    </div>
                   </td>
                 </tr>
               ))
