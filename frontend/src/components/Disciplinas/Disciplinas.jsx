@@ -60,7 +60,7 @@ const Disciplinas = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista-aluno">
           <thead>
             <tr>
               <th>Nome</th>
@@ -78,13 +78,15 @@ const Disciplinas = () => {
                   <td>{disciplina.carga_horaria}</td>
                   <td>{disciplina.horario_inicio}</td>
                   <td>{Array.isArray(disciplina.dias_semana) ? disciplina.dias_semana.join(', ') : disciplina.dias_semana}</td>
-                  <td className="for-list-acoes">
+                  <td className="for-list-acoes-aluno">
+                    <div className="for-list-acoes-aluno-icons">
                     <Link to={`/disciplinas/edit/${disciplina.id}`}>
                       <img src={Edit} alt="Editar" />
                     </Link>
                     <Link onClick={() => handleDelete(disciplina.id)}>
                       <img src={Delete} alt="Deletar" />
                     </Link>
+                    </div>
                   </td>
                 </tr>
               ))
