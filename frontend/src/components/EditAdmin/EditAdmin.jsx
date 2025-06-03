@@ -11,6 +11,7 @@ const adminSchema = z.object({
   email: z.string().email({ message: "Email inválido." }),
   telefone: z.string().min(10, { message: "Telefone inválido." }),
   status: z.string().nonempty({ message: "Selecione um status válido." }),
+  password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }).optional(),
 });
 
 const EditAdmin = () => {
@@ -50,18 +51,25 @@ const EditAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const adminResult = adminSchema.safeParse(adminData);
-
-    if (!adminResult.success) {
-      setErrors(adminResult.error.format());
-      return;
-    }
+    const adminData = {
+      nome: adminData.nome,
+      email: adminData.email,
+      telefone: adminData.telefone,
+      status: adminData.status,
+      ...(adminData.password ? { password: adminData.password } : {})
+    };
 
     try {
+      const adminResult = adminSchema.safeParse(adminData);
+      if (!adminResult.success) {
+        setErrors(adminResult.error.format());
+        return;
+      }
+
       await api.put(`/admins/edit/${id}`, adminData);
       navigate("/admins");
     } catch (error) {
-      console.error("Erro ao atualizar admin", error);
+      console.error("Erro ao atualizar admin:", error);
       setApiError("Erro ao atualizar admin. Por favor, tente novamente.");
     }
   };
@@ -132,12 +140,16 @@ const EditAdmin = () => {
           </div>
           {errors.status && <p className="error_message" style={{ color: "red" }}>{errors.status._errors?.[0]}</p>}
           <InputPassword
-            value={adminData.password}
+            value={adminData.password || ''}
             onChange={(e) => handleChange({ target: { name: 'password', value: e.target.value } })}
+            required={false}
+            placeholder="Digite a nova senha (opcional)"
           />
-          {errors.password &&
+          {errors.password && (
             <p className="error_message" style={{ color: "red" }}>
-              {errors.password._errors?.[0]}</p>}
+              {errors.password._errors?.[0]}
+            </p>
+          )}
         </div>
 
         <button className="aluno-btn" type="submit">Salvar</button>
