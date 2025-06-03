@@ -51,21 +51,14 @@ const EditAdmin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const adminData = {
-      nome: adminData.nome,
-      email: adminData.email,
-      telefone: adminData.telefone,
-      status: adminData.status,
-      ...(adminData.password ? { password: adminData.password } : {})
-    };
+    const adminResult = adminSchema.safeParse(adminData);
+
+    if (!adminResult.success) {
+      setErrors(adminResult.error.format());
+      return;
+    }
 
     try {
-      const adminResult = adminSchema.safeParse(adminData);
-      if (!adminResult.success) {
-        setErrors(adminResult.error.format());
-        return;
-      }
-
       await api.put(`/admins/edit/${id}`, adminData);
       navigate("/admins");
     } catch (error) {
