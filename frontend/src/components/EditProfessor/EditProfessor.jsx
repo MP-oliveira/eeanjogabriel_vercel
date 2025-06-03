@@ -12,6 +12,7 @@ const professorSchema = z.object({
   email: z.string().email({ message: "Email inválido." }),
   telefone: z.string().min(10, { message: "Telefone inválido." }),
   status: z.string().nonempty({ message: "Selecione um status válido." }),
+  password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres." }).optional(),
 });
 
 const EditProfessor = () => {
@@ -52,18 +53,26 @@ const EditProfessor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const professorResult = professorSchema.safeParse(professorData);
-
-    if (!professorResult.success) {
-      setErrors(professorResult.error.format());
-      return;
-    }
+    const professorData = {
+      nome: professorData.nome,
+      especialidade: professorData.especialidade,
+      email: professorData.email,
+      telefone: professorData.telefone,
+      status: professorData.status,
+      ...(professorData.password ? { password: professorData.password } : {})
+    };
 
     try {
+      const professorResult = professorSchema.safeParse(professorData);
+      if (!professorResult.success) {
+        setErrors(professorResult.error.format());
+        return;
+      }
+
       await api.put(`/professores/edit/${id}`, professorData);
       navigate("/professores");
     } catch (error) {
-      console.error("Erro ao atualizar professor", error);
+      console.error("Erro ao atualizar professor:", error);
       setApiError("Erro ao atualizar professor. Por favor, tente novamente.");
     }
   };
@@ -142,12 +151,16 @@ const EditProfessor = () => {
           {errors.status && <p className="error_message" style={{ color: "red" }}>{errors.status._errors?.[0]}</p>}
 
           <InputPassword
-            value={professorData.password}
+            value={professorData.password || ''}
             onChange={(e) => handleChange({ target: { name: 'password', value: e.target.value } })}
+            required={false}
+            placeholder="Digite a nova senha (opcional)"
           />
-          {errors.password &&
+          {errors.password && (
             <p className="error_message" style={{ color: "red" }}>
-              {errors.password._errors?.[0]}</p>}
+              {errors.password._errors?.[0]}
+            </p>
+          )}
         </div>
         <button className="form-btn" type="submit">Salvar</button>
       </form>
