@@ -16,9 +16,11 @@ const DetalhesAluno = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [registroAtualId, setRegistroAtualId] = useState(id); // ID do registro que está sendo editado
   const [alunoInfo, setAlunoInfo] = useState({
-    nome: "",
-    curso: "",
-    turma: ""
+    id: "",
+    nome: "Carregando...",
+    curso: "Carregando...",
+    cursoId: "",
+    turma: "Carregando..."
   });
   const [formData, setFormData] = useState({
     notaProva: 0,
@@ -40,17 +42,19 @@ const DetalhesAluno = () => {
   // Novo estado para mensalidades
   const [mensalidades, setMensalidades] = useState([]);
   const [loadingMensalidades, setLoadingMensalidades] = useState(true);
+  // Novo estado para cursos
+  const [cursosDisponiveis, setCursosDisponiveis] = useState([]);
+  const [cursoSelecionado, setCursoSelecionado] = useState("");
 
   // Função para buscar todas as disciplinas, com tentativas alternativas
   const fetchTodasDisciplinas = async () => {
     setLoadingDisciplinas(true);
     setErrorMsg("");
 
-    // Lista de possíveis endpoints para tentar
     const endpoints = [
-      '/disciplinas',         // Endpoint principal
-      '/disciplina',          // Possível endpoint alternativo
-      '/api/disciplinas'      // Outro possível caminho
+      '/disciplinas',
+      '/disciplina',
+      '/api/disciplinas'
     ];
 
     for (const endpoint of endpoints) {
@@ -58,7 +62,6 @@ const DetalhesAluno = () => {
         const response = await api.get(endpoint);
 
         if (response.data) {
-          // Verificar o formato dos dados
           const disciplinas = Array.isArray(response.data) ? response.data :
             (response.data.data && Array.isArray(response.data.data)) ? response.data.data : [];
 
@@ -73,10 +76,24 @@ const DetalhesAluno = () => {
       }
     }
 
-    // Se chegou aqui, vamos tentar um mock de dados como último recurso
     setErrorMsg("Não foi possível carregar as disciplinas do servidor. Por favor, tente novamente mais tarde.");
     setLoadingDisciplinas(false);
     return [];
+  };
+
+  // Função para buscar todos os cursos disponíveis
+  const fetchCursosDisponiveis = async () => {
+    try {
+      const response = await api.get('/cursos');
+      if (response.data) {
+        setCursosDisponiveis(Array.isArray(response.data) ? response.data : []);
+      } else {
+        setCursosDisponiveis([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar cursos:", error);
+      setCursosDisponiveis([]);
+    }
   };
 
   useEffect(() => {
@@ -96,9 +113,9 @@ const DetalhesAluno = () => {
             if (alunoResponse.data) {
               setAlunoInfo({
                 id: alunoResponse.data.id || alunoId,
-                nome: alunoResponse.data.nome || response.data.aluno,
+                nome: alunoResponse.data.nome || response.data.aluno || "Aluno não identificado",
                 curso: alunoResponse.data.curso?.nome || response.data.curso || "Não informado",
-                cursoId: alunoResponse.data.cursoId || response.data.cursoId || 1,
+                cursoId: alunoResponse.data.cursoId || response.data.cursoId || "",
                 turma: alunoResponse.data.turno || response.data.turma || "Não informada"
               });
 
@@ -110,6 +127,14 @@ const DetalhesAluno = () => {
                 console.error("Erro ao buscar mensalidades:", error);
                 setMensalidades([]);
               }
+            } else {
+              setAlunoInfo({
+                id: alunoId,
+                nome: response.data.aluno || "Aluno não identificado",
+                curso: response.data.curso || "Não informado",
+                cursoId: response.data.cursoId || "",
+                turma: response.data.turma || "Não informada"
+              });
             }
           } catch (error) {
             console.error("Erro ao buscar dados do aluno:", error);
@@ -117,10 +142,14 @@ const DetalhesAluno = () => {
               id: response.data.alunoId || id,
               nome: response.data.aluno || "Aluno não identificado",
               curso: response.data.curso || "Não informado",
-              cursoId: response.data.cursoId || 1,
+              cursoId: response.data.cursoId || "",
               turma: response.data.turma || "Não informada"
             });
           }
+
+          // Buscar cursos disponíveis
+          await fetchCursosDisponiveis();
+          setCursoSelecionado(alunoInfo.cursoId || response.data.cursoId || "");
 
           // Buscar disciplinas cursadas
           await fetchDisciplinasCursadas();
@@ -160,7 +189,6 @@ const DetalhesAluno = () => {
             setFaltas([{ data: '', motivo: '' }]);
           }
         }
-
       } catch (error) {
         console.error("Erro ao buscar detalhes do aluno:", error);
       } finally {
@@ -178,7 +206,6 @@ const DetalhesAluno = () => {
     try {
       const alunoId = alunoInfo.id || registroAluno.alunoId || id;
 
-
       try {
         const disciplinasResponse = await api.get(`/registroacademico/aluno/${alunoId}`);
 
@@ -193,7 +220,7 @@ const DetalhesAluno = () => {
             notaTeste: disc.notaTeste || 0,
             notaTrabalho: disc.notaTrabalho || 0,
             faltas: disc.faltas || 0,
-            totalAulas: disc.totalAulas || 0, // Garantindo que totalAulas seja carregado
+            totalAulas: disc.totalAulas || 0,
             faltaData: disc.faltaData || [],
             faltaMotivo: disc.faltaMotivo || []
           }));
@@ -205,7 +232,6 @@ const DetalhesAluno = () => {
         console.warn("Erro ao buscar disciplinas do endpoint específico:", endpointError);
       }
 
-      // Tentativa alternativa: buscar da listagem completa
       const registrosResponse = await api.get('/registroacademico');
 
       if (registrosResponse.data && Array.isArray(registrosResponse.data)) {
@@ -213,7 +239,6 @@ const DetalhesAluno = () => {
           (reg.alunoId && reg.alunoId === alunoId) ||
           (reg.aluno && reg.aluno.toLowerCase().includes(alunoInfo.nome.toLowerCase()))
         );
-
 
         if (registrosDoAluno.length > 0) {
           const disciplinasFormatadas = registrosDoAluno.map(reg => ({
@@ -226,7 +251,7 @@ const DetalhesAluno = () => {
             notaTeste: reg.notaTeste || 0,
             notaTrabalho: reg.notaTrabalho || 0,
             faltas: reg.faltas || 0,
-            totalAulas: reg.totalAulas || 0, // Garantindo que totalAulas seja carregado
+            totalAulas: reg.totalAulas || 0,
             faltaData: reg.faltaData || [],
             faltaMotivo: reg.faltaMotivo || []
           }));
@@ -249,14 +274,13 @@ const DetalhesAluno = () => {
   const calcularPresenca = (faltas, totalAulas) => {
     if (!totalAulas || totalAulas === 0) return { valor: 100, abaixoMinimo: false };
 
-    // Conta o número de faltas válidas (com data preenchida)
     const numeroFaltas = Array.isArray(faltas)
       ? faltas.filter(f => f && f.data && f.data.trim() !== '').length
       : (typeof faltas === 'number' ? faltas : 0);
 
     const presenca = ((totalAulas - numeroFaltas) / totalAulas) * 100;
     return {
-      valor: Math.max(0, Math.min(100, presenca.toFixed(2))), // Garante valor entre 0 e 100
+      valor: Math.max(0, Math.min(100, presenca.toFixed(2))),
       abaixoMinimo: presenca < 70,
       faltas: numeroFaltas
     };
@@ -271,9 +295,7 @@ const DetalhesAluno = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    // Para campos numéricos, converter para número
     if (['notaProva', 'notaTrabalho', 'notaTeste', 'estagioNota', 'faltas', 'totalAulas'].includes(name)) {
-      // Permitir campo vazio para totalAulas
       if (name === 'totalAulas' && value === '') {
         setFormData(prev => ({
           ...prev,
@@ -282,15 +304,12 @@ const DetalhesAluno = () => {
         return;
       }
 
-      // Limita a 1 casa decimal para notas
       let numValue = value === '' ? 0 : Number(value);
 
-      // Se for uma nota, validar e limitar entre 0 e 10
       if (['notaProva', 'notaTrabalho', 'notaTeste', 'estagioNota'].includes(name)) {
         numValue = Math.min(10, Math.max(0, numValue));
       }
 
-      // Para totalAulas, garantir valor positivo
       if (name === 'totalAulas') {
         numValue = Math.max(1, numValue);
       }
@@ -300,7 +319,6 @@ const DetalhesAluno = () => {
         [name]: numValue
       }));
     } else {
-      // Para campos de texto
       setFormData(prev => ({
         ...prev,
         [name]: value
@@ -310,7 +328,6 @@ const DetalhesAluno = () => {
 
   const handleSaveChanges = async () => {
     try {
-      // Validar notas antes de calcular a média
       const notas = [
         { nome: 'Prova', valor: formData.notaProva },
         { nome: 'Trabalho', valor: formData.notaTrabalho },
@@ -324,16 +341,12 @@ const DetalhesAluno = () => {
         return;
       }
 
-      // Cálculo da média apenas com as notas preenchidas
       const notasPreenchidas = notas.filter(n => n.valor > 0);
       const media = notasPreenchidas.length > 0 
         ? notasPreenchidas.reduce((acc, n) => acc + parseFloat(n.valor), 0) / notasPreenchidas.length 
         : 0;
 
-      // Filtrar apenas as faltas que têm data e motivo preenchidos
       const faltasValidas = faltas.filter(f => f.data && f.motivo);
-      
-      // Validar datas das faltas
       const dataAtual = new Date();
       const faltasInvalidas = faltasValidas.filter(f => {
         const dataFalta = new Date(f.data);
@@ -345,11 +358,9 @@ const DetalhesAluno = () => {
         return;
       }
 
-      // Arrays de faltas
       const faltaDataArray = faltasValidas.map(f => f.data);
       const faltaMotivoArray = faltasValidas.map(f => f.motivo);
 
-      // Dados a serem enviados para a API
       const dadosAtualizados = {
         faltaData: faltaDataArray,
         faltaMotivo: faltaMotivoArray,
@@ -370,9 +381,7 @@ const DetalhesAluno = () => {
         faltas: faltaDataArray.length
       };
 
-
       try {
-        // Primeiro, atualizar o registro com arrays vazios para limpar as faltas
         const dadosLimpos = {
           ...dadosAtualizados,
           faltaData: [],
@@ -380,16 +389,10 @@ const DetalhesAluno = () => {
           faltas: 0
         };
 
-        // Enviar dados limpos primeiro
         await api.put(`/registroacademico/edit/${registroAtualId}`, dadosLimpos);
-        
-        // Aguardar um momento para garantir que a limpeza foi processada
         await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Depois, enviar os novos dados com as faltas atualizadas
         const response = await api.put(`/registroacademico/edit/${registroAtualId}`, dadosAtualizados);
 
-        // Atualizar o estado local com os novos dados
         setDisciplinaAtual(prev => ({
           ...prev,
           ...dadosAtualizados,
@@ -398,7 +401,6 @@ const DetalhesAluno = () => {
           faltaMotivo: faltaMotivoArray
         }));
 
-        // Se o registro atual for o mesmo que foi carregado inicialmente
         if (registroAtualId === id) {
           setRegistroAluno(prev => ({
             ...prev,
@@ -409,7 +411,6 @@ const DetalhesAluno = () => {
           }));
         }
 
-        // Atualizar a disciplina na lista de disciplinas cursadas
         setDisciplinasCursadas(prev =>
           prev.map(disc => {
             if (disc.id === registroAtualId) {
@@ -431,49 +432,40 @@ const DetalhesAluno = () => {
           })
         );
 
-        // Fechar o modo de edição
         setIsEditing(false);
-        
-        // Atualizar todos os dados do servidor
         await fetchDisciplinasCursadas();
-        
         alert("Registro acadêmico atualizado com sucesso!");
       } catch (apiError) {
-
         if (apiError.response) {
           let mensagemErro = "Erro ao atualizar registro acadêmico";
-
           if (apiError.response.data) {
             if (apiError.response.data.error) {
-              if (Array.isArray(apiError.response.data.error)) {
-                mensagemErro = apiError.response.data.error.join(", ");
-              } else {
-                mensagemErro = apiError.response.data.error;
-              }
+              mensagemErro = Array.isArray(apiError.response.data.error) ? apiError.response.data.error.join(", ") : apiError.response.data.error;
             } else if (apiError.response.data.message) {
               mensagemErro = apiError.response.data.message;
             }
           }
-
           alert(`Erro: ${mensagemErro}`);
         } else {
           alert("Erro ao conectar com o servidor. Verifique sua conexão.");
         }
       }
     } catch (error) {
-      alert("Erro ao salvar alterações. Tente novamente.", error);
+      alert("Erro ao salvar alterações.", error);
     }
   };
 
-  // Função para adicionar uma nova disciplina
   const handleAddDisciplina = async () => {
     if (!disciplinaSelecionada) {
       alert("Por favor, selecione uma disciplina");
       return;
     }
+    if (!cursoSelecionado) {
+      alert("Por favor, selecione um curso");
+      return;
+    }
 
     try {
-      // Extrair o ID da disciplina e garantir que é um número
       const disciplinaId = typeof disciplinaSelecionada === 'string'
         ? parseInt(disciplinaSelecionada, 10)
         : disciplinaSelecionada;
@@ -486,25 +478,16 @@ const DetalhesAluno = () => {
         return;
       }
 
-      // Verificar se a disciplina já está cursada
       const disciplinaJaCursada = disciplinasCursadas.some(d => d.nome === disciplina.nome);
       if (disciplinaJaCursada) {
         alert("Esta disciplina já está cursada!");
         return;
       }
 
-      // Usar o ID do aluno armazenado no estado alunoInfo
       const alunoId = alunoInfo.id || registroAluno.alunoId || id;
-
-
-      // Usar o ID do curso armazenado no estado alunoInfo
-      const cursoId = alunoInfo.cursoId || registroAluno.cursoId || 1;
-
-
-      // Data atual no formato correto para o banco de dados
+      const cursoId = cursoSelecionado;
       const dataAtual = new Date().toISOString().slice(0, 10);
 
-      // Criar novo registro acadêmico para a disciplina
       const novoRegistro = {
         alunoId: parseInt(alunoId, 10),
         disciplinaId: disciplinaId,
@@ -559,27 +542,21 @@ const DetalhesAluno = () => {
 
         setAdicionandoDisciplina(false);
         setDisciplinaSelecionada("");
+        setCursoSelecionado("");
         alert("Disciplina adicionada com sucesso!");
 
         await fetchDisciplinasCursadas();
       } catch (apiError) {
         console.error(`Erro ao adicionar disciplina no servidor:`, apiError);
-
         if (apiError.response) {
           let mensagemErro = "Erro ao adicionar disciplina no servidor";
-
           if (apiError.response.data) {
             if (apiError.response.data.error) {
-              if (Array.isArray(apiError.response.data.error)) {
-                mensagemErro = apiError.response.data.error.join(", ");
-              } else {
-                mensagemErro = apiError.response.data.error;
-              }
+              mensagemErro = Array.isArray(apiError.response.data.error) ? apiError.response.data.error.join(", ") : apiError.response.data.error;
             } else if (apiError.response.data.message) {
               mensagemErro = apiError.response.data.message;
             }
           }
-
           alert(`Erro: ${mensagemErro}`);
         } else {
           alert("Erro ao conectar com o servidor. Verifique sua conexão.");
@@ -591,13 +568,13 @@ const DetalhesAluno = () => {
     }
   };
 
-  // Se o usuário clicar no botão de Adicionar Nova Disciplina, buscaremos as disciplinas novamente
   const handleOpenAddDisciplina = async () => {
     try {
       if (!adicionandoDisciplina) {
         setLoadingDisciplinas(true);
         setErrorMsg("");
         await fetchTodasDisciplinas();
+        await fetchCursosDisponiveis();
       }
       setAdicionandoDisciplina(!adicionandoDisciplina);
     } catch (error) {
@@ -609,15 +586,10 @@ const DetalhesAluno = () => {
 
   const presenca = calcularPresenca(faltas, formData.totalAulas);
 
-  // Função para selecionar uma disciplina para edição
   const selecionarDisciplinaParaEdicao = (disciplina) => {
-
-    // Armazenar o ID do registro acadêmico sendo editado
     setRegistroAtualId(disciplina.id);
-
-    // Definir a disciplina atual como a selecionada
     setDisciplinaAtual({
-      id: disciplina.id, // Importante armazenar o ID
+      id: disciplina.id,
       nome: disciplina.nome,
       notaProva: disciplina.notaProva !== undefined ? disciplina.notaProva : 0,
       notaTrabalho: disciplina.notaTrabalho !== undefined ? disciplina.notaTrabalho : 0,
@@ -628,7 +600,6 @@ const DetalhesAluno = () => {
       totalAulas: disciplina.totalAulas || disciplina.carga_horaria || 20
     });
 
-    // Atualizar o formulário com os dados da disciplina selecionada
     setFormData({
       notaProva: disciplina.notaProva !== undefined ? disciplina.notaProva : 0,
       notaTrabalho: disciplina.notaTrabalho !== undefined ? disciplina.notaTrabalho : 0,
@@ -639,13 +610,7 @@ const DetalhesAluno = () => {
       faltaMotivo: disciplina.faltaMotivo || ""
     });
 
-    // Ajustar a visualização para mostrar a disciplina selecionada
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
-    // Iniciar o modo de edição
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsEditing(true);
   };
 
@@ -656,15 +621,14 @@ const DetalhesAluno = () => {
       </div>
     );
   }
-  
 
   return (
     <div className="detalhes-container">
       <VoltarButton url="/alunos" />
       <div className="detalhes-header">
         <div className="aluno-info">
-          <h2 className="aluno-nome">{alunoInfo.nome}</h2>
-          <p className="curso-nome">Curso: {alunoInfo.curso}</p>
+          <h2 className="aluno-nome">{alunoInfo.nome || "Aluno não identificado"}</h2>
+          <p className="curso-nome">Curso: {alunoInfo.curso || "Não informado"}</p>
         </div>
         <Button
           variant="contained"
@@ -675,7 +639,6 @@ const DetalhesAluno = () => {
         </Button>
       </div>
 
-      {/* Nova seção de mensalidades */}
       <div className="mensalidades-section">
         <h2>Mensalidades</h2>
         <div className="mensalidades-grid">
@@ -706,7 +669,6 @@ const DetalhesAluno = () => {
         </div>
       </div>
 
-      {/* Seção de disciplina atual */}
       {disciplinasCursadas.length > 0 ? (
         <div className="disciplina-atual-section">
           <h2>Disciplina Atual</h2>
@@ -724,9 +686,7 @@ const DetalhesAluno = () => {
                   name="notaProva"
                   value={formData.notaProva === 0 ? '' : formData.notaProva}
                   onChange={handleInputChange}
-                  InputProps={{
-                    inputProps: { min: 0, max: 10, step: 0.1 },
-                  }}
+                  InputProps={{ inputProps: { min: 0, max: 10, step: 0.1 } }}
                   margin="normal"
                   size="small"
                 />
@@ -780,7 +740,6 @@ const DetalhesAluno = () => {
                   margin="normal"
                   size="small"
                 />
-                {/* Formulário de faltas */}
                 <form 
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -894,7 +853,7 @@ const DetalhesAluno = () => {
                       <ul className="faltas-lista">
                         {faltas.map((falta, idx) => (
                           <li key={idx} className="falta-item-lista">
-                            <span className="falta-arrow">&rarr;</span>
+                            <span className="falta-arrow">→</span>
                             <b>{falta.data ? new Date(falta.data).toLocaleDateString() : ''}</b> - {falta.motivo}
                           </li>
                         ))}
@@ -933,7 +892,6 @@ const DetalhesAluno = () => {
         </div>
       )}
 
-      {/* Seção de adicionar disciplina */}
       <div className="adicionar-disciplina-section">
         <div className="add-disciplina-header">
           <h2>Adicionar Disciplina</h2>
@@ -977,6 +935,28 @@ const DetalhesAluno = () => {
                 </div>
 
                 <FormControl fullWidth margin="normal">
+                  <InputLabel id="curso-select-label">Curso</InputLabel>
+                  <Select
+                    labelId="curso-select-label"
+                    value={cursoSelecionado}
+                    label="Curso"
+                    onChange={(e) => setCursoSelecionado(e.target.value)}
+                  >
+                    {cursosDisponiveis.length > 0 ? (
+                      cursosDisponiveis.map(curso => (
+                        <MenuItem key={curso.id} value={curso.id}>
+                          {curso.nome}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled value="">
+                        Nenhum curso disponível
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth margin="normal">
                   <InputLabel id="disciplina-select-label">Disciplina</InputLabel>
                   <Select
                     labelId="disciplina-select-label"
@@ -1010,7 +990,7 @@ const DetalhesAluno = () => {
                   variant="contained"
                   color="success"
                   onClick={handleAddDisciplina}
-                  disabled={!disciplinaSelecionada}
+                  disabled={!disciplinaSelecionada || !cursoSelecionado}
                   sx={{ mt: 2 }}
                 >
                   Adicionar Disciplina
@@ -1021,7 +1001,6 @@ const DetalhesAluno = () => {
         )}
       </div>
 
-      {/* Seção de disciplinas cursadas */}
       <div className="disciplinas-section">
         <h2>Disciplinas Cursadas</h2>
         <div className="disciplinas-grid">
