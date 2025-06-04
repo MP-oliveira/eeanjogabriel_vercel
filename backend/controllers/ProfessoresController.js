@@ -6,6 +6,7 @@ const supabase = createClient(
 
 const Professor = require("../models/professor");
 const Disciplina = require("../models/disciplina");
+const bcrypt = require("bcrypt");
 
 // Função para criar um usuário no Supabase Auth
 async function createSupabaseUser(nome, email, password, role) {
@@ -63,6 +64,9 @@ module.exports = class ProfessoresController {
       disciplinasIds
     } = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     try {
       const professorExists = await Professor.findOne({
         where: { email: email },
@@ -79,23 +83,28 @@ module.exports = class ProfessoresController {
         telefone,
         status,
         role,
-        password
+        password: hashedPassword
       };
 
+      // Converter para minúsculas com exceções
       const professorLowercase = Object.fromEntries(
         Object.entries(professor).map(([key, value]) => [
           key,
           typeof value === "string" &&
-            key !== "nome"
+            key !== "nome" &&
+            key !== "password"
             ? value.toLowerCase()
             : value,
         ])
       );
-      console.log(professorLowercase, 'antes do await')
+      console.log("Dados do professor antes de criar:", {
+        ...professorLowercase,
+        password: professorLowercase.password ? "exists" : "missing"
+      });
 
       const createdProfessor = await Professor.create(professorLowercase);
-      console.log(createdProfessor, 'professor depois do create')
-      await createSupabaseUser(professorLowercase.nome, professorLowercase.email, professorLowercase.password, 'professor');
+      console.log('professor depois do create', createdProfessor)
+      await createSupabaseUser(professorLowercase.nome, professorLowercase.email, password, 'professor');
       
       if (disciplinasIds && disciplinasIds.length > 0) {
         const disciplinas = await Disciplina.findAll({
@@ -176,15 +185,34 @@ module.exports = class ProfessoresController {
         }
       }
 
-      await professor.update({
+      // Se uma nova senha foi fornecida, hash ela
+      let updateData = {
         nome,
         especialidade,
         email,
         telefone,
         status,
-        role,
-        password
-      });
+        role
+      };
+
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        updateData.password = hashedPassword;
+
+        // Atualizar senha no Supabase
+        const { error: supabaseError } = await supabase.auth.admin.updateUserById(
+          professor.id,
+          { password: password }
+        );
+
+        if (supabaseError) {
+          console.error("Erro ao atualizar senha no Supabase:", supabaseError);
+          return res.status(500).json({ error: "Erro ao atualizar senha no Supabase" });
+        }
+      }
+
+      await professor.update(updateData);
 
       if (disciplinasIds) {
         const disciplinas = await Disciplina.findAll({

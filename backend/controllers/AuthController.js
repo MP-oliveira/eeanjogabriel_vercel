@@ -30,7 +30,7 @@ module.exports = class AuthController {
         
         const { data: foundUser, error: roleError } = await supabase
           .from(table)
-          .select("*")
+          .select("id, nome, email, password, role")
           .or(`email.eq.${email},email.eq.${email.toLowerCase()}`)
           .single();
         
@@ -51,8 +51,19 @@ module.exports = class AuthController {
         return res.status(401).json({ message: "Usuário não encontrado" });
       }
 
+      console.log("Dados do usuário encontrados:", {
+        hasPassword: !!userData.password,
+        email: userData.email,
+        role: userData.role
+      });
+
+      if (!userData.password) {
+        console.error("Senha não encontrada para o usuário");
+        return res.status(401).json({ message: "Erro na configuração da conta" });
+      }
+
       // Verificar a senha usando bcrypt
-      const senhaValida = await bcrypt.compare(password, userData.senha);
+      const senhaValida = await bcrypt.compare(password, userData.password);
       
       if (!senhaValida) {
         return res.status(401).json({ message: "Senha incorreta" });
@@ -62,7 +73,7 @@ module.exports = class AuthController {
       console.log("Iniciando autenticação no Supabase...");
       
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        email: email.toLowerCase().trim(),
         password: password,
       });
   

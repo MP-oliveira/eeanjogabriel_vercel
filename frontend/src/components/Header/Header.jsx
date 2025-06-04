@@ -33,7 +33,11 @@ const Header = () => {
     const userLog = JSON.parse(localStorage.getItem("user"));
 
     if (userLog) {
-      setUser(userLog.role);
+      setUser({
+        role: userLog.role,
+        nome: userLog.user.nome,
+        email: userLog.user.email
+      });
     }
 
     if (!token || !userLog) {
@@ -152,7 +156,7 @@ const Header = () => {
               Dashboard
             </NavLink>
             <div className="dropdown-menu">
-              {user && user === "admin" ? (
+              {user && user.role === "admin" ? (
                 <>
                   <NavLink
                     to="/admins"
@@ -212,7 +216,7 @@ const Header = () => {
                     Financeiro
                   </NavLink>
                 </>
-              ) : user && user === "professor" ? (
+              ) : user && user.role === "professor" ? (
                 <>
                   <NavLink
                     to="/alunos"
