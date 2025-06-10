@@ -7,21 +7,25 @@
 
 .boletim_container {
   width: 100%;
-  max-width: 210mm;
-  /* Tamanho A4 largura */
-  margin: 10px auto;
+  max-width: 297mm;
+  /* Largura máxima para A4 em paisagem */
+  margin: 0 auto;
   background-color: white;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 10mm;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   box-sizing: border-box;
   font-size: 12px;
   /* Reduzir tamanho base da fonte */
+  height: auto;
 }
 
 .boletim_impressao {
   width: 100%;
+  height: auto;
+  transform: none;
+  background: white;
 }
 
 .print-btn {
@@ -172,7 +176,7 @@
 .modulo_tabela th,
 .modulo_tabela td {
   border: 1px solid #000;
-  padding: 3px 5px;
+  padding: 2px 4px;
   font-size: 11px;
 }
 
@@ -198,8 +202,11 @@
 }
 
 .observacoes_container {
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  page-break-inside: avoid;
+  /* Evitar quebra dentro das observações */
+  display: block !important;
 }
 
 .observacoes_titulo {
@@ -209,9 +216,10 @@
 }
 
 .observacoes_conteudo {
-  min-height: 30px;
-  border: 1px solid #000;
-  padding: 3px;
+  min-height: 20px;
+  /* Reduzir altura mínima para economizar espaço */
+  padding: 2px;
+  display: block !important;
 }
 
 .rodape_boletim {
@@ -226,6 +234,9 @@
   justify-content: space-around;
   margin-top: 15px;
   gap: 60px;
+  page-break-inside: avoid;
+  /* Evitar quebra dentro das assinaturas */
+  display: flex !important;
 }
 
 .assinatura_campo {
@@ -241,9 +252,8 @@
 @media print {
 
   @page {
-    size: A4 portraite;
+    size: A4 landscape;
     margin: 5mm;
-    /* Margem mínima */
   }
   /* Esconder elementos que não devem ser impressos */
   .no-print {
@@ -269,13 +279,13 @@
 
   .boletim_container {
     width: 100%;
-    /* Após rotação, a largura será a altura da página A4 */
-    height: 100vh;
-    /* Após rotação, a altura será a largura da página A4 */
-    margin: 0;
+    height: auto;
+    margin: 0 auto;
+    padding: 4mm;
+    /* Ajustar margens internas para melhor encaixe */
     border: none;
     box-shadow: none;
-    font-size: 12px;
+    font-size: 10px;
     box-sizing: border-box;
     overflow: hidden;
     /* Evitar transbordo */
@@ -283,15 +293,17 @@
 
   /* Aplicar rotação de 90 graus e ajustar posição */
   .boletim_impressao {
-    transform: rotate(-90deg) translate(-200mm, 20mm);
-    transform-origin: 0 0;
-    width: 96% !important;
-    height: 297mm;
+    width: 98vh !important;
+    height: 70vw !important;
+    transform: rotate(-90deg) translate(-100%, 0);
+    transform-origin: top left;
+    background: white;
+    margin-left: 90px;
   }
 
   /* Garantir que o conteúdo caiba em uma página */
   .modulo_container {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     page-break-inside: avoid;
     /* Evitar quebra dentro de módulos */
   }
@@ -308,26 +320,33 @@
   }
 
   /* Ajustar a tabela para ocupar menos espaço */
-  .modulo_tabela th,
+  .modulo_tabela th {
+    padding: 4px 5px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+  }
+
   .modulo_tabela td {
-    padding: 2px 5px;
-    /* Reduzir padding para economizar espaço */
-    font-size: 10px;
-    /* Reduzir fonte para caber mais conteúdo */
+    padding: 6px 2px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
   }
 
   /* Garantir que a seção de observações não quebre */
   .observacoes_container {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 10px;
     page-break-inside: avoid;
     /* Evitar quebra dentro das observações */
+    display: block !important;
   }
 
   .observacoes_conteudo {
-    min-height: 20px;
+    min-height: 50px;
     /* Reduzir altura mínima para economizar espaço */
     padding: 2px;
+    display: block !important;
   }
 
   /* Ajustar o rodapé */
@@ -336,14 +355,15 @@
   }
 
   .assinaturas {
-    margin-top: 5px;
-    gap: 40px;
+    margin-top: 2px;
+    gap: 20px;
     /* Reduzir o espaço entre assinaturas */
+    display: flex !important;
   }
 
   .assinatura_campo {
-    width: 140px;
-    /* Reduzir largura para economizar espaço */
+    width: 80px !important;
+    font-size: 7px !important;
   }
 
   /* Garantir que toda a página seja impressa em uma folha só */
@@ -363,5 +383,10 @@
   .error-container,
   .loading-container {
     display: none !important;
+  }
+
+  .boletim_container {
+    padding: 2mm !important;
+    font-size: 8px !important;
   }
 }
