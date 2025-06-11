@@ -11,19 +11,35 @@ const Home = () => {
   const location = useLocation();
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
+  const [sections, setSections] = useState({
+    sectionOne: false,
+    sectionTwo: false,
+    sectionThree: false,
+    sectionFour: false
+  });
 
   useEffect(() => {
-    try {
-      // Marca como carregado após um pequeno delay
-      const timer = setTimeout(() => {
-        setIsLoaded(true);
-      }, 100);
+    const loadSections = async () => {
+      try {
+        // Marca como carregado após um pequeno delay
+        const timer = setTimeout(() => {
+          setIsLoaded(true);
+          setSections({
+            sectionOne: true,
+            sectionTwo: true,
+            sectionThree: true,
+            sectionFour: true
+          });
+        }, 100);
 
-      return () => clearTimeout(timer);
-    } catch (error) {
-      console.error('Erro ao inicializar Home:', error);
-      setError('Erro ao carregar a página inicial');
-    }
+        return () => clearTimeout(timer);
+      } catch (error) {
+        console.error('Erro ao inicializar Home:', error);
+        setError('Erro ao carregar a página inicial');
+      }
+    };
+
+    loadSections();
   }, []);
 
   useEffect(() => {
@@ -34,7 +50,10 @@ const Home = () => {
         if (!sectionId) return;
         
         const element = document.getElementById(sectionId);
-        if (!element) return;
+        if (!element) {
+          console.warn(`Seção ${sectionId} não encontrada`);
+          return;
+        }
 
         const headerOffset = 70;
         const elementPosition = element.getBoundingClientRect().top;
@@ -57,6 +76,7 @@ const Home = () => {
       }
     } catch (error) {
       console.error('Erro ao rolar para seção:', error);
+      setError('Erro ao navegar entre as seções');
     }
   }, [location.state, location.hash, isLoaded]);
 
@@ -81,15 +101,15 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <SectionOne />
+      {sections.sectionOne && <SectionOne />}
       <div id="sectionTwo">
-        <SectionTwo />
+        {sections.sectionTwo && <SectionTwo />}
       </div>
       <div id="sectionThree">
-        <SectionThree />
+        {sections.sectionThree && <SectionThree />}
       </div>
       <div id="sectionFour">
-        <SectionFour />
+        {sections.sectionFour && <SectionFour />}
       </div>
       <Footer />
     </div>

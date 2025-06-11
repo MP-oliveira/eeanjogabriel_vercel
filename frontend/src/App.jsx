@@ -2,6 +2,7 @@ import "./index.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "./context/UseContext";
+import ErrorBoundary from "./context/ErrorBoundary";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
@@ -52,7 +53,7 @@ function App() {
   const { user } = useContext(UserContext);
 
   return (
-    <>
+    <ErrorBoundary>
       <BrowserRouter>
         <Header />
         <Routes>
@@ -104,7 +105,7 @@ function App() {
           <Route path="/*" element={<Home />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </ErrorBoundary>
   );
 }
 
