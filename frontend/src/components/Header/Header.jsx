@@ -8,10 +8,10 @@ import "./Header.css";
 const Header = () => {
   const { user, setUser } = useContext(UserContext);
   const [isBlurred, setIsBlurred] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
-  
 
   const handleScroll = () => {
     if (window.scrollY > 0) {
@@ -29,20 +29,43 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userLog = JSON.parse(localStorage.getItem("user"));
+    const initializeUser = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
+        const userLog = localStorage.getItem("user");
 
-    if (userLog) {
-      setUser({
-        role: userLog.role,
-        nome: userLog.user.nome,
-        email: userLog.user.email
-      });
-    }
+        if (userLog) {
+          try {
+            const parsedUser = JSON.parse(userLog);
+            if (parsedUser && parsedUser.user) {
+              setUser({
+                role: parsedUser.role,
+                nome: parsedUser.user.nome || '',
+                email: parsedUser.user.email || ''
+              });
+            } else {
+              console.warn('Dados do usuário inválidos:', userLog);
+              setUser(null);
+            }
+          } catch (parseError) {
+            console.error('Erro ao fazer parse dos dados do usuário:', parseError);
+            setUser(null);
+          }
+        }
 
-    if (!token || !userLog) {
-      setUser(null);
-    }
+        if (!token || !userLog) {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Erro ao inicializar usuário:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeUser();
   }, [setUser]);
 
   const handleLogout = async () => {
@@ -57,19 +80,27 @@ const Header = () => {
   };
 
   const handleNavigateAndScroll = (sectionId) => {
+    if (!sectionId) return;
+
     if (location.pathname !== "/") {
       navigate(`/#${sectionId}`);
     } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const headerOffset = 70;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      try {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 70;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        } else {
+          console.warn(`Seção ${sectionId} não encontrada`);
+        }
+      } catch (error) {
+        console.error('Erro ao rolar para seção:', error);
       }
     }
     setMenuOpen(false);
@@ -78,11 +109,28 @@ const Header = () => {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  console.log("header",user)
+
+  if (isLoading) {
+    return (
+      <header className="header loading">
+        <div className="header__container">
+          <div className="logo">
+            <div className="img">
+              <img src={Logo} alt="Escola de Enfermagem Anjo Gabriel" />
+            </div>
+            <div className="logo-text">
+              <span className="logo-span-anjo">Anjo Gabriel</span>
+              <span className="logo-span-escola">Escola de Enfermagem</span>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header
-      className={`header  no-print ${isBlurred ? "blur" : ""} ${
+      className={`header no-print ${isBlurred ? "blur" : ""} ${
         menuOpen ? "menu-open" : ""
       }`}
     >
@@ -92,7 +140,7 @@ const Header = () => {
             <img src={Logo} alt="Escola de Enfermagem Anjo Gabriel" />
           </div>
           <div className="logo-text">
-            <span className="logo-span-anjo"> Anjo Gabriel</span>
+            <span className="logo-span-anjo">Anjo Gabriel</span>
             <span className="logo-span-escola">Escola de Enfermagem</span>
           </div>
         </div>
@@ -156,7 +204,7 @@ const Header = () => {
               Dashboard
             </NavLink>
             <div className="dropdown-menu">
-              {user && user.role === "admin" ? (
+              {user?.role === "admin" ? (
                 <>
                   <NavLink
                     to="/admins"
@@ -179,7 +227,6 @@ const Header = () => {
                   >
                     Cursos
                   </NavLink>
-
                   <NavLink
                     to="/disciplinas"
                     className="dropdown-item"
@@ -216,7 +263,7 @@ const Header = () => {
                     Financeiro
                   </NavLink>
                 </>
-              ) : user && user.role === "professor" ? (
+              ) : user?.role === "professor" ? (
                 <>
                   <NavLink
                     to="/alunos"
@@ -227,7 +274,6 @@ const Header = () => {
                   </NavLink>
                 </>
               ) : (
-                // Outros usuários - sem acesso (ou pode mostrar uma mensagem)
                 <div className="dropdown-item disabled">
                   Acesso não autorizado
                 </div>
@@ -241,7 +287,7 @@ const Header = () => {
               <div className="icon">
                 <UserCircle size={26} color="#C6D6F3" />
                 <div className="user-text">
-                  <span>{user.nome || user.email}</span>
+                  <span>{user.nome || user.email || 'Usuário'}</span>
                 </div>
               </div>
               <div className="login-button-container">
