@@ -64,27 +64,44 @@ const PagamentoController = {
   async getByAluno(req, res) {
     try {
       const { aluno_id } = req.params;
-      console.log('Buscando pagamentos para aluno_id:', aluno_id);
+      console.log('Iniciando busca de pagamentos para aluno_id:', aluno_id);
 
       // Verificar se o aluno existe
       const aluno = await Aluno.findByPk(aluno_id);
+      console.log('Busca do aluno:', aluno ? 'Encontrado' : 'Não encontrado');
+      
       if (!aluno) {
         console.log('Aluno não encontrado:', aluno_id);
         return res.status(404).json({ error: 'Aluno não encontrado' });
       }
 
-      console.log('Aluno encontrado:', aluno.nome);
-
+      console.log('Buscando pagamentos...');
       const pagamentos = await Pagamento.findAll({
         where: { aluno_id },
         include: [
-          { model: Aluno, attributes: ['nome'] },
-          { model: ContaBancaria, attributes: ['nome'] }
+          { 
+            model: Aluno, 
+            attributes: ['nome'],
+            required: true
+          },
+          { 
+            model: ContaBancaria, 
+            attributes: ['nome'],
+            required: true
+          }
         ],
         order: [['data_pagamento', 'DESC']]
       });
-
       console.log('Pagamentos encontrados:', pagamentos.length);
+
+      // Verificar se há algum erro nas associações
+      if (pagamentos.length > 0) {
+        console.log('Primeiro pagamento:', {
+          id: pagamentos[0].id,
+          aluno: pagamentos[0].Aluno?.nome,
+          conta: pagamentos[0].ContaBancaria?.nome
+        });
+      }
 
       // Calcular totais
       const totalPago = pagamentos.reduce((acc, pag) => acc + parseFloat(pag.valor), 0);
@@ -98,9 +115,29 @@ const PagamentoController = {
     } catch (error) {
       console.error('Erro detalhado ao buscar pagamentos:', error);
       console.error('Stack trace:', error.stack);
+      console.error('Mensagem de erro:', error.message);
+      console.error('Nome do erro:', error.name);
+      
+      // Verificar se é um erro de conexão com o banco
+      if (error.name === 'SequelizeConnectionError') {
+        return res.status(500).json({ 
+          error: 'Erro de conexão com o banco de dados',
+          details: error.message 
+        });
+      }
+      
+      // Verificar se é um erro de tabela não encontrada
+      if (error.name === 'SequelizeTableDoesNotExistError') {
+        return res.status(500).json({ 
+          error: 'Tabela não encontrada no banco de dados',
+          details: error.message 
+        });
+      }
+
       return res.status(500).json({ 
         error: 'Erro ao buscar pagamentos',
-        details: error.message 
+        details: error.message,
+        type: error.name
       });
     }
   },

@@ -47,7 +47,7 @@ const Pagamento = db.define('Pagamento', {
   }
 }, {
   tableName: 'pagamentos',
-  timestamps: true
+  timestamps: false
 });
 
 Pagamento.belongsTo(Aluno, { foreignKey: 'aluno_id' });
