@@ -64,6 +64,16 @@ const PagamentoController = {
   async getByAluno(req, res) {
     try {
       const { aluno_id } = req.params;
+      console.log('Buscando pagamentos para aluno_id:', aluno_id);
+
+      // Verificar se o aluno existe
+      const aluno = await Aluno.findByPk(aluno_id);
+      if (!aluno) {
+        console.log('Aluno não encontrado:', aluno_id);
+        return res.status(404).json({ error: 'Aluno não encontrado' });
+      }
+
+      console.log('Aluno encontrado:', aluno.nome);
 
       const pagamentos = await Pagamento.findAll({
         where: { aluno_id },
@@ -73,6 +83,8 @@ const PagamentoController = {
         ],
         order: [['data_pagamento', 'DESC']]
       });
+
+      console.log('Pagamentos encontrados:', pagamentos.length);
 
       // Calcular totais
       const totalPago = pagamentos.reduce((acc, pag) => acc + parseFloat(pag.valor), 0);
@@ -84,8 +96,12 @@ const PagamentoController = {
         mesesPagos
       });
     } catch (error) {
-      console.error('Erro ao buscar pagamentos:', error);
-      return res.status(500).json({ error: 'Erro ao buscar pagamentos' });
+      console.error('Erro detalhado ao buscar pagamentos:', error);
+      console.error('Stack trace:', error.stack);
+      return res.status(500).json({ 
+        error: 'Erro ao buscar pagamentos',
+        details: error.message 
+      });
     }
   },
 
