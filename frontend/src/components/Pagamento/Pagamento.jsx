@@ -72,6 +72,16 @@ const Pagamento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validar dados antes de enviar
+      if (!formData.conta_id || !formData.mes_referencia || !formData.valor) {
+        setSnackbar({
+          open: true,
+          message: 'Por favor, preencha todos os campos obrigatórios',
+          severity: 'error'
+        });
+        return;
+      }
+
       // Obter a data atual no fuso horário brasileiro
       const dataAtual = new Date();
       const dataBrasil = new Date(dataAtual.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
@@ -79,13 +89,23 @@ const Pagamento = () => {
       const dataToSend = {
         ...formData,
         data_pagamento: dataBrasil.toISOString(),
-        id: id
+        aluno_id: id // Corrigindo o nome do campo para aluno_id
       };
 
-      await api.post('/pagamentos', dataToSend);
+      console.log('Enviando dados:', dataToSend);
+
+      const response = await api.post('/pagamentos', dataToSend);
       
+      if (!response.data) {
+        throw new Error('Resposta inválida do servidor');
+      }
+
       // Atualizar a lista de pagamentos
       const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
+      if (!pagamentosResponse.data) {
+        throw new Error('Erro ao atualizar lista de pagamentos');
+      }
+      
       setPagamentos(pagamentosResponse.data.pagamentos || []);
       
       // Limpar o formulário
@@ -106,7 +126,7 @@ const Pagamento = () => {
       console.error('Erro ao registrar pagamento:', error);
       setSnackbar({
         open: true,
-        message: 'Erro ao registrar pagamento',
+        message: error.response?.data?.error || 'Erro ao registrar pagamento',
         severity: 'error'
       });
     }
@@ -137,10 +157,19 @@ const Pagamento = () => {
 
   return (
     <div className="payment-container">
-      {!error && (
+      {error && (
+        <div className="payment-error-container">
+          <p className="payment-error-message">{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">
+            Tentar Novamente
+          </button>
+        </div>
+      )}
+
+      {!error && aluno && (
         <>
           <div className="payment-header">
-            <h1 className="payment-title">Pagamentos - {aluno?.nome || 'Carregando...'}</h1>
+            <h1 className="payment-title">Pagamentos - {aluno.nome}</h1>
             <VoltarButton url={`/mensalidade/${id}`} />
           </div>
 
@@ -152,13 +181,13 @@ const Pagamento = () => {
                   <div className="payment-form-group">
                     <label>Conta</label>
                     <select
-                      value={formData.conta_id}
+                      value={formData.conta_id || ''}
                       onChange={handleInputChange}
                       name="conta_id"
                       required
                     >
                       <option value="">Selecione uma conta</option>
-                      {contas.map(conta => (
+                      {contas && contas.map(conta => (
                         <option key={conta.id} value={conta.id}>
                           {conta.nome}
                         </option>
@@ -171,7 +200,7 @@ const Pagamento = () => {
                     <input
                       type="month"
                       name="mes_referencia"
-                      value={formData.mes_referencia}
+                      value={formData.mes_referencia || ''}
                       onChange={handleInputChange}
                       required
                     />
@@ -182,10 +211,12 @@ const Pagamento = () => {
                     <input
                       type="number"
                       name="valor"
-                      value={formData.valor}
+                      value={formData.valor || ''}
                       onChange={handleInputChange}
                       required
                       placeholder="R$"
+                      min="0"
+                      step="0.01"
                     />
                   </div>
 
@@ -193,7 +224,7 @@ const Pagamento = () => {
                     <label>Observação</label>
                     <textarea
                       name="observacao"
-                      value={formData.observacao}
+                      value={formData.observacao || ''}
                       onChange={handleInputChange}
                       rows={2}
                     />
@@ -209,34 +240,40 @@ const Pagamento = () => {
             <div className="payment-history-container">
               <div className="payment-history">
                 <h2>Histórico de Pagamentos</h2>
-                <table className="payment-table">
-                  <thead>
-                    <tr>
-                      <th>Data</th>
-                      <th>Mês Referência</th>
-                      <th>Valor</th>
-                      <th>Recebido Por</th>
-                      <th>Observação</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagamentos.map(pagamento => {
-                      // Converter a data para o fuso horário brasileiro
-                      const dataPagamento = new Date(pagamento.data_pagamento);
-                      const dataBrasil = new Date(dataPagamento.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+                {pagamentos && pagamentos.length > 0 ? (
+                  <table className="payment-table">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Mês Referência</th>
+                        <th>Valor</th>
+                        <th>Recebido Por</th>
+                        <th>Observação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagamentos.map(pagamento => {
+                        if (!pagamento) return null;
+                        
+                        // Converter a data para o fuso horário brasileiro
+                        const dataPagamento = new Date(pagamento.data_pagamento);
+                        const dataBrasil = new Date(dataPagamento.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
 
-                      return (
-                        <tr key={pagamento.id}>
-                          <td>{dataBrasil.toLocaleDateString('pt-BR')} {dataBrasil.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
-                          <td>{new Date(pagamento.mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</td>
-                          <td>R$ {parseFloat(pagamento.valor).toFixed(2)}</td>
-                          <td>{pagamento.recebido_por}</td>
-                          <td>{pagamento.observacao}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                        return (
+                          <tr key={pagamento.id}>
+                            <td>{dataBrasil.toLocaleDateString('pt-BR')} {dataBrasil.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
+                            <td>{new Date(pagamento.mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</td>
+                            <td>R$ {parseFloat(pagamento.valor).toFixed(2)}</td>
+                            <td>{pagamento.recebido_por || '-'}</td>
+                            <td>{pagamento.observacao || '-'}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="no-payments">Nenhum pagamento registrado</p>
+                )}
               </div>
             </div>
           </div>

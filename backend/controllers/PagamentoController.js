@@ -8,23 +8,35 @@ const PagamentoController = {
   // Criar um novo pagamento
   async create(req, res) {
     try {
+      console.log('Dados recebidos:', req.body);
       const { aluno_id, conta_id, mes_referencia, valor, observacao } = req.body;
       const recebido_por = req.body.recebido_por || 'Usuário não identificado';
 
       // Validar dados
       if (!aluno_id || !conta_id || !mes_referencia || !valor) {
-        return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos' });
+        console.log('Dados inválidos:', { aluno_id, conta_id, mes_referencia, valor });
+        return res.status(400).json({ 
+          error: 'Todos os campos obrigatórios devem ser preenchidos',
+          details: {
+            aluno_id: !aluno_id ? 'ID do aluno é obrigatório' : null,
+            conta_id: !conta_id ? 'Conta é obrigatória' : null,
+            mes_referencia: !mes_referencia ? 'Mês de referência é obrigatório' : null,
+            valor: !valor ? 'Valor é obrigatório' : null
+          }
+        });
       }
 
       // Verificar se o aluno existe
       const aluno = await Aluno.findByPk(aluno_id);
       if (!aluno) {
+        console.log('Aluno não encontrado:', aluno_id);
         return res.status(404).json({ error: 'Aluno não encontrado' });
       }
 
       // Verificar se a conta existe
       const conta = await ContaBancaria.findByPk(conta_id);
       if (!conta) {
+        console.log('Conta não encontrada:', conta_id);
         return res.status(404).json({ error: 'Conta não encontrada' });
       }
 
@@ -37,6 +49,8 @@ const PagamentoController = {
         recebido_por,
         observacao
       });
+
+      console.log('Pagamento criado:', pagamento.id);
 
       // Atualizar o saldo da conta
       await conta.update({
@@ -56,7 +70,11 @@ const PagamentoController = {
       return res.status(201).json(pagamento);
     } catch (error) {
       console.error('Erro ao criar pagamento:', error);
-      return res.status(500).json({ error: 'Erro ao criar pagamento' });
+      console.error('Stack trace:', error.stack);
+      return res.status(500).json({ 
+        error: 'Erro ao criar pagamento',
+        details: error.message
+      });
     }
   },
 
