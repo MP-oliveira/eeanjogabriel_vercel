@@ -12,65 +12,116 @@ const PagamentoController = {
       const { aluno_id, conta_id, mes_referencia, valor, observacao } = req.body;
       const recebido_por = req.body.recebido_por || 'Usuário não identificado';
 
-      // Validar dados
-      if (!aluno_id || !conta_id || !mes_referencia || !valor) {
-        console.log('Dados inválidos:', { aluno_id, conta_id, mes_referencia, valor });
+      // Validar tipos de dados
+      const errors = {};
+      
+      if (!aluno_id || isNaN(parseInt(aluno_id))) {
+        errors.aluno_id = 'ID do aluno é inválido';
+      }
+      
+      if (!conta_id || isNaN(parseInt(conta_id))) {
+        errors.conta_id = 'ID da conta é inválido';
+      }
+      
+      if (!mes_referencia || !Date.parse(mes_referencia)) {
+        errors.mes_referencia = 'Mês de referência é inválido';
+      }
+      
+      if (!valor || isNaN(parseFloat(valor)) || parseFloat(valor) <= 0) {
+        errors.valor = 'Valor deve ser um número maior que zero';
+      }
+
+      if (Object.keys(errors).length > 0) {
+        console.log('Erros de validação:', errors);
         return res.status(400).json({ 
-          error: 'Todos os campos obrigatórios devem ser preenchidos',
-          details: {
-            aluno_id: !aluno_id ? 'ID do aluno é obrigatório' : null,
-            conta_id: !conta_id ? 'Conta é obrigatória' : null,
-            mes_referencia: !mes_referencia ? 'Mês de referência é obrigatório' : null,
-            valor: !valor ? 'Valor é obrigatório' : null
-          }
+          error: 'Dados inválidos',
+          details: errors
         });
       }
 
+      // Converter valores para os tipos corretos
+      const alunoId = parseInt(aluno_id);
+      const contaId = parseInt(conta_id);
+      const valorNumerico = parseFloat(valor);
+
       // Verificar se o aluno existe
-      const aluno = await Aluno.findByPk(aluno_id);
+      const aluno = await Aluno.findByPk(alunoId);
       if (!aluno) {
-        console.log('Aluno não encontrado:', aluno_id);
+        console.log('Aluno não encontrado:', alunoId);
         return res.status(404).json({ error: 'Aluno não encontrado' });
       }
 
       // Verificar se a conta existe
-      const conta = await ContaBancaria.findByPk(conta_id);
+      const conta = await ContaBancaria.findByPk(contaId);
       if (!conta) {
-        console.log('Conta não encontrada:', conta_id);
+        console.log('Conta não encontrada:', contaId);
         return res.status(404).json({ error: 'Conta não encontrada' });
+      }
+
+      // Verificar se já existe pagamento para este mês
+      const pagamentoExistente = await Pagamento.findOne({
+        where: {
+          aluno_id: alunoId,
+          mes_referencia: mes_referencia
+        }
+      });
+
+      if (pagamentoExistente) {
+        console.log('Pagamento já existe para este mês:', mes_referencia);
+        return res.status(400).json({ 
+          error: 'Já existe um pagamento registrado para este mês',
+          details: {
+            mes_referencia: 'Este mês já possui um pagamento registrado'
+          }
+        });
       }
 
       // Criar o pagamento
       const pagamento = await Pagamento.create({
-        aluno_id,
-        conta_id,
+        aluno_id: alunoId,
+        conta_id: contaId,
         mes_referencia,
-        valor,
+        valor: valorNumerico,
         recebido_por,
-        observacao
+        observacao: observacao || ''
       });
 
       console.log('Pagamento criado:', pagamento.id);
 
       // Atualizar o saldo da conta
+      const novoSaldo = parseFloat(conta.saldo_atual) + valorNumerico;
       await conta.update({
-        saldo_atual: parseFloat(conta.saldo_atual) + parseFloat(valor)
+        saldo_atual: novoSaldo
       });
 
       // Criar uma transação financeira
       await TransacaoFinanceira.create({
         tipo: 'receita',
-        valor: valor,
+        valor: valorNumerico,
         descricao: `Mensalidade - ${aluno.nome} - ${new Date(mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })} - ${new Date().toLocaleTimeString('pt-BR')}`,
         categoria: 'mensalidade',
         data: new Date(),
-        conta_id: conta_id
+        conta_id: contaId
       });
 
       return res.status(201).json(pagamento);
     } catch (error) {
       console.error('Erro ao criar pagamento:', error);
       console.error('Stack trace:', error.stack);
+      
+      // Verificar se é um erro de validação do Sequelize
+      if (error.name === 'SequelizeValidationError') {
+        const validationErrors = error.errors.reduce((acc, err) => {
+          acc[err.path] = err.message;
+          return acc;
+        }, {});
+        
+        return res.status(400).json({
+          error: 'Erro de validação',
+          details: validationErrors
+        });
+      }
+
       return res.status(500).json({ 
         error: 'Erro ao criar pagamento',
         details: error.message

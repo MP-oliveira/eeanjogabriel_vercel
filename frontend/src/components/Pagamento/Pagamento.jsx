@@ -74,9 +74,22 @@ const Pagamento = () => {
     try {
       // Validar dados antes de enviar
       if (!formData.conta_id || !formData.mes_referencia || !formData.valor) {
+        console.log('Dados inválidos:', formData);
         setSnackbar({
           open: true,
           message: 'Por favor, preencha todos os campos obrigatórios',
+          severity: 'error'
+        });
+        return;
+      }
+
+      // Validar valor numérico
+      const valorNumerico = parseFloat(formData.valor);
+      if (isNaN(valorNumerico) || valorNumerico <= 0) {
+        console.log('Valor inválido:', formData.valor);
+        setSnackbar({
+          open: true,
+          message: 'Por favor, insira um valor válido maior que zero',
           severity: 'error'
         });
         return;
@@ -86,22 +99,34 @@ const Pagamento = () => {
       const dataAtual = new Date();
       const dataBrasil = new Date(dataAtual.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
 
+      // Formatar o mês de referência corretamente
+      const [ano, mes] = formData.mes_referencia.split('-');
+      const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
+
       const dataToSend = {
-        ...formData,
-        data_pagamento: dataBrasil.toISOString(),
-        aluno_id: id // Corrigindo o nome do campo para aluno_id
+        aluno_id: parseInt(id), // Garantir que é número
+        conta_id: parseInt(formData.conta_id), // Garantir que é número
+        mes_referencia: mesReferencia,
+        valor: valorNumerico,
+        recebido_por: formData.recebido_por || 'Usuário não identificado',
+        observacao: formData.observacao || '',
+        data_pagamento: dataBrasil.toISOString()
       };
 
-      console.log('Enviando dados:', dataToSend);
+      console.log('Enviando dados para o servidor:', dataToSend);
 
       const response = await api.post('/pagamentos', dataToSend);
+      console.log('Resposta do servidor:', response.data);
       
       if (!response.data) {
         throw new Error('Resposta inválida do servidor');
       }
 
       // Atualizar a lista de pagamentos
+      console.log('Buscando pagamentos atualizados...');
       const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
+      console.log('Resposta da lista de pagamentos:', pagamentosResponse.data);
+      
       if (!pagamentosResponse.data) {
         throw new Error('Erro ao atualizar lista de pagamentos');
       }
@@ -123,10 +148,30 @@ const Pagamento = () => {
         severity: 'success'
       });
     } catch (error) {
-      console.error('Erro ao registrar pagamento:', error);
+      console.error('Erro detalhado ao registrar pagamento:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+
+      let errorMessage = 'Erro ao registrar pagamento';
+      
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+        if (error.response.data.details) {
+          const details = Object.values(error.response.data.details)
+            .filter(value => value !== null)
+            .join(', ');
+          if (details) {
+            errorMessage += `: ${details}`;
+          }
+        }
+      }
+
       setSnackbar({
         open: true,
-        message: error.response?.data?.error || 'Erro ao registrar pagamento',
+        message: errorMessage,
         severity: 'error'
       });
     }
