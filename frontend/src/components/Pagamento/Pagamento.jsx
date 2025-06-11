@@ -6,7 +6,7 @@ import VoltarButton from '../VoltarButton/VoltarButton';
 import { UserContext } from '../../context/UseContext';
 
 const Pagamento = () => {
-  const { aluno_id } = useParams();
+  const { id } = useParams();
   const { user } = useContext(UserContext);
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
@@ -23,7 +23,7 @@ const Pagamento = () => {
   });
 
   useEffect(() => {
-    if (!aluno_id) {
+    if (!id) {
       setError('ID do aluno não encontrado');
       setLoading(false);
       return;
@@ -31,13 +31,13 @@ const Pagamento = () => {
 
     const fetchData = async () => {
       try {
-        const alunoResponse = await api.get(`/alunos/${aluno_id}`);
+        const alunoResponse = await api.get(`/alunos/${id}`);
         setAluno(alunoResponse.data);
 
         const contasResponse = await api.get('/contas');
         setContas(contasResponse.data);
 
-        const pagamentosResponse = await api.get(`/pagamentos/aluno/${aluno_id}`);
+        const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
         setPagamentos(pagamentosResponse.data.pagamentos || []);
 
         setLoading(false);
@@ -49,7 +49,7 @@ const Pagamento = () => {
     };
 
     fetchData();
-  }, [aluno_id]);
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -69,13 +69,13 @@ const Pagamento = () => {
       const dataToSend = {
         ...formData,
         data_pagamento: dataBrasil.toISOString(),
-        aluno_id: aluno_id
+        id: id
       };
 
       await api.post('/pagamentos', dataToSend);
       
       // Atualizar a lista de pagamentos
-      const pagamentosResponse = await api.get(`/pagamentos/aluno/${aluno_id}`);
+      const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
       setPagamentos(pagamentosResponse.data.pagamentos || []);
       
       // Limpar o formulário
@@ -126,7 +126,7 @@ const Pagamento = () => {
     <div className="payment-container">
       <div className="payment-header">
         <h1 className="payment-title">Pagamentos - {aluno?.nome}</h1>
-        <VoltarButton url={`/mensalidade/${aluno_id}`} />
+        <VoltarButton url={`/mensalidade/${id}`} />
       </div>
 
       <div className="payment-content">
