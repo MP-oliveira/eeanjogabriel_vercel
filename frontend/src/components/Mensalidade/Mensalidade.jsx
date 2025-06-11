@@ -142,7 +142,7 @@ const Mensalidade = () => {
 
       <div className="print-btn no-print">
         <Link to="/alunos" className="mensalidade-btn">Voltar</Link>
-        <Link to={`/pagamento/${id}`} className="mensalidade-btn">
+        <Link to={`/pagamentos/${id}`} className="mensalidade-btn">
           Registrar Pagamento
         </Link>
         <button onClick={handlePrintPage1} className="mensalidade-btn">

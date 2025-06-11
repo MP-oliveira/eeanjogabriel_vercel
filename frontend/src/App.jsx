@@ -98,7 +98,7 @@ function App() {
           <Route path="/adicionar-transacao" element={user && user.role === 'admin' ? <AdicionarTransacao /> : <Navigate to="/" />} />
           <Route path="/adicionar-conta" element={user && user.role === 'admin' ? <AdicionarConta /> : <Navigate to="/" />} />
           <Route path="/mensalidade/:id" element={user && user.role === 'admin' ? <Mensalidade /> : <Navigate to="/" />} />
-          <Route path="/pagamento/:id" element={<Pagamento />} />
+          <Route path="/pagamentos/:id" element={<Pagamento />} />
           
           {/* Rota principal que renderiza a Home */}
           <Route path="/*" element={<Home />} />
