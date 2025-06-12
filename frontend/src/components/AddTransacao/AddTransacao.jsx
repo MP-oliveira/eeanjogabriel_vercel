@@ -37,6 +37,10 @@ function AddTransacao() {
       }
     } catch (error) {
       console.error('Erro ao buscar contas bancárias:', error);
+      setErrors(prev => ({
+        ...prev,
+        contas: 'Erro ao carregar contas bancárias. Tente novamente.'
+      }));
     }
   };
 
@@ -97,7 +101,7 @@ function AddTransacao() {
       console.error('Erro ao criar transação:', error);
       setLoading(false);
       setErrors({
-        submit: 'Erro ao criar transação. Por favor, tente novamente.'
+        submit: error.response?.data?.message || 'Erro ao criar transação. Por favor, tente novamente.'
       });
     }
   };
