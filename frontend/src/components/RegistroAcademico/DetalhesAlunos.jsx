@@ -45,6 +45,8 @@ const DetalhesAluno = () => {
   // Novo estado para cursos
   const [cursosDisponiveis, setCursosDisponiveis] = useState([]);
   const [cursoSelecionado, setCursoSelecionado] = useState("");
+  const [notasBloqueadas, setNotasBloqueadas] = useState({});
+  const [disciplinaTemEstagio, setDisciplinaTemEstagio] = useState(false);
 
   // Função para buscar todas as disciplinas, com tentativas alternativas
   const fetchTodasDisciplinas = async () => {
@@ -164,7 +166,8 @@ const DetalhesAluno = () => {
             media: response.data.media || 0,
             faltaData: response.data.faltaData || [],
             faltaMotivo: response.data.faltaMotivo || [],
-            totalAulas: response.data.totalAulas || 0
+            totalAulas: response.data.totalAulas || 0,
+            temEstagio: response.data.temEstagio || false
           });
 
           // Inicializa o formulário com os dados atuais
@@ -175,7 +178,8 @@ const DetalhesAluno = () => {
             estagioNota: response.data.estagioNota || 0,
             faltas: response.data.faltaData?.length || 0,
             totalAulas: response.data.totalAulas || 0,
-            faltaMotivo: response.data.faltaMotivo || ""
+            faltaMotivo: response.data.faltaMotivo || "",
+            temEstagio: response.data.temEstagio || false
           });
 
           // Preencher faltas com os dados do backend
@@ -222,7 +226,8 @@ const DetalhesAluno = () => {
             faltas: disc.faltas || 0,
             totalAulas: disc.totalAulas || 0,
             faltaData: disc.faltaData || [],
-            faltaMotivo: disc.faltaMotivo || []
+            faltaMotivo: disc.faltaMotivo || [],
+            temEstagio: disc.temEstagio || false
           }));
 
           setDisciplinasCursadas(disciplinasFormatadas);
@@ -253,7 +258,8 @@ const DetalhesAluno = () => {
             faltas: reg.faltas || 0,
             totalAulas: reg.totalAulas || 0,
             faltaData: reg.faltaData || [],
-            faltaMotivo: reg.faltaMotivo || []
+            faltaMotivo: reg.faltaMotivo || [],
+            temEstagio: reg.temEstagio || false
           }));
 
           setDisciplinasCursadas(disciplinasFormatadas);
@@ -341,10 +347,13 @@ const DetalhesAluno = () => {
         return;
       }
 
-      const notasPreenchidas = notas.filter(n => n.valor > 0);
-      const media = notasPreenchidas.length > 0 
-        ? notasPreenchidas.reduce((acc, n) => acc + parseFloat(n.valor), 0) / notasPreenchidas.length 
-        : 0;
+      // Calcula a média apenas com as notas existentes
+      const media = calcularMedia([
+        formData.notaProva,
+        formData.notaTrabalho,
+        formData.notaTeste,
+        disciplinaTemEstagio ? formData.estagioNota : null
+      ]);
 
       const faltasValidas = faltas.filter(f => f.data && f.motivo);
       const dataAtual = new Date();
@@ -432,6 +441,15 @@ const DetalhesAluno = () => {
           })
         );
 
+        // Após salvar, bloqueia as notas que foram lançadas
+        const novasNotasBloqueadas = {
+          notaProva: formData.notaProva > 0,
+          notaTeste: formData.notaTeste > 0,
+          notaTrabalho: formData.notaTrabalho > 0,
+          estagioNota: formData.estagioNota > 0
+        };
+        setNotasBloqueadas(novasNotasBloqueadas);
+
         setIsEditing(false);
         await fetchDisciplinasCursadas();
         alert("Registro acadêmico atualizado com sucesso!");
@@ -451,7 +469,8 @@ const DetalhesAluno = () => {
         }
       }
     } catch (error) {
-      alert("Erro ao salvar alterações.", error);
+      console.error("Erro ao salvar alterações:", error);
+      alert("Erro ao salvar alterações. Por favor, tente novamente.");
     }
   };
 
@@ -535,7 +554,8 @@ const DetalhesAluno = () => {
           faltas: 0,
           totalAulas: disciplina.carga_horaria || 20,
           faltaData: [],
-          faltaMotivo: []
+          faltaMotivo: [],
+          temEstagio: disciplina.temEstagio || false
         };
 
         setDisciplinasCursadas(prevDisciplinas => [...prevDisciplinas, novaDisciplina]);
@@ -597,8 +617,21 @@ const DetalhesAluno = () => {
       estagioNota: disciplina.estagioNota !== undefined ? disciplina.estagioNota : 0,
       media: disciplina.media !== undefined ? disciplina.media : 0,
       faltas: disciplina.faltas !== undefined ? disciplina.faltas : 0,
-      totalAulas: disciplina.totalAulas || disciplina.carga_horaria || 20
+      totalAulas: disciplina.totalAulas || disciplina.carga_horaria || 20,
+      temEstagio: disciplina.temEstagio || false
     });
+
+    // Verifica se a disciplina tem estágio
+    setDisciplinaTemEstagio(disciplina.temEstagio || false);
+
+    // Verifica quais notas já foram lançadas e bloqueia
+    const notasJaBloqueadas = {
+      notaProva: disciplina.notaProva !== undefined && disciplina.notaProva > 0,
+      notaTeste: disciplina.notaTeste !== undefined && disciplina.notaTeste > 0,
+      notaTrabalho: disciplina.notaTrabalho !== undefined && disciplina.notaTrabalho > 0,
+      estagioNota: disciplina.estagioNota !== undefined && disciplina.estagioNota > 0
+    };
+    setNotasBloqueadas(notasJaBloqueadas);
 
     setFormData({
       notaProva: disciplina.notaProva !== undefined ? disciplina.notaProva : 0,
@@ -607,11 +640,18 @@ const DetalhesAluno = () => {
       estagioNota: disciplina.estagioNota !== undefined ? disciplina.estagioNota : 0,
       faltas: disciplina.faltas !== undefined ? disciplina.faltas : 0,
       totalAulas: disciplina.totalAulas || disciplina.carga_horaria || 20,
-      faltaMotivo: disciplina.faltaMotivo || ""
+      faltaMotivo: disciplina.faltaMotivo || "",
+      temEstagio: disciplina.temEstagio || false
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsEditing(true);
+  };
+
+  const calcularMedia = (notas) => {
+    const notasValidas = notas.filter(nota => nota !== undefined && nota !== null && nota !== '' && nota > 0);
+    if (notasValidas.length === 0) return 0;
+    return notasValidas.reduce((acc, nota) => acc + parseFloat(nota), 0) / notasValidas.length;
   };
 
   if (loading) {
@@ -686,9 +726,13 @@ const DetalhesAluno = () => {
                   name="notaProva"
                   value={formData.notaProva === 0 ? '' : formData.notaProva}
                   onChange={handleInputChange}
-                  InputProps={{ inputProps: { min: 0, max: 10, step: 0.1 } }}
+                  InputProps={{ 
+                    inputProps: { min: 0, max: 10, step: 0.1 },
+                    disabled: notasBloqueadas.notaProva
+                  }}
                   margin="normal"
                   size="small"
+                  helperText={notasBloqueadas.notaProva ? "Nota já lançada" : ""}
                 />
                 <TextField
                   label="Nota Teste"
@@ -696,9 +740,13 @@ const DetalhesAluno = () => {
                   name="notaTeste"
                   value={formData.notaTeste === 0 ? '' : formData.notaTeste}
                   onChange={handleInputChange}
-                  InputProps={{ inputProps: { min: 0, max: 10, step: 0.1 } }}
+                  InputProps={{ 
+                    inputProps: { min: 0, max: 10, step: 0.1 },
+                    disabled: notasBloqueadas.notaTeste
+                  }}
                   margin="normal"
                   size="small"
+                  helperText={notasBloqueadas.notaTeste ? "Nota já lançada" : ""}
                 />
                 <TextField
                   label="Nota Trabalho"
@@ -706,20 +754,30 @@ const DetalhesAluno = () => {
                   name="notaTrabalho"
                   value={formData.notaTrabalho === 0 ? '' : formData.notaTrabalho}
                   onChange={handleInputChange}
-                  InputProps={{ inputProps: { min: 0, max: 10, step: 0.1 } }}
+                  InputProps={{ 
+                    inputProps: { min: 0, max: 10, step: 0.1 },
+                    disabled: notasBloqueadas.notaTrabalho
+                  }}
                   margin="normal"
                   size="small"
+                  helperText={notasBloqueadas.notaTrabalho ? "Nota já lançada" : ""}
                 />
-                <TextField
-                  label="Nota Estágio"
-                  type="number"
-                  name="estagioNota"
-                  value={formData.estagioNota === 0 ? '' : formData.estagioNota}
-                  onChange={handleInputChange}
-                  InputProps={{ inputProps: { min: 0, max: 10, step: 0.1 } }}
-                  margin="normal"
-                  size="small"
-                />
+                {disciplinaTemEstagio && (
+                  <TextField
+                    label="Nota Estágio"
+                    type="number"
+                    name="estagioNota"
+                    value={formData.estagioNota === 0 ? '' : formData.estagioNota}
+                    onChange={handleInputChange}
+                    InputProps={{ 
+                      inputProps: { min: 0, max: 10, step: 0.1 },
+                      disabled: notasBloqueadas.estagioNota
+                    }}
+                    margin="normal"
+                    size="small"
+                    helperText={notasBloqueadas.estagioNota ? "Nota já lançada" : ""}
+                  />
+                )}
                 <TextField
                   label="Faltas"
                   type="number"
@@ -818,23 +876,22 @@ const DetalhesAluno = () => {
                   <div className="notas-grid">
                     <div className="notas-card">
                       <h4>Provas</h4>
-                      <p>{typeof disciplinaAtual.notaProva === 'number' ? disciplinaAtual.notaProva.toFixed(1) : "N/A"}</p>
+                      <p>{typeof disciplinaAtual.notaProva === 'number' && disciplinaAtual.notaProva > 0 ? disciplinaAtual.notaProva.toFixed(1) : "N/A"}</p>
                     </div>
-
                     <div className="notas-card">
                       <h4>Testes</h4>
-                      <p>{typeof disciplinaAtual.notaTeste === 'number' ? disciplinaAtual.notaTeste.toFixed(1) : "N/A"}</p>
+                      <p>{typeof disciplinaAtual.notaTeste === 'number' && disciplinaAtual.notaTeste > 0 ? disciplinaAtual.notaTeste.toFixed(1) : "N/A"}</p>
                     </div>
-
                     <div className="notas-card">
                       <h4>Trabalhos</h4>
-                      <p>{typeof disciplinaAtual.notaTrabalho === 'number' ? disciplinaAtual.notaTrabalho.toFixed(1) : "N/A"}</p>
+                      <p>{typeof disciplinaAtual.notaTrabalho === 'number' && disciplinaAtual.notaTrabalho > 0 ? disciplinaAtual.notaTrabalho.toFixed(1) : "N/A"}</p>
                     </div>
-
-                    <div className="notas-card">
-                      <h4>Estágio</h4>
-                      <p>{typeof disciplinaAtual.estagioNota === 'number' ? disciplinaAtual.estagioNota.toFixed(1) : "N/A"}</p>
-                    </div>
+                    {disciplinaTemEstagio && (
+                      <div className="notas-card">
+                        <h4>Estágio</h4>
+                        <p>{typeof disciplinaAtual.estagioNota === 'number' && disciplinaAtual.estagioNota > 0 ? disciplinaAtual.estagioNota.toFixed(1) : "N/A"}</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="media-final">
