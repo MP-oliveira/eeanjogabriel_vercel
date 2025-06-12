@@ -8,7 +8,7 @@ import { UserContext } from '../../context/UseContext';
 const Pagamento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
   const [pagamentos, setPagamentos] = useState([]);
@@ -23,7 +23,42 @@ const Pagamento = () => {
     observacao: ''
   });
 
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const userLog = localStorage.getItem("user");
 
+        if (userLog) {
+          try {
+            const parsedUser = JSON.parse(userLog);
+            if (parsedUser && parsedUser.user) {
+              setUser({
+                role: parsedUser.role,
+                nome: parsedUser.user.nome || '',
+                email: parsedUser.user.email || ''
+              });
+            } else {
+              console.warn('Dados do usuário inválidos:', userLog);
+              setUser(null);
+            }
+          } catch (parseError) {
+            console.error('Erro ao fazer parse dos dados do usuário:', parseError);
+            setUser(null);
+          }
+        }
+
+        if (!token || !userLog) {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Erro ao inicializar usuário:", error);
+        setUser(null);
+      }
+    };
+
+    initializeUser();
+  }, [setUser]);
 
   useEffect(() => {
     if (user?.role !== 'admin') {
