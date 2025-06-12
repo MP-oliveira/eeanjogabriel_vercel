@@ -146,16 +146,26 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {sections.sectionOne ? <SectionOne /> : null}
-      <div id="sectionTwo">
-        {sections.sectionTwo ? <SectionTwo /> : null}
-      </div>
-      <div id="sectionThree">
-        {sections.sectionThree ? <SectionThree /> : null}
-      </div>
-      <div id="sectionFour">
-        {sections.sectionFour ? <SectionFour /> : null}
-      </div>
+      {sections.sectionOne && (
+        <section id="sectionOne">
+          <SectionOne />
+        </section>
+      )}
+      {sections.sectionTwo && (
+        <section id="sectionTwo">
+          <SectionTwo />
+        </section>
+      )}
+      {sections.sectionThree && (
+        <section id="sectionThree">
+          <SectionThree />
+        </section>
+      )}
+      {sections.sectionFour && (
+        <section id="sectionFour">
+          <SectionFour />
+        </section>
+      )}
       <Footer />
     </div>
   );
