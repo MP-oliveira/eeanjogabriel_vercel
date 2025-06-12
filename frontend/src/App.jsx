@@ -1,110 +1,387 @@
-import "./index.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useContext } from "react";
-import { UserContext } from "./context/UseContext";
-import ErrorBoundary from "./context/ErrorBoundary";
-
-import Home from "./pages/Home/Home";
-import Login from "./pages/Login/Login";
-import EsqueciASenha from "./components/EsqueciASenha/EsqueciASenha";
-
-import AddMaterialEUtensilio from "./components/AddMaterial/AddMaterialEUtensilo";
-import Diploma from "./components/Diploma/Diploma"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy, useState, useEffect } from "react";
+import { UserProvider } from "./context/UseContext";
+import { ErrorBoundary } from "./context/ErrorBoundary";
 import Header from "./components/Header/Header";
+import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
+import "./index.css";
 
-import AddAluno from "./components/AddAluno/AddAluno";
-import EditAluno from "./components/EditAluno/EditAluno";
-import Alunos from "./components/Alunos/Alunos";
-
-import AddCurso from "./components/AddCurso/AddCurso";
-import EditCurso from "./components/EditCurso/EditCurso";
-import Cursos from "./components/Cursos/Cursos";
-
-import AddDisciplina from "./components/AddDisciplina/AddDisciplina";
-import EditDisciplina from "./components/EditDisciplina/EditDisciplina";
-import Disciplinas from "./components/Disciplinas/Disciplinas";
-
-import AddAdmin from "./components/AddAdmin/AddAdmin";
-import EditAdmin from "./components/EditAdmin/EditAdmin";
-import Admins from "./components/Admin/Admin";
-
-import AddProfessor from "./components/AddProfessor/AddProfessor";
-import EditProfessor from "./components/EditProfessor/EditProfessor";
-import Professores from "./components/Professores/Professores";
-
-import AddRegistroAcademico from "./components/AddRegistroAcademico/AddRegistroAcademico";
-import EditRegistroAcademico from "./components/EditRegistroAcademico/EditRegistroAcademico";
-import RegistroAcademico from './components/RegistroAcademico/RegistroAcademicoAluno';
-import DetalhesAluno from './components/RegistroAcademico/DetalhesAlunos';
-import Boletim from './components/Boletim/Boletim';
-
-import Dashboard from './components/Dashboard/Dashboard';
-import Transacoes from './components/Transacoes/Transacoes';
-import AdicionarTransacao from './components/AddTransacao/AddTransacao';
-import AdicionarConta from './components/AdicionarConta/AdicionarConta';
-import Turnos from './components/Turnos/Turnos';
-import AddTurnos from './components/Addturnos/AddTurnos';
-import MaterialEUtensilio from './components/MaterialEUtensilio/MaterialEUtensilio';
-import EditMaterialEUtensilio from './components/EditMaterialEUtensilio/EditMaterialEUtensilio';
-import Mensalidade from './components/Mensalidade/Mensalidade';
-import Pagamento from './components/Pagamento/Pagamento';
+// Lazy loading de todos os componentes
+const Home = lazy(() => import("./pages/Home/Home"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const Register = lazy(() => import("./pages/Register/Register"));
+const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
+const Alunos = lazy(() => import("./pages/Alunos/Alunos"));
+const Cursos = lazy(() => import("./pages/Cursos/Cursos"));
+const Disciplinas = lazy(() => import("./pages/Disciplinas/Disciplinas"));
+const MaterialEUtensilios = lazy(() => import("./pages/MaterialEUtensilios/MaterialEUtensilios"));
+const Professores = lazy(() => import("./pages/Professores/Professores"));
+const Turnos = lazy(() => import("./pages/Turnos/Turnos"));
+const Admins = lazy(() => import("./pages/Admins/Admins"));
+const Pagamento = lazy(() => import("./components/Pagamento/Pagamento"));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute/ProtectedRoute"));
+const AddAluno = lazy(() => import("./components/AddAluno/AddAluno"));
+const EditAluno = lazy(() => import("./components/EditAluno/EditAluno"));
+const AddCurso = lazy(() => import("./components/AddCurso/AddCurso"));
+const EditCurso = lazy(() => import("./components/EditCurso/EditCurso"));
+const AddDisciplina = lazy(() => import("./components/AddDisciplina/AddDisciplina"));
+const EditDisciplina = lazy(() => import("./components/EditDisciplina/EditDisciplina"));
+const AddAdmin = lazy(() => import("./components/AddAdmin/AddAdmin"));
+const EditAdmin = lazy(() => import("./components/EditAdmin/EditAdmin"));
+const AddProfessor = lazy(() => import("./components/AddProfessor/AddProfessor"));
+const EditProfessor = lazy(() => import("./components/EditProfessor/EditProfessor"));
+const AddRegistroAcademico = lazy(() => import("./components/AddRegistroAcademico/AddRegistroAcademico"));
+const EditRegistroAcademico = lazy(() => import("./components/EditRegistroAcademico/EditRegistroAcademico"));
+const RegistroAcademico = lazy(() => import("./components/RegistroAcademico/RegistroAcademicoAluno"));
+const DetalhesAluno = lazy(() => import("./components/RegistroAcademico/DetalhesAlunos"));
+const Boletim = lazy(() => import("./components/Boletim/Boletim"));
+const Transacoes = lazy(() => import("./components/Transacoes/Transacoes"));
+const AdicionarTransacao = lazy(() => import("./components/AddTransacao/AddTransacao"));
+const AdicionarConta = lazy(() => import("./components/AdicionarConta/AdicionarConta"));
+const AddTurnos = lazy(() => import("./components/Addturnos/AddTurnos"));
+const EditMaterialEUtensilio = lazy(() => import("./components/EditMaterialEUtensilio/EditMaterialEUtensilio"));
+const Mensalidade = lazy(() => import("./components/Mensalidade/Mensalidade"));
+const EsqueciASenha = lazy(() => import("./components/EsqueciASenha/EsqueciASenha"));
+const Diploma = lazy(() => import("./components/Diploma/Diploma"));
 
 function App() {
-  const { user } = useContext(UserContext);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Verificar se o localStorage está disponível
+        if (typeof window === 'undefined' || !window.localStorage) {
+          throw new Error('localStorage não está disponível neste ambiente');
+        }
+
+        // Verificar se há dados corrompidos no localStorage
+        const checkLocalStorage = () => {
+          const keys = ['token', 'user'];
+          for (const key of keys) {
+            try {
+              const value = localStorage.getItem(key);
+              if (value) {
+                JSON.parse(value);
+              }
+            } catch (e) {
+              console.error(`Erro ao fazer parse dos dados do localStorage (${key}):`, e);
+              localStorage.removeItem(key);
+            }
+          }
+        };
+
+        checkLocalStorage();
+        setIsInitialized(true);
+      } catch (err) {
+        console.error('Erro ao inicializar a aplicação:', err);
+        setError(err.message);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  if (error) {
+    return (
+      <div style={{ 
+        padding: '20px', 
+        textAlign: 'center',
+        color: '#1E56B8',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <h2>Erro ao carregar a aplicação</h2>
+        <p>{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#1E56B8',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            marginTop: '20px'
+          }}
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (!isInitialized) {
+    return <LoadingScreen />;
+  }
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-          <Route path="/esqueciaasenha" element={<EsqueciASenha />} />
-
-          <Route path="/alunos/add" element={user && user.role === 'admin' ? <AddAluno /> : <Navigate to="/login" />} />
-          <Route path="/alunos/edit/:id" element={user && user.role === 'admin' ? <EditAluno /> : <Navigate to="/login" />} />
-          <Route path="/alunos" element={user && (user.role === 'admin' || user.role === 'professor') ? <Alunos /> : <Navigate to="/login" />} />
-
-          <Route path="/cursos/add" element={user && user.role === 'admin' ? <AddCurso /> : <Navigate to="/login" />} />
-          <Route path="/cursos/edit/:id" element={user && user.role === 'admin' ? <EditCurso /> : <Navigate to="/login" />} />
-          <Route path="/cursos" element={user && user.role === 'admin' ? <Cursos /> : <Navigate to="/login" />} />
-
-          <Route path="/disciplinas/add" element={user && user.role === 'admin' ? <AddDisciplina /> : <Navigate to="/login" />} />
-          <Route path="/disciplinas/edit/:id" element={user && user.role === 'admin' ? <EditDisciplina /> : <Navigate to="/login" />} />
-          <Route path="/disciplinas" element={user && user.role === 'admin' ? <Disciplinas /> : <Navigate to="/login" />} />
-
-          <Route path="/admins/create" element={user && user.role === 'admin' ? <AddAdmin />: <Navigate to="/login" />} />
-          <Route path="/admins/edit/:id" element={user && user.role === 'admin' ? <EditAdmin /> : <Navigate to="/login" />} />
-          <Route path="/admins" element={user && user.role === 'admin' ? <Admins />: <Navigate to="/login" />} />
-
-          <Route path="/professores/add" element={user && user.role === 'admin' ? <AddProfessor /> : <Navigate to="/login" />} />
-          <Route path="/professores/edit/:id" element={user && user.role === 'admin' ? <EditProfessor /> : <Navigate to="/login" />} />
-          <Route path="/professores" element={user && user.role === 'admin' ? <Professores /> : <Navigate to="/login" />} />
-
-          <Route path="/registroacademico" element={user && (user.role === 'admin' || user.role === 'professor') ? <RegistroAcademico /> : <Navigate to="/login" />} />
-          <Route path="/registroacademico/create" element={user && user.role === 'admin' ? <AddRegistroAcademico /> : <Navigate to="/login" />} />
-          <Route path="/registroacademico/edit/:id" element={user && (user.role === 'professor' || user.role === 'admin') ? <EditRegistroAcademico /> : <Navigate to="/login" />} />
-          <Route path="/registroacademico/:id" element={user && (user.role === 'professor' || user.role === 'admin') ? <DetalhesAluno /> : <Navigate to="/login" />} />
-
-          <Route path="/diplomas/:id" element={user && user.role === 'admin' ? <Diploma /> : <Navigate to="/" />} />
-          <Route path="/boletim/:id" element={user && user.role === 'admin' ? <Boletim /> : <Navigate to="/" />} />
-          <Route path="/turnos/" element={user && user.role === 'admin' ? <Turnos /> : <Navigate to="/" />} />
-          <Route path="/turnos/add" element={user && user.role === 'admin' ? <AddTurnos /> : <Navigate to="/" />} />
-
-          <Route path="/materialeutensilios" element={user && user.role === 'admin' ? <MaterialEUtensilio /> : <Navigate to="/" />} />
-          <Route path="/materialeutensilios/add" element={user && user.role === 'admin' ? <AddMaterialEUtensilio /> : <Navigate to="/" />} />
-          <Route path="/materialeutensilios/edit/:id" element={user && user.role === 'admin' ? <EditMaterialEUtensilio /> : <Navigate to="/" />} />
-
-          <Route path="/dashboard" element={user && user.role === 'admin' ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route path="/transacoes" element={user && user.role === 'admin' ? <Transacoes /> : <Navigate to="/" />} />
-          <Route path="/adicionar-transacao" element={user && user.role === 'admin' ? <AdicionarTransacao /> : <Navigate to="/" />} />
-          <Route path="/adicionar-conta" element={user && user.role === 'admin' ? <AdicionarConta /> : <Navigate to="/" />} />
-          <Route path="/mensalidade/:id" element={user && user.role === 'admin' ? <Mensalidade /> : <Navigate to="/" />} />
-          <Route path="/pagamentos/:id" element={<Pagamento />} />
-          
-          {/* Rota principal que renderiza a Home */}
-          <Route path="/*" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Suspense fallback={<LoadingScreen />}>
+            <div className="app">
+              <Header />
+              <main className="main-content">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/esqueci-a-senha" element={<EsqueciASenha />} />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/alunos"
+                    element={
+                      <ProtectedRoute>
+                        <Alunos />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cursos"
+                    element={
+                      <ProtectedRoute>
+                        <Cursos />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/disciplinas"
+                    element={
+                      <ProtectedRoute>
+                        <Disciplinas />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/materialeutensilios"
+                    element={
+                      <ProtectedRoute>
+                        <MaterialEUtensilios />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/professores"
+                    element={
+                      <ProtectedRoute>
+                        <Professores />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/turnos"
+                    element={
+                      <ProtectedRoute>
+                        <Turnos />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admins"
+                    element={
+                      <ProtectedRoute>
+                        <Admins />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/pagamento/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <Pagamento />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addaluno"
+                    element={
+                      <ProtectedRoute>
+                        <AddAluno />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editaluno/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditAluno />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addcurso"
+                    element={
+                      <ProtectedRoute>
+                        <AddCurso />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editcurso/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditCurso />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/adddisciplina"
+                    element={
+                      <ProtectedRoute>
+                        <AddDisciplina />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editdisciplina/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditDisciplina />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addadmin"
+                    element={
+                      <ProtectedRoute>
+                        <AddAdmin />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editadmin/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditAdmin />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addprofessor"
+                    element={
+                      <ProtectedRoute>
+                        <AddProfessor />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editprofessor/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditProfessor />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addregistroacademico"
+                    element={
+                      <ProtectedRoute>
+                        <AddRegistroAcademico />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editregistroacademico/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditRegistroAcademico />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/registroacademico/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <RegistroAcademico />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/detalhesaluno/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <DetalhesAluno />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/boletim/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <Boletim />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/transacoes"
+                    element={
+                      <ProtectedRoute>
+                        <Transacoes />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/adicionar-transacao"
+                    element={
+                      <ProtectedRoute>
+                        <AdicionarTransacao />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/adicionar-conta"
+                    element={
+                      <ProtectedRoute>
+                        <AdicionarConta />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/addturno"
+                    element={
+                      <ProtectedRoute>
+                        <AddTurnos />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/editmaterialeutensilio/:id"
+                    element={
+                      <ProtectedRoute>
+                        <EditMaterialEUtensilio />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/mensalidade/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <Mensalidade />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/diploma/:alunoId"
+                    element={
+                      <ProtectedRoute>
+                        <Diploma />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </main>
+            </div>
+          </Suspense>
+        </BrowserRouter>
+      </UserProvider>
     </ErrorBoundary>
   );
 }

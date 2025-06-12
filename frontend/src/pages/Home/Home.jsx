@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import LoadingScreen from '../../components/LoadingScreen/LoadingScreen';
 
 import SectionOne from '../SectionOne/SectionOne';
 import SectionTwo from '../SectionTwo/SectionTwo';
@@ -21,21 +22,50 @@ const Home = () => {
   useEffect(() => {
     const loadSections = async () => {
       try {
-        // Marca como carregado após um pequeno delay
-        const timer = setTimeout(() => {
-          setIsLoaded(true);
-          setSections({
-            sectionOne: true,
-            sectionTwo: true,
-            sectionThree: true,
-            sectionFour: true
-          });
-        }, 100);
+        // Pré-carregar as seções
+        const loadSection = async (sectionName) => {
+          try {
+            switch (sectionName) {
+              case 'sectionOne':
+                await import('../SectionOne/SectionOne');
+                break;
+              case 'sectionTwo':
+                await import('../SectionTwo/SectionTwo');
+                break;
+              case 'sectionThree':
+                await import('../SectionThree/SectionThree');
+                break;
+              case 'sectionFour':
+                await import('../SectionFour/SectionFour');
+                break;
+              default:
+                throw new Error(`Seção ${sectionName} não encontrada`);
+            }
+            return true;
+          } catch (err) {
+            console.error(`Erro ao carregar ${sectionName}:`, err);
+            return false;
+          }
+        };
 
-        return () => clearTimeout(timer);
+        // Carregar todas as seções em paralelo
+        const sectionPromises = Object.keys(sections).map(sectionName => 
+          loadSection(sectionName)
+        );
+
+        const results = await Promise.all(sectionPromises);
+        
+        // Atualizar o estado das seções com base nos resultados
+        const newSections = {};
+        Object.keys(sections).forEach((sectionName, index) => {
+          newSections[sectionName] = results[index];
+        });
+
+        setSections(newSections);
+        setIsLoaded(true);
       } catch (error) {
         console.error('Erro ao inicializar Home:', error);
-        setError('Erro ao carregar a página inicial');
+        setError('Erro ao carregar a página inicial. Por favor, tente novamente.');
       }
     };
 
@@ -76,13 +106,14 @@ const Home = () => {
       }
     } catch (error) {
       console.error('Erro ao rolar para seção:', error);
-      setError('Erro ao navegar entre as seções');
+      setError('Erro ao navegar entre as seções. Por favor, tente novamente.');
     }
   }, [location.state, location.hash, isLoaded]);
 
   if (error) {
     return (
       <div className="error-container">
+        <h2>Ops! Algo deu errado</h2>
         <p className="error-message">{error}</p>
         <button onClick={() => window.location.reload()} className="retry-button">
           Tentar Novamente
@@ -92,9 +123,23 @@ const Home = () => {
   }
 
   if (!isLoaded) {
+    return <LoadingScreen />;
+  }
+
+  // Verifica se todas as seções foram carregadas com sucesso
+  const allSectionsLoaded = Object.values(sections).every(section => section === true);
+
+  if (!allSectionsLoaded) {
     return (
-      <div className="loading-container">
-        <p>Carregando...</p>
+      <div className="error-container">
+        <h2>Atenção</h2>
+        <p className="error-message">
+          Algumas seções da página não puderam ser carregadas completamente.
+          Por favor, tente recarregar a página.
+        </p>
+        <button onClick={() => window.location.reload()} className="retry-button">
+          Recarregar Página
+        </button>
       </div>
     );
   }
