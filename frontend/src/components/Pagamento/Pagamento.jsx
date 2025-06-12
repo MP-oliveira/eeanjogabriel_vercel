@@ -29,6 +29,7 @@ const Pagamento = () => {
         const token = localStorage.getItem("token");
         const userLog = localStorage.getItem("user");
 
+        console.log('userLog',userLog);
         if (userLog) {
           try {
             const parsedUser = JSON.parse(userLog);
