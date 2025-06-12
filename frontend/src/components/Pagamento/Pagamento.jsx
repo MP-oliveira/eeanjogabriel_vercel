@@ -129,8 +129,8 @@ const Pagamento = () => {
         conta_id: parseInt(formData.conta_id),
         mes_referencia: mesReferencia,
         valor: valorNumerico,
-        recebido_por: user?.nome || 'Usuário não identificado',
-        recebido_por_id: user?.id,
+        recebido_por: user?.user?.nome || 'Usuário não identificado',
+        recebido_por_id: user?.user?.id || null,
         observacao: formData.observacao || '',
         data_pagamento: dataBrasil.toISOString()
       };
