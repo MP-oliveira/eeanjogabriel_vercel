@@ -148,138 +148,140 @@ const Header = () => {
           {menuOpen ? <X size={24} /> : <List size={24} />}
         </button>
         <div className={`links ${menuOpen ? "active" : ""}`}>
-          <li>
-            <NavLink
-              className="nav-link"
-              to="/"
-              onClick={e => {
-                e.preventDefault();
-                handleNavigateAndScroll("sectionOne");
-              }}
-            >
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className="nav-link"
-              to="/"
-              onClick={e => {
-                e.preventDefault();
-                handleNavigateAndScroll("sectionTwo");
-              }}
-            >
-              Nossos Cursos
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className="nav-link"
-              to="/"
-              onClick={e => {
-                e.preventDefault();
-                handleNavigateAndScroll("sectionThree");
-              }}
-            >
-              Nossa Estrutura
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className="nav-link"
-              to="/"
-              onClick={e => {
-                e.preventDefault();
-                handleNavigateAndScroll("sectionFour");
-              }}
-            >
-              Fale Conosco
-            </NavLink>
-          </li>
-          <li className="dropdown">
-            <NavLink
-              className="nav-link dropdown-trigger"
-              onClick={() => setMenuOpen(false)}
-            >
-              Dashboard
-            </NavLink>
-            <div className="dropdown-menu">
-              {user?.role === "admin" ? (
-                <>
-                  <NavLink
-                    to="/admins"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Administrador
-                  </NavLink>
-                  <NavLink
-                    to="/alunos"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Alunos
-                  </NavLink>
-                  <NavLink
-                    to="/cursos"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Cursos
-                  </NavLink>
-                  <NavLink
-                    to="/disciplinas"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Disciplina
-                  </NavLink>
-                  <NavLink
-                    to="/materialeutensilios"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Materiais e Utensílios
-                  </NavLink>
-                  <NavLink
-                    to="/professores"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Professores
-                  </NavLink>
-                  <NavLink
-                    to="/turnos"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Turno
-                  </NavLink>
-                  <NavLink
-                    to="/dashboard"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Financeiro
-                  </NavLink>
-                </>
-              ) : user?.role === "professor" ? (
-                <>
-                  <NavLink
-                    to="/alunos"
-                    className="dropdown-item"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Alunos
-                  </NavLink>
-                </>
-              ) : (
-                <div className="dropdown-item disabled">
-                  Acesso não autorizado
-                </div>
-              )}
-            </div>
-          </li>
+          <ul>
+            <li>
+              <NavLink
+                className="nav-link"
+                to="/"
+                onClick={e => {
+                  e.preventDefault();
+                  handleNavigateAndScroll("sectionOne");
+                }}
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className="nav-link"
+                to="/"
+                onClick={e => {
+                  e.preventDefault();
+                  handleNavigateAndScroll("sectionTwo");
+                }}
+              >
+                Nossos Cursos
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className="nav-link"
+                to="/"
+                onClick={e => {
+                  e.preventDefault();
+                  handleNavigateAndScroll("sectionThree");
+                }}
+              >
+                Nossa Estrutura
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className="nav-link"
+                to="/"
+                onClick={e => {
+                  e.preventDefault();
+                  handleNavigateAndScroll("sectionFour");
+                }}
+              >
+                Fale Conosco
+              </NavLink>
+            </li>
+            <li className="dropdown">
+              <NavLink
+                className="nav-link dropdown-trigger"
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+              </NavLink>
+              <div className="dropdown-menu">
+                {user?.role === "admin" ? (
+                  <>
+                    <NavLink
+                      to="/admins"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Administrador
+                    </NavLink>
+                    <NavLink
+                      to="/alunos"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Alunos
+                    </NavLink>
+                    <NavLink
+                      to="/cursos"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Cursos
+                    </NavLink>
+                    <NavLink
+                      to="/disciplinas"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Disciplina
+                    </NavLink>
+                    <NavLink
+                      to="/materialeutensilios"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Materiais e Utensílios
+                    </NavLink>
+                    <NavLink
+                      to="/professores"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Professores
+                    </NavLink>
+                    <NavLink
+                      to="/turnos"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Turno
+                    </NavLink>
+                    <NavLink
+                      to="/dashboard"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Financeiro
+                    </NavLink>
+                  </>
+                ) : user?.role === "professor" ? (
+                  <>
+                    <NavLink
+                      to="/alunos"
+                      className="dropdown-item"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Alunos
+                    </NavLink>
+                  </>
+                ) : (
+                  <div className="dropdown-item disabled">
+                    Acesso não autorizado
+                  </div>
+                )}
+              </div>
+            </li>
+          </ul>
         </div>
         <div className="login">
           {user ? (

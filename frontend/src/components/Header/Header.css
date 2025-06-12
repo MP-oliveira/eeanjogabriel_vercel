@@ -59,11 +59,17 @@
 
 .links {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  background-color: #3875D6;
-  padding: 6px 30px;
-  border-radius: 12px;
+  align-items: center;
+  gap: 2rem;
+}
+
+.links ul {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .links li {
