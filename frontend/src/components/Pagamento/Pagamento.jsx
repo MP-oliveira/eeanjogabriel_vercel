@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import api from '../../services/api';
 import './Pagamento.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import VoltarButton from '../VoltarButton/VoltarButton';
-import { useAuth } from '../../context/AuthContext';
+import { UserContext } from '../../context/UseContext';
 
 const Pagamento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isAdmin } = useAuth();
+  const { user } = useContext(UserContext);
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
   const [pagamentos, setPagamentos] = useState([]);
@@ -24,7 +24,7 @@ const Pagamento = () => {
   });
 
   useEffect(() => {
-    if (!isAdmin) {
+    if (user?.role !== 'admin') {
       setError('Acesso restrito. Apenas administradores podem registrar pagamentos.');
       setLoading(false);
       return;
@@ -68,7 +68,7 @@ const Pagamento = () => {
     };
 
     fetchData();
-  }, [id, isAdmin]);
+  }, [id, user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -81,7 +81,7 @@ const Pagamento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!isAdmin) {
+    if (user?.role !== 'admin') {
       setSnackbar({
         open: true,
         message: 'Acesso restrito. Apenas administradores podem registrar pagamentos.',
@@ -125,7 +125,7 @@ const Pagamento = () => {
         conta_id: parseInt(formData.conta_id),
         mes_referencia: mesReferencia,
         valor: valorNumerico,
-        recebido_por: user?.nome || 'Administrador não identificado',
+        recebido_por: user?.nome || 'Usuário não identificado',
         recebido_por_id: user?.id,
         observacao: formData.observacao || '',
         data_pagamento: dataBrasil.toISOString()
@@ -188,7 +188,7 @@ const Pagamento = () => {
     );
   }
 
-  if (!isAdmin) {
+  if (!user || user.role !== 'admin') {
     return (
       <div className="payment-error-container">
         <p className="payment-error-message">Acesso restrito. Apenas administradores podem registrar pagamentos.</p>
