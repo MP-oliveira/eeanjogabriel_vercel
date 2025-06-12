@@ -308,7 +308,7 @@ const Pagamento = () => {
                             <td>{dataBrasil.toLocaleDateString('pt-BR')} {dataBrasil.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
                             <td>{new Date(pagamento.mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</td>
                             <td>R$ {parseFloat(pagamento.valor).toFixed(2)}</td>
-                            <td>{pagamento.recebido_por || '-'}</td>
+                            <td>{user?.nome || '-'}</td>
                             <td>{pagamento.observacao || '-'}</td>
                           </tr>
                         );
