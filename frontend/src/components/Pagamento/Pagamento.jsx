@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import './Pagamento.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import VoltarButton from '../VoltarButton/VoltarButton';
+import { useAuth } from '../../context/AuthContext';
 
 const Pagamento = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
   const [pagamentos, setPagamentos] = useState([]);
@@ -21,6 +24,12 @@ const Pagamento = () => {
   });
 
   useEffect(() => {
+    if (!isAdmin) {
+      setError('Acesso restrito. Apenas administradores podem registrar pagamentos.');
+      setLoading(false);
+      return;
+    }
+
     if (!id) {
       setError('ID do aluno não encontrado');
       setLoading(false);
@@ -59,7 +68,7 @@ const Pagamento = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, isAdmin]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,10 +80,19 @@ const Pagamento = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isAdmin) {
+      setSnackbar({
+        open: true,
+        message: 'Acesso restrito. Apenas administradores podem registrar pagamentos.',
+        severity: 'error'
+      });
+      return;
+    }
+
     try {
       // Validar dados antes de enviar
       if (!formData.conta_id || !formData.mes_referencia || !formData.valor) {
-        console.log('Dados inválidos:', formData);
         setSnackbar({
           open: true,
           message: 'Por favor, preencha todos os campos obrigatórios',
@@ -86,7 +104,6 @@ const Pagamento = () => {
       // Validar valor numérico
       const valorNumerico = parseFloat(formData.valor);
       if (isNaN(valorNumerico) || valorNumerico <= 0) {
-        console.log('Valor inválido:', formData.valor);
         setSnackbar({
           open: true,
           message: 'Por favor, insira um valor válido maior que zero',
@@ -104,33 +121,24 @@ const Pagamento = () => {
       const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
 
       const dataToSend = {
-        aluno_id: parseInt(id), // Garantir que é número
-        conta_id: parseInt(formData.conta_id), // Garantir que é número
+        aluno_id: parseInt(id),
+        conta_id: parseInt(formData.conta_id),
         mes_referencia: mesReferencia,
         valor: valorNumerico,
-        recebido_por: formData.recebido_por || 'Usuário não identificado',
+        recebido_por: user?.nome || 'Administrador não identificado',
+        recebido_por_id: user?.id,
         observacao: formData.observacao || '',
         data_pagamento: dataBrasil.toISOString()
       };
 
-      console.log('Enviando dados para o servidor:', dataToSend);
-
       const response = await api.post('/pagamentos', dataToSend);
-      console.log('Resposta do servidor:', response.data);
       
       if (!response.data) {
         throw new Error('Resposta inválida do servidor');
       }
 
       // Atualizar a lista de pagamentos
-      console.log('Buscando pagamentos atualizados...');
       const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
-      console.log('Resposta da lista de pagamentos:', pagamentosResponse.data);
-      
-      if (!pagamentosResponse.data) {
-        throw new Error('Erro ao atualizar lista de pagamentos');
-      }
-      
       setPagamentos(pagamentosResponse.data.pagamentos || []);
       
       // Limpar o formulário
@@ -148,30 +156,10 @@ const Pagamento = () => {
         severity: 'success'
       });
     } catch (error) {
-      console.error('Erro detalhado ao registrar pagamento:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        data: error.response?.data
-      });
-
-      let errorMessage = 'Erro ao registrar pagamento';
-      
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-        if (error.response.data.details) {
-          const details = Object.values(error.response.data.details)
-            .filter(value => value !== null)
-            .join(', ');
-          if (details) {
-            errorMessage += `: ${details}`;
-          }
-        }
-      }
-
+      console.error('Erro ao registrar pagamento:', error);
       setSnackbar({
         open: true,
-        message: errorMessage,
+        message: error.response?.data?.error || 'Erro ao registrar pagamento',
         severity: 'error'
       });
     }
@@ -195,6 +183,17 @@ const Pagamento = () => {
         <p className="payment-error-message">{error}</p>
         <button onClick={() => window.location.reload()} className="retry-button">
           Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="payment-error-container">
+        <p className="payment-error-message">Acesso restrito. Apenas administradores podem registrar pagamentos.</p>
+        <button onClick={() => navigate('/alunos')} className="retry-button">
+          Voltar para Lista de Alunos
         </button>
       </div>
     );

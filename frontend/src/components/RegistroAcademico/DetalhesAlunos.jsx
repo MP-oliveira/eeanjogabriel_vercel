@@ -121,10 +121,35 @@ const DetalhesAluno = () => {
                 turma: alunoResponse.data.turno || response.data.turma || "Não informada"
               });
 
-              // Buscar mensalidades do aluno
+              // Buscar mensalidades do aluno com informações do administrador
               try {
                 const mensalidadesResponse = await api.get(`/pagamentos/aluno/${alunoResponse.data.id}`);
-                setMensalidades(mensalidadesResponse.data.pagamentos || []);
+                if (mensalidadesResponse.data && mensalidadesResponse.data.pagamentos) {
+                  // Buscar informações dos administradores para cada mensalidade
+                  const mensalidadesComAdmin = await Promise.all(
+                    mensalidadesResponse.data.pagamentos.map(async (mensalidade) => {
+                      if (mensalidade.recebido_por_id) {
+                        try {
+                          const adminResponse = await api.get(`/admin/${mensalidade.recebido_por_id}`);
+                          return {
+                            ...mensalidade,
+                            recebido_por: adminResponse.data?.nome || "Administrador não identificado"
+                          };
+                        } catch (error) {
+                          console.error("Erro ao buscar dados do administrador:", error);
+                          return {
+                            ...mensalidade,
+                            recebido_por: "Administrador não identificado"
+                          };
+                        }
+                      }
+                      return mensalidade;
+                    })
+                  );
+                  setMensalidades(mensalidadesComAdmin);
+                } else {
+                  setMensalidades([]);
+                }
               } catch (error) {
                 console.error("Erro ao buscar mensalidades:", error);
                 setMensalidades([]);
@@ -696,7 +721,7 @@ const DetalhesAluno = () => {
                 <div className="mensalidade-content">
                   <p><strong>Valor:</strong> R$ {parseFloat(mensalidade.valor).toFixed(2)}</p>
                   <p><strong>Data do Pagamento:</strong> {new Date(mensalidade.data_pagamento).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-                  <p><strong>Recebido por:</strong> {mensalidade.recebido_por}</p>
+                  <p><strong>Registrado por:</strong> {mensalidade.recebido_por || "Administrador não identificado"}</p>
                   {mensalidade.observacao && (
                     <p className="mensalidade-observacao"><strong>Observação:</strong> {mensalidade.observacao}</p>
                   )}
