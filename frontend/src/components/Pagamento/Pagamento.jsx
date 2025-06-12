@@ -23,6 +23,8 @@ const Pagamento = () => {
     observacao: ''
   });
 
+
+
   useEffect(() => {
     if (user?.role !== 'admin') {
       setError('Acesso restrito. Apenas administradores podem registrar pagamentos.');
@@ -120,6 +122,8 @@ const Pagamento = () => {
       const [ano, mes] = formData.mes_referencia.split('-');
       const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
 
+    
+      console.log('user',user);
       const dataToSend = {
         aluno_id: parseInt(id),
         conta_id: parseInt(formData.conta_id),
@@ -308,7 +312,7 @@ const Pagamento = () => {
                             <td>{dataBrasil.toLocaleDateString('pt-BR')} {dataBrasil.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
                             <td>{new Date(pagamento.mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</td>
                             <td>R$ {parseFloat(pagamento.valor).toFixed(2)}</td>
-                            <td>{user?.nome || '-'}</td>
+                            <td>{pagamento.recebido_por || '-'}</td>
                             <td>{pagamento.observacao || '-'}</td>
                           </tr>
                         );
