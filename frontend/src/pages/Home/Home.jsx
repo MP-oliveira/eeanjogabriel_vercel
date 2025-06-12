@@ -146,15 +146,15 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {sections.sectionOne && <SectionOne />}
+      {sections.sectionOne ? <SectionOne /> : null}
       <div id="sectionTwo">
-        {sections.sectionTwo && <SectionTwo />}
+        {sections.sectionTwo ? <SectionTwo /> : null}
       </div>
       <div id="sectionThree">
-        {sections.sectionThree && <SectionThree />}
+        {sections.sectionThree ? <SectionThree /> : null}
       </div>
       <div id="sectionFour">
-        {sections.sectionFour && <SectionFour />}
+        {sections.sectionFour ? <SectionFour /> : null}
       </div>
       <Footer />
     </div>
