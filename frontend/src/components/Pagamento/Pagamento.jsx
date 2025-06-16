@@ -124,9 +124,11 @@ const Pagamento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('Estado atual do user no momento do envio:', user);
+    console.log('=== INÍCIO DO ENVIO DE PAGAMENTO ===');
+    console.log('1. Estado atual do user:', JSON.stringify(user, null, 2));
     
     if (user?.role !== 'admin') {
+      console.log('Usuário não é admin:', user?.role);
       setSnackbar({
         open: true,
         message: 'Acesso restrito. Apenas administradores podem registrar pagamentos.',
@@ -138,6 +140,7 @@ const Pagamento = () => {
     try {
       // Validar dados antes de enviar
       if (!formData.conta_id || !formData.mes_referencia || !formData.valor) {
+        console.log('Dados inválidos:', formData);
         setSnackbar({
           open: true,
           message: 'Por favor, preencha todos os campos obrigatórios',
@@ -149,6 +152,7 @@ const Pagamento = () => {
       // Validar valor numérico
       const valorNumerico = parseFloat(formData.valor);
       if (isNaN(valorNumerico) || valorNumerico <= 0) {
+        console.log('Valor inválido:', formData.valor);
         setSnackbar({
           open: true,
           message: 'Por favor, insira um valor válido maior que zero',
@@ -166,7 +170,7 @@ const Pagamento = () => {
       const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
 
       if (!user || !user.nome) {
-        console.error('Usuário não disponível ou nome não definido:', user);
+        console.log('Usuário não disponível ou nome não definido:', user);
         setSnackbar({
           open: true,
           message: 'Erro: Usuário não identificado. Por favor, faça login novamente.',
@@ -186,19 +190,19 @@ const Pagamento = () => {
         data_pagamento: dataBrasil.toISOString()
       };
 
-      console.log('Dados a serem enviados:', dataToSend);
+      console.log('2. Dados a serem enviados:', JSON.stringify(dataToSend, null, 2));
 
       const response = await api.post('/api/pagamentos', dataToSend);
-      console.log('Resposta do servidor:', response.data);
+      console.log('3. Resposta do servidor:', JSON.stringify(response.data, null, 2));
       
       if (!response.data) {
         throw new Error('Resposta inválida do servidor');
       }
 
       // Atualizar a lista de pagamentos
-      console.log('Buscando pagamentos atualizados...');
+      console.log('4. Buscando pagamentos atualizados...');
       const pagamentosResponse = await api.get(`/api/pagamentos/aluno/${id}`);
-      console.log('Resposta da lista de pagamentos:', pagamentosResponse.data);
+      console.log('5. Resposta da lista de pagamentos:', JSON.stringify(pagamentosResponse.data, null, 2));
       
       setPagamentos(pagamentosResponse.data.pagamentos || []);
       
