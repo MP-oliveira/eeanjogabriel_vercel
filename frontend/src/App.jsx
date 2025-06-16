@@ -14,7 +14,7 @@ const Dashboard = lazy(() => import("./components/Dashboard/Dashboard"));
 const Alunos = lazy(() => import("./components/Alunos/Alunos"));
 const Cursos = lazy(() => import("./components/Cursos/Cursos"));
 const Disciplinas = lazy(() => import("./components/Disciplinas/Disciplinas"));
-const MaterialEUtensilios = lazy(() => import("./components/MaterialEUtensilios/MaterialEUtensilios"));
+const MaterialEUtensilios = lazy(() => import("./components/MaterialEUtensilio/MaterialEUtensilio"));
 const Professores = lazy(() => import("./components/Professores/Professores"));
 const Turnos = lazy(() => import("./components/Turnos/Turnos"));
 const Admins = lazy(() => import("./components/AddAdmin/AddAdmin"));
