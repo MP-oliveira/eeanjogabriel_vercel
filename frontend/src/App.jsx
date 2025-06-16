@@ -9,7 +9,6 @@ import "./index.css";
 // Lazy loading de todos os componentes
 const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
-const Register = lazy(() => import("./pages/Register/Register"));
 const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 const Alunos = lazy(() => import("./pages/Alunos/Alunos"));
 const Cursos = lazy(() => import("./pages/Cursos/Cursos"));
@@ -126,7 +125,6 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
                   <Route path="/esqueci-a-senha" element={<EsqueciASenha />} />
                   <Route
                     path="/dashboard"
