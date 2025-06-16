@@ -188,14 +188,18 @@ const Pagamento = () => {
 
       console.log('Dados a serem enviados:', dataToSend);
 
-      const response = await api.post('/pagamentos', dataToSend);
+      const response = await api.post('/api/pagamentos', dataToSend);
+      console.log('Resposta do servidor:', response.data);
       
       if (!response.data) {
         throw new Error('Resposta inválida do servidor');
       }
 
       // Atualizar a lista de pagamentos
-      const pagamentosResponse = await api.get(`/pagamentos/aluno/${id}`);
+      console.log('Buscando pagamentos atualizados...');
+      const pagamentosResponse = await api.get(`/api/pagamentos/aluno/${id}`);
+      console.log('Resposta da lista de pagamentos:', pagamentosResponse.data);
+      
       setPagamentos(pagamentosResponse.data.pagamentos || []);
       
       // Limpar o formulário
