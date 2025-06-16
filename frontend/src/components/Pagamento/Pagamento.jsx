@@ -34,21 +34,15 @@ const Pagamento = () => {
         if (userLog) {
           try {
             const parsedUser = JSON.parse(userLog);
-            console.log('Usuário parseado:', parsedUser);
-            
-            if (parsedUser) {
-              const userData = {
-                role: parsedUser.role,
-                nome: parsedUser.nome || '',
-                email: parsedUser.email || '',
-                id: parsedUser.id || null
-              };
-              console.log('Dados do usuário a serem definidos:', userData);
-              setUser(userData);
-            } else {
-              console.warn('Dados do usuário inválidos:', userLog);
-              setUser(null);
-            }
+            // Tenta pegar o nome, id, email e role na raiz, se não existir, tenta em user.nome, etc.
+            const nome = parsedUser.nome || (parsedUser.user && parsedUser.user.nome) || '';
+            const id = parsedUser.id || (parsedUser.user && parsedUser.user.id) || null;
+            const email = parsedUser.email || (parsedUser.user && parsedUser.user.email) || '';
+            const role = parsedUser.role || (parsedUser.user && parsedUser.user.role) || '';
+
+            const userData = { role, nome, email, id };
+            console.log('Dados do usuário a serem definidos:', userData);
+            setUser(userData);
           } catch (parseError) {
             console.error('Erro ao fazer parse dos dados do usuário:', parseError);
             setUser(null);
@@ -169,8 +163,7 @@ const Pagamento = () => {
       const [ano, mes] = formData.mes_referencia.split('-');
       const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
 
-    
-      console.log('user',user);
+      console.log('Dados do usuário antes de enviar:', user);
       const dataToSend = {
         aluno_id: parseInt(id),
         conta_id: parseInt(formData.conta_id),
@@ -182,7 +175,7 @@ const Pagamento = () => {
         data_pagamento: dataBrasil.toISOString()
       };
 
-      console.log('Dados do usuário:', user); // Log para debug
+      console.log('Dados a serem enviados:', dataToSend);
 
       const response = await api.post('/pagamentos', dataToSend);
       
