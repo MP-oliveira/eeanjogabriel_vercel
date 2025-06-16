@@ -29,7 +29,6 @@ const Pagamento = () => {
         const token = localStorage.getItem("token");
         const userLog = localStorage.getItem("user");
 
-        console.log('userLog',userLog);
         if (userLog) {
           try {
             const parsedUser = JSON.parse(userLog);
@@ -37,7 +36,8 @@ const Pagamento = () => {
               setUser({
                 role: parsedUser.role,
                 nome: parsedUser.user.nome || '',
-                email: parsedUser.user.email || ''
+                email: parsedUser.user.email || '',
+                id: parsedUser.user.id || null
               });
             } else {
               console.warn('Dados do usuário inválidos:', userLog);
