@@ -124,6 +124,8 @@ const Pagamento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('Estado atual do user no momento do envio:', user);
+    
     if (user?.role !== 'admin') {
       setSnackbar({
         open: true,
@@ -163,14 +165,23 @@ const Pagamento = () => {
       const [ano, mes] = formData.mes_referencia.split('-');
       const mesReferencia = `${ano}-${mes}-01`; // Primeiro dia do mês
 
-      console.log('Dados do usuário antes de enviar:', user);
+      if (!user || !user.nome) {
+        console.error('Usuário não disponível ou nome não definido:', user);
+        setSnackbar({
+          open: true,
+          message: 'Erro: Usuário não identificado. Por favor, faça login novamente.',
+          severity: 'error'
+        });
+        return;
+      }
+
       const dataToSend = {
         aluno_id: parseInt(id),
         conta_id: parseInt(formData.conta_id),
         mes_referencia: mesReferencia,
         valor: valorNumerico,
-        recebido_por: user?.nome || 'Usuário não identificado',
-        recebido_por_id: user?.id || null,
+        recebido_por: user.nome,
+        recebido_por_id: user.id,
         observacao: formData.observacao || '',
         data_pagamento: dataBrasil.toISOString()
       };
