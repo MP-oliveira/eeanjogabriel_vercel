@@ -9,16 +9,16 @@ import "./index.css";
 // Lazy loading de todos os componentes
 const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
-const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
-const Alunos = lazy(() => import("./pages/Alunos/Alunos"));
-const Cursos = lazy(() => import("./pages/Cursos/Cursos"));
-const Disciplinas = lazy(() => import("./pages/Disciplinas/Disciplinas"));
-const MaterialEUtensilios = lazy(() => import("./pages/MaterialEUtensilios/MaterialEUtensilios"));
-const Professores = lazy(() => import("./pages/Professores/Professores"));
-const Turnos = lazy(() => import("./pages/Turnos/Turnos"));
-const Admins = lazy(() => import("./pages/Admins/Admins"));
-const Pagamento = lazy(() => import("./components/Pagamento/Pagamento"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute/ProtectedRoute"));
+const Dashboard = lazy(() => import("./components/Dashboard/Dashboard"));
+const Alunos = lazy(() => import("./components/Alunos/Alunos"));
+const Cursos = lazy(() => import("./components/Cursos/Cursos"));
+const Disciplinas = lazy(() => import("./components/Disciplinas/Disciplinas"));
+const MaterialEUtensilios = lazy(() => import("./components/MaterialEUtensilios/MaterialEUtensilios"));
+const Professores = lazy(() => import("./components/Professores/Professores"));
+const Turnos = lazy(() => import("./components/Turnos/Turnos"));
+const Admins = lazy(() => import("./components/AddAdmin/AddAdmin"));
+const Pagamento = lazy(() => import("./components/Pagamento/Pagamento"));
 const AddAluno = lazy(() => import("./components/AddAluno/AddAluno"));
 const EditAluno = lazy(() => import("./components/EditAluno/EditAluno"));
 const AddCurso = lazy(() => import("./components/AddCurso/AddCurso"));
@@ -37,7 +37,7 @@ const Boletim = lazy(() => import("./components/Boletim/Boletim"));
 const Transacoes = lazy(() => import("./components/Transacoes/Transacoes"));
 const AdicionarTransacao = lazy(() => import("./components/AddTransacao/AddTransacao"));
 const AdicionarConta = lazy(() => import("./components/AdicionarConta/AdicionarConta"));
-const AddTurnos = lazy(() => import("./components/Addturnos/AddTurnos"));
+const AddTurnos = lazy(() => import("./components/AddTurnos/AddTurnos"));
 const EditMaterialEUtensilio = lazy(() => import("./components/EditMaterialEUtensilio/EditMaterialEUtensilio"));
 const Mensalidade = lazy(() => import("./components/Mensalidade/Mensalidade"));
 const EsqueciASenha = lazy(() => import("./components/EsqueciASenha/EsqueciASenha"));
@@ -129,7 +129,7 @@ function App() {
                   <Route
                     path="/dashboard"
                     element={
-                      <ProtectedRoute>
+                      <ProtectedRoute >
                         <Dashboard />
                       </ProtectedRoute>
                     }
