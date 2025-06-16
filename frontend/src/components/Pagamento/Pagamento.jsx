@@ -29,16 +29,22 @@ const Pagamento = () => {
         const token = localStorage.getItem("token");
         const userLog = localStorage.getItem("user");
 
+        console.log('Dados do localStorage:', { token, userLog });
+
         if (userLog) {
           try {
             const parsedUser = JSON.parse(userLog);
-            if (parsedUser && parsedUser.user) {
-              setUser({
+            console.log('Usuário parseado:', parsedUser);
+            
+            if (parsedUser) {
+              const userData = {
                 role: parsedUser.role,
-                nome: parsedUser.user.nome || '',
-                email: parsedUser.user.email || '',
-                id: parsedUser.user.id || null
-              });
+                nome: parsedUser.nome || '',
+                email: parsedUser.email || '',
+                id: parsedUser.id || null
+              };
+              console.log('Dados do usuário a serem definidos:', userData);
+              setUser(userData);
             } else {
               console.warn('Dados do usuário inválidos:', userLog);
               setUser(null);
@@ -50,6 +56,7 @@ const Pagamento = () => {
         }
 
         if (!token || !userLog) {
+          console.log('Token ou userLog não encontrados');
           setUser(null);
         }
       } catch (error) {
@@ -60,6 +67,10 @@ const Pagamento = () => {
 
     initializeUser();
   }, [setUser]);
+
+  useEffect(() => {
+    console.log('Estado atual do user:', user);
+  }, [user]);
 
   useEffect(() => {
     if (user?.role !== 'admin') {
