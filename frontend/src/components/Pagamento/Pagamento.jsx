@@ -34,11 +34,11 @@ const Pagamento = () => {
         if (userLog) {
           try {
             const parsedUser = JSON.parse(userLog);
-            // Tenta pegar o nome, id, email e role na raiz, se não existir, tenta em user.nome, etc.
-            const nome = parsedUser.nome || (parsedUser.user && parsedUser.user.nome) || '';
-            const id = parsedUser.id || (parsedUser.user && parsedUser.user.id) || null;
-            const email = parsedUser.email || (parsedUser.user && parsedUser.user.email) || '';
-            const role = parsedUser.role || (parsedUser.user && parsedUser.user.role) || '';
+            // Pega os dados do campo 'user' do objeto salvo
+            const nome = parsedUser.user?.nome || '';
+            const id = parsedUser.user?.id || null;
+            const email = parsedUser.user?.email || '';
+            const role = parsedUser.user?.role || '';
 
             const userData = { role, nome, email, id };
             console.log('Dados do usuário a serem definidos:', userData);
