@@ -103,7 +103,7 @@ module.exports = class AuthController {
         
         if (userData && userData.length > 0) {
           console.log(`Usuário encontrado na tabela ${table}:`, userData);
-          userRole = role; // Agora será "admin", "professor" ou "aluno"
+          userRole = userData; // Agora será "admin", "professor" ou "aluno"
           roleData = userData[0];  // Pega o primeiro resultado
           break;
         }
