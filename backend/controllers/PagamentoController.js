@@ -47,7 +47,7 @@ const PagamentoController = {
       await TransacaoFinanceira.create({
         tipo: 'receita',
         valor: valor,
-        descricao: `Mensalidade - ${aluno.nome} - ${new Date(mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })} - ${new Date().toLocaleTimeString('pt-BR')}`,
+        descricao: `Mensalidade - ${aluno.nome} - ${new Date(mes_referencia).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}`,
         categoria: 'mensalidade',
         data: new Date(),
         conta_id: conta_id
