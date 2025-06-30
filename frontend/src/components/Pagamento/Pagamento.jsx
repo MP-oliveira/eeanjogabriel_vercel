@@ -67,11 +67,12 @@ const Pagamento = () => {
     try {
       // Obter a data atual no fuso horário brasileiro
       const dataAtual = new Date();
-      const dataBrasil = new Date(dataAtual.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
 
+      console.log(dataAtual, 'data Atual ')
+     
       const dataToSend = {
         ...formData,
-        data_pagamento: dataBrasil.toISOString(),
+        data_pagamento: dataAtual,
         aluno_id: aluno_id,
         recebido_por: user.nome
       };
