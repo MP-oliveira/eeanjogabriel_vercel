@@ -1,13 +1,13 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import './Pagamento.css';
 import { useParams } from 'react-router-dom';
 import VoltarButton from '../VoltarButton/VoltarButton';
-import { UserContext } from '../../context/UseContext';
+// import { UserContext } from '../../context/UseContext';
 
 const Pagamento = () => {
   const { aluno_id } = useParams();
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
   const [pagamentos, setPagamentos] = useState([]);
@@ -39,6 +39,7 @@ const Pagamento = () => {
 
         const pagamentosResponse = await api.get(`/pagamentos/aluno/${aluno_id}`);
         setPagamentos(pagamentosResponse.data.pagamentos || []);
+        
 
         setLoading(false);
       } catch (error) {
