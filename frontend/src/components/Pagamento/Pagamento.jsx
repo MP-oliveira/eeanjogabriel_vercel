@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import api from '../../services/api';
 import './Pagamento.css';
 import { useParams } from 'react-router-dom';
 import VoltarButton from '../VoltarButton/VoltarButton';
-// import { UserContext } from '../../context/UseContext';
+import { UserContext } from '../../context/UseContext';
 
 const Pagamento = () => {
   const { aluno_id } = useParams();
-  // const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [aluno, setAluno] = useState(null);
   const [contas, setContas] = useState([]);
   const [pagamentos, setPagamentos] = useState([]);
@@ -21,6 +21,8 @@ const Pagamento = () => {
     recebido_por: '',
     observacao: ''
   });
+
+
 
   useEffect(() => {
     if (!aluno_id) {
@@ -70,7 +72,8 @@ const Pagamento = () => {
       const dataToSend = {
         ...formData,
         data_pagamento: dataBrasil.toISOString(),
-        aluno_id: aluno_id
+        aluno_id: aluno_id,
+        recebido_por: user.nome
       };
 
       await api.post('/pagamentos', dataToSend);
