@@ -448,6 +448,13 @@ select {
   .tabela-form-lista-mobile {
     display: none !important;
   }
+  .professores-cards-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 0;
+    align-items: center;
+  }
   .admin-cards-mobile {
     display: flex !important;
     flex-direction: column;
@@ -479,6 +486,9 @@ select {
     display: none !important;
   }
   .disciplinas-cards-mobile {
+    display: none !important;
+  }
+  .professores-cards-mobile {
     display: none !important;
   }
 }

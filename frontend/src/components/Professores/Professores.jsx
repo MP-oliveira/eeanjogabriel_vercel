@@ -58,11 +58,10 @@ const Professores = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista tabela-form-lista-mobile">
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Especialidade</th>
               <th>Email</th>
               <th>Telefone</th>
               <th>Status</th>
@@ -71,18 +70,17 @@ const Professores = () => {
           </thead>
           <tbody>
             {filteredProfessores.length > 0 ? (
-              filteredProfessores.map((professor) => (
-                <tr key={professor.id}>
-                  <td>{professor.nome}</td>
-                  <td>{professor.especialidade}</td>
-                  <td>{professor.email}</td>
-                  <td>{professor.telefone}</td>
-                  <td>{professor.status}</td>
+              filteredProfessores.map((prof) => (
+                <tr key={prof.id}>
+                  <td>{prof.nome}</td>
+                  <td>{prof.email}</td>
+                  <td>{prof.telefone}</td>
+                  <td>{prof.status}</td>
                   <td className="for-list-acoes">
-                    <Link to={`/professores/edit/${professor.id}`}>
+                    <Link to={`/professores/edit/${prof.id}`}>
                       <img src={Edit} alt="Editar" />
                     </Link>
-                    <Link onClick={() => handleDelete(professor.id)}>
+                    <Link onClick={() => handleDelete(prof.id)}>
                       <img src={Delete} alt="Deletar" />
                     </Link>
                   </td>
@@ -95,6 +93,33 @@ const Professores = () => {
             )}
           </tbody>
         </table>
+        {/* Cards responsivos para telas menores de 430px */}
+        <div className="professores-cards-mobile">
+          {filteredProfessores.length > 0 ? (
+            filteredProfessores.map((prof) => (
+              <div className="aluno-card" key={prof.id}>
+                <div className="aluno-card-header">
+                  <span className="aluno-card-nome">{prof.nome}</span>
+                  <div className="aluno-card-actions">
+                    <Link to={`/professores/edit/${prof.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(prof.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="aluno-card-info">
+                  <div><strong>Email:</strong> {prof.email}</div>
+                  <div><strong>Telefone:</strong> {prof.telefone}</div>
+                  <div><strong>Status:</strong> {prof.status}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="aluno-card-empty">Nenhum professor encontrado</div>
+          )}
+        </div>
       </div>
     </div>
   );
