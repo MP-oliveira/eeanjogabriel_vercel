@@ -393,6 +393,15 @@
   .form-footer-content {
     gap: 8px;
   }
+
+  .form-container .form-group input,
+  .form-container .form-group textarea {
+    min-width: 0 !important;
+  }
+
+  .footer-item-padding {
+    padding-right: 40px;
+  }
 }
 
 @media screen and (max-width: 375px) {

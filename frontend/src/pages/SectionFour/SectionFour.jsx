@@ -105,7 +105,7 @@ const SectionFour = () => {
                   <div className="footer-icon">🔒</div>
                   <p>Seus dados estão seguros</p>
                 </div>
-                <div className="footer-item">
+                <div className="footer-item footer-item-padding">
                   <div className="footer-icon">⚡</div>
                   <p>Resposta em até 24h</p>
                 </div>
