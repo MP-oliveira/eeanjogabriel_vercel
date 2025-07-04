@@ -77,24 +77,101 @@ const Alunos = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista-aluno">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>CPF</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div className="aluno-list-responsive">
+          <table className="tabela-form-lista-aluno">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAlunos.length > 0 ? (
+                filteredAlunos.map((aluno) => (
+                  <tr key={aluno.id}>
+                    <td title={aluno.nome}>{formatarNome(aluno.nome)}</td>
+                    <td>{aluno.email}</td>
+                    <td>{aluno.cpf}</td>
+                    <td className="for-list-acoes-aluno">
+                      <div className="for-list-acoes-aluno-icons">
+                        <Link to={`/alunos/edit/${aluno.id}`}>
+                          <img src={Edit} alt="Editar" />
+                        </Link>
+                        <Link onClick={() => handleDelete(aluno.id)}>
+                          <img src={Delete} alt="Deletar" />
+                        </Link>
+                      </div>
+                      <div className="for-list-acoes-aluno-buttons">
+                        <Link
+                          className="edit-btn-aluno"
+                          to={`/registroacademico/${aluno.id}`}
+                        >
+                          <button>Reg Aca</button>
+                        </Link>
+                        {user && role.role === "admin" ? (
+                          <>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/mensalidade/${aluno.id}`}
+                            >
+                              <button>Mensalidade</button>
+                            </Link>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/boletim/${aluno.id}`}
+                            >
+                              <button>Boletim</button>
+                            </Link>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/diplomas/${aluno.id}`}
+                            >
+                              <button>Diploma</button>
+                            </Link>{" "}
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/mensalidade/${aluno.id}`}
+                            >
+                              <button disabled>Mensalidade</button>
+                            </Link>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/boletim/${aluno.id}`}
+                            >
+                              <button disabled>Boletim</button>
+                            </Link>
+                            <Link
+                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              to={`/diplomas/${aluno.id}`}
+                            >
+                              <button disabled>Diploma</button>
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">Nenhum aluno encontrado</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {/* Cards para mobile */}
+          <div className="aluno-cards-mobile">
             {filteredAlunos.length > 0 ? (
               filteredAlunos.map((aluno) => (
-                <tr key={aluno.id}>
-                  <td title={aluno.nome}>{formatarNome(aluno.nome)}</td>
-                  <td>{aluno.email}</td>
-                  <td>{aluno.cpf}</td>
-                  <td className="for-list-acoes-aluno">
-                    <div className="for-list-acoes-aluno-icons">
+                <div className="aluno-card" key={aluno.id}>
+                  <div className="aluno-card-header">
+                    <span className="aluno-card-nome">{formatarNome(aluno.nome)}</span>
+                    <div className="aluno-card-actions">
                       <Link to={`/alunos/edit/${aluno.id}`}>
                         <img src={Edit} alt="Editar" />
                       </Link>
@@ -102,68 +179,48 @@ const Alunos = () => {
                         <img src={Delete} alt="Deletar" />
                       </Link>
                     </div>
-                    <div className="for-list-acoes-aluno-buttons">
-                      <Link
-                        className="edit-btn-aluno"
-                        to={`/registroacademico/${aluno.id}`}
-                      >
-                        <button>Reg Aca</button>
-                      </Link>
-
-                      {user && role.role === "admin" ? (
-                        <>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/mensalidade/${aluno.id}`}
-                          >
-                            <button>Mensalidade</button>
-                          </Link>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/boletim/${aluno.id}`}
-                          >
-                            <button>Boletim</button>
-                          </Link>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/diplomas/${aluno.id}`}
-                          >
-                            <button>Diploma</button>
-                          </Link>{" "}
-                        </>
-                      ) : (
-                        <>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/mensalidade/${aluno.id}`}
-                          >
-                            <button disabled>Mensalidade</button>
-                          </Link>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/boletim/${aluno.id}`}
-                          >
-                            <button disabled>Boletim</button>
-                          </Link>
-                          <Link
-                            className={user.role === "admin" ? "edit-btn-aluno": "disable"}
-                            to={`/diplomas/${aluno.id}`}
-                          >
-                            <button disabled>Diploma</button>
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+                  <div className="aluno-card-info">
+                    <div><strong>Email:</strong> {aluno.email}</div>
+                    <div><strong>CPF:</strong> {aluno.cpf}</div>
+                  </div>
+                  <div className="aluno-card-actions aluno-card-actions-btns">
+                    <Link className="edit-btn-aluno" to={`/registroacademico/${aluno.id}`}>
+                      <button>RA</button>
+                    </Link>
+                    {user && role.role === "admin" ? (
+                      <>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/mensalidade/${aluno.id}`}>
+                          <button>M</button>
+                        </Link>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/boletim/${aluno.id}`}>
+                          <button>B</button>
+                        </Link>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/diplomas/${aluno.id}`}>
+                          <button>D</button>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/mensalidade/${aluno.id}`}>
+                          <button disabled>M</button>
+                        </Link>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/boletim/${aluno.id}`}>
+                          <button disabled>B</button>
+                        </Link>
+                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/diplomas/${aluno.id}`}>
+                          <button disabled>D</button>
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </div>
               ))
             ) : (
-              <tr>
-                <td colSpan="4">Nenhum aluno encontrado</td>
-              </tr>
+              <div className="aluno-card-empty">Nenhum aluno encontrado</div>
             )}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     </div>
   );
