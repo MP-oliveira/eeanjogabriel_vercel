@@ -58,7 +58,7 @@ const Admins = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista tabela-form-lista-mobile">
           <thead>
             <tr>
               <th>Nome</th>
@@ -93,6 +93,33 @@ const Admins = () => {
             )}
           </tbody>
         </table>
+        {/* Cards responsivos para telas menores de 430px */}
+        <div className="admin-cards-mobile">
+          {filteredAdmins.length > 0 ? (
+            filteredAdmins.map((admin) => (
+              <div className="aluno-card" key={admin.id}>
+                <div className="aluno-card-header">
+                  <span className="aluno-card-nome">{admin.nome}</span>
+                  <div className="aluno-card-actions">
+                    <Link to={`/admins/edit/${admin.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(admin.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="aluno-card-info">
+                  <div><strong>Email:</strong> {admin.email}</div>
+                  <div><strong>Telefone:</strong> {admin.telefone}</div>
+                  <div><strong>Status:</strong> {admin.status}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="aluno-card-empty">Nenhum admin encontrado</div>
+          )}
+        </div>
       </div>
     </div>
   );

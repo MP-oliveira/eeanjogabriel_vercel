@@ -433,6 +433,34 @@ select {
   .cur-tur-dai-dat {
     grid-template-columns: 1fr;
   }
+
+  .lista-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 0;
+    align-items: center;
+  }
+  .lista-tabela {
+    display: none;
+  }
+
+  .tabela-form-lista-mobile {
+    display: none !important;
+  }
+  .admin-cards-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 0;
+    align-items: center;
+  }
+}
+
+@media (min-width: 431px) {
+  .admin-cards-mobile {
+    display: none !important;
+  }
 }
 
 @media (max-width: 375px) {
