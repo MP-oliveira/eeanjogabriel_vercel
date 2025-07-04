@@ -59,10 +59,13 @@ const Cursos = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista tabela-form-lista-mobile">
           <thead>
             <tr>
               <th>Nome</th>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -71,23 +74,53 @@ const Cursos = () => {
               filteredCursos.map((curso) => (
                 <tr key={curso.id}>
                   <td>{curso.nome}</td>
+                  <td>{curso.codigo}</td>
+                  <td>{curso.descricao}</td>
+                  <td>{curso.status}</td>
                   <td className="for-list-acoes">
                     <Link to={`/cursos/edit/${curso.id}`}>
-                      <img src={Edit} alt="" />
+                      <img src={Edit} alt="Editar" />
                     </Link>
                     <Link onClick={() => handleDelete(curso.id)}>
-                      <img src={Delete} alt="" />
+                      <img src={Delete} alt="Deletar" />
                     </Link>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4">Nenhum curso encontrado</td>
+                <td colSpan="6">Nenhum curso encontrado</td>
               </tr>
             )}
           </tbody>
         </table>
+        {/* Cards responsivos para telas menores de 430px */}
+        <div className="cursos-cards-mobile">
+          {filteredCursos.length > 0 ? (
+            filteredCursos.map((curso) => (
+              <div className="aluno-card" key={curso.id}>
+                <div className="aluno-card-header">
+                  <span className="aluno-card-nome">{curso.nome}</span>
+                  <div className="aluno-card-actions">
+                    <Link to={`/cursos/edit/${curso.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(curso.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="aluno-card-info">
+                  <div><strong>Código:</strong> {curso.codigo}</div>
+                  <div><strong>Descrição:</strong> {curso.descricao}</div>
+                  <div><strong>Status:</strong> {curso.status}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="aluno-card-empty">Nenhum curso encontrado</div>
+          )}
+        </div>
       </div>
     </div>
   )
