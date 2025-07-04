@@ -484,7 +484,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: transform 0.2s ease-in-out;
     border-left: 4px solid #1976d2;
-    min-height: 80px; /* Altura mínima para cada card */
   }
 
   .mensalidade-card:hover {

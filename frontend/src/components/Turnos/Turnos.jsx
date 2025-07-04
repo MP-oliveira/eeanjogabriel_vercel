@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from "../../services/api"; // Certifique-se de que o caminho está correto
+import Edit from '../../assets/pencil.svg';
+import Delete from '../../assets/trash.svg';
+
 
 const Turnos = () => {
   const [turnos, setTurnos] = useState([]);
@@ -29,6 +32,11 @@ const Turnos = () => {
     setFilteredTurnos(filtered);
   };
 
+  const handleDelete = (id) => {
+    // Implemente a lógica para deletar um turno
+    console.log(`Deletando turno com ID: ${id}`);
+  };
+
   return (
     <div className="form-container">
       <div className="form-list-content">
@@ -45,26 +53,65 @@ const Turnos = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista tabela-form-lista-mobile">
           <thead>
             <tr>
-              <th>Nome do Turno</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {filteredTurnos.length > 0 ? (
               filteredTurnos.map((turno) => (
                 <tr key={turno.id}>
-                  <td>{turno.nome}</td> 
+                  <td>{turno.nome}</td>
+                  <td>{turno.descricao}</td>
+                  <td>{turno.status}</td>
+                  <td className="for-list-acoes">
+                    <Link to={`/turnos/edit/${turno.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(turno.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="2">Nenhum turno encontrado</td>
+                <td colSpan="5">Nenhum turno encontrado</td>
               </tr>
             )}
           </tbody>
         </table>
+        {/* Cards responsivos para telas menores de 430px */}
+        <div className="turnos-cards-mobile">
+          {filteredTurnos.length > 0 ? (
+            filteredTurnos.map((turno) => (
+              <div className="aluno-card" key={turno.id}>
+                <div className="aluno-card-header">
+                  <span className="aluno-card-nome">{turno.nome}</span>
+                  <div className="aluno-card-actions">
+                    <Link to={`/turnos/edit/${turno.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(turno.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="aluno-card-info">
+                  <div><strong>Descrição:</strong> {turno.descricao}</div>
+                  <div><strong>Status:</strong> {turno.status}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="aluno-card-empty">Nenhum turno encontrado</div>
+          )}
+        </div>
       </div>
     </div>
   );
