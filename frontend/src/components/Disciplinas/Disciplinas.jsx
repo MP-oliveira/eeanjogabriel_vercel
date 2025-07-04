@@ -60,29 +60,29 @@ const Disciplinas = () => {
             onChange={handleSearch}
           />
         </div>
-        <table className="tabela-form-lista">
+        <table className="tabela-form-lista tabela-form-lista-mobile">
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Carga Horária</th>
-              <th>Horário de Início</th>
-              <th>Dias da Semana</th>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {filteredDisciplinas.length > 0 ? (
-              filteredDisciplinas.map((disciplina) => (
-                <tr key={disciplina.id}>
-                  <td>{disciplina.nome}</td>
-                  <td>{disciplina.carga_horaria}</td>
-                  <td>{disciplina.horario_inicio}</td>
-                  <td>{Array.isArray(disciplina.dias_semana) ? disciplina.dias_semana.join(', ') : disciplina.dias_semana}</td>
+              filteredDisciplinas.map((disc) => (
+                <tr key={disc.id}>
+                  <td>{disc.nome}</td>
+                  <td>{disc.codigo}</td>
+                  <td>{disc.descricao}</td>
+                  <td>{disc.status}</td>
                   <td className="for-list-acoes">
-                    <Link to={`/disciplinas/edit/${disciplina.id}`}>
+                    <Link to={`/disciplinas/edit/${disc.id}`}>
                       <img src={Edit} alt="Editar" />
                     </Link>
-                    <Link onClick={() => handleDelete(disciplina.id)}>
+                    <Link onClick={() => handleDelete(disc.id)}>
                       <img src={Delete} alt="Deletar" />
                     </Link>
                   </td>
@@ -90,11 +90,38 @@ const Disciplinas = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="14">Nenhuma disciplina encontrada</td>
+                <td colSpan="6">Nenhuma disciplina encontrada</td>
               </tr>
             )}
           </tbody>
         </table>
+        {/* Cards responsivos para telas menores de 430px */}
+        <div className="disciplinas-cards-mobile">
+          {filteredDisciplinas.length > 0 ? (
+            filteredDisciplinas.map((disc) => (
+              <div className="aluno-card" key={disc.id}>
+                <div className="aluno-card-header">
+                  <span className="aluno-card-nome">{disc.nome}</span>
+                  <div className="aluno-card-actions">
+                    <Link to={`/disciplinas/edit/${disc.id}`}>
+                      <img src={Edit} alt="Editar" />
+                    </Link>
+                    <Link onClick={() => handleDelete(disc.id)}>
+                      <img src={Delete} alt="Deletar" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="aluno-card-info">
+                  <div><strong>Código:</strong> {disc.codigo}</div>
+                  <div><strong>Descrição:</strong> {disc.descricao}</div>
+                  <div><strong>Status:</strong> {disc.status}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="aluno-card-empty">Nenhuma disciplina encontrada</div>
+          )}
+        </div>
       </div>
     </div>
   );
