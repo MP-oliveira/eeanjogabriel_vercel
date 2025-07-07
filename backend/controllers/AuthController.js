@@ -13,6 +13,8 @@ module.exports = class AuthController {
   
     // Log para debug
     console.log("Tentativa de login para:", email);
+    console.log("Senha recebida (primeiros 3 chars):", password ? password.substring(0, 3) + "..." : "null");
+    console.log("Tamanho da senha:", password ? password.length : 0);
   
     try {
       // Autenticar o usuário no Supabase

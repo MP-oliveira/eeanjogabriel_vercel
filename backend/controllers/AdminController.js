@@ -5,6 +5,11 @@ const supabase = require("../db/supabaseCilent");
 // Função para criar um usuário no Supabase Auth
 async function createSupabaseUser(nome, email, password, role) {
   try {
+    console.log('Criando usuário no Supabase Auth:');
+    console.log('Email:', email);
+    console.log('Senha para Supabase (primeiros 3 chars):', password ? password.substring(0, 3) + "..." : "null");
+    console.log('Tamanho da senha para Supabase:', password ? password.length : 0);
+    
     const { user, error } = await supabase.auth.signUp({
       email,
       password,
@@ -67,12 +72,13 @@ module.exports = class AdminsController {
         password,
       };
 
-      // Converter para minúsculas com exceções
+      // Converter para minúsculas com exceções (não converter senha)
       const adminLowercase = Object.fromEntries(
         Object.entries(admin).map(([key, value]) => [
           key,
           typeof value === "string" &&
-            key !== "nome"
+            key !== "nome" &&
+            key !== "password"
             ? value.toLowerCase()
             : value,
         ])
@@ -81,6 +87,8 @@ module.exports = class AdminsController {
       // Salvar a senha original antes de criar o admin (que vai hashear)
       const senhaOriginal = adminLowercase.password;
       
+      console.log('Senha original recebida:', senhaOriginal);
+      console.log('Tamanho da senha original:', senhaOriginal ? senhaOriginal.length : 0);
       console.log(adminLowercase, 'antes do await');
 
       const createdAdmin = await Admin.create(adminLowercase);

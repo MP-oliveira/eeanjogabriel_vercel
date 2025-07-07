@@ -86,7 +86,8 @@ module.exports = class ProfessoresController {
         Object.entries(professor).map(([key, value]) => [
           key,
           typeof value === "string" &&
-            key !== "nome"
+            key !== "nome" &&
+            key !== "password"
             ? value.toLowerCase()
             : value,
         ])
