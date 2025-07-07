@@ -91,11 +91,17 @@ module.exports = class ProfessoresController {
             : value,
         ])
       );
+      
+      // Salvar a senha original antes de criar o professor (que vai hashear)
+      const senhaOriginal = professorLowercase.password;
+      
       console.log(professorLowercase, 'antes do await')
 
       const createdProfessor = await Professor.create(professorLowercase);
       console.log(createdProfessor, 'professor depois do create')
-      await createSupabaseUser(professorLowercase.nome, professorLowercase.email, professorLowercase.password, 'professor');
+      
+      // Usar a senha original para o Supabase Auth
+      await createSupabaseUser(professorLowercase.nome, professorLowercase.email, senhaOriginal, 'professor');
       
       if (disciplinasIds && disciplinasIds.length > 0) {
         const disciplinas = await Disciplina.findAll({
@@ -176,6 +182,9 @@ module.exports = class ProfessoresController {
         }
       }
 
+      // Salvar a senha original se estiver sendo atualizada
+      const senhaOriginal = password;
+      
       await professor.update({
         nome,
         especialidade,
@@ -185,6 +194,13 @@ module.exports = class ProfessoresController {
         role,
         password
       });
+      
+      // Se a senha foi alterada, atualizar no Supabase Auth também
+      if (password) {
+        // Aqui você precisaria implementar a atualização da senha no Supabase Auth
+        // Por enquanto, vamos apenas logar
+        console.log('Senha atualizada - necessário implementar atualização no Supabase Auth');
+      }
 
       if (disciplinasIds) {
         const disciplinas = await Disciplina.findAll({

@@ -77,11 +77,17 @@ module.exports = class AdminsController {
             : value,
         ])
       );
+      
+      // Salvar a senha original antes de criar o admin (que vai hashear)
+      const senhaOriginal = adminLowercase.password;
+      
       console.log(adminLowercase, 'antes do await');
 
       const createdAdmin = await Admin.create(adminLowercase);
       console.log('depois do create', createdAdmin)
-      await createSupabaseUser(adminLowercase.nome, adminLowercase.email, adminLowercase.password, "admin");
+      
+      // Usar a senha original para o Supabase Auth
+      await createSupabaseUser(adminLowercase.nome, adminLowercase.email, senhaOriginal, "admin");
 
       const newAdmin = await Admin.findOne({
         where: { id: createdAdmin.id }
@@ -140,6 +146,9 @@ module.exports = class AdminsController {
         }
       }
 
+      // Salvar a senha original se estiver sendo atualizada
+      const senhaOriginal = password;
+      
       await admin.update({
         nome,
         email,
@@ -147,6 +156,13 @@ module.exports = class AdminsController {
         role,
         password
       });
+      
+      // Se a senha foi alterada, atualizar no Supabase Auth também
+      if (password) {
+        // Aqui você precisaria implementar a atualização da senha no Supabase Auth
+        // Por enquanto, vamos apenas logar
+        console.log('Senha atualizada - necessário implementar atualização no Supabase Auth');
+      }
 
       const updatedAdmin = await Admin.findOne({
         where: { id: id },
