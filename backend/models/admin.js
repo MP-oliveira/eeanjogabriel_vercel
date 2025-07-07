@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 const db = require('../db/db');
 
 const Admin = db.define('Admin', {
@@ -32,12 +33,27 @@ const Admin = db.define('Admin', {
       }
     }
   }
-},
+  },
   {
     tableName: "admins",
     timestamps: false,
+    hooks: {
+      beforeCreate: async (admin) => {
+        if (admin.password) {
+          admin.password = await bcrypt.hash(admin.password, 10);
+        }
+      },
+      beforeUpdate: async (admin) => {
+        if (admin.changed('password')) {
+          admin.password = await bcrypt.hash(admin.password, 10);
+        }
+      }
+    }
   });
 
-
+// Método para verificar senha
+Admin.prototype.verifyPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 module.exports = Admin;

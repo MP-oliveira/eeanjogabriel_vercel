@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 const db = require('../db/db');
 const Disciplina = require('./disciplina');
 
@@ -46,6 +47,18 @@ const Professor = db.define('Professor', {
 }, {
   tableName: "professores",
   timestamps: false,
+  hooks: {
+    beforeCreate: async (professor) => {
+      if (professor.password) {
+        professor.password = await bcrypt.hash(professor.password, 10);
+      }
+    },
+    beforeUpdate: async (professor) => {
+      if (professor.changed('password')) {
+        professor.password = await bcrypt.hash(professor.password, 10);
+      }
+    }
+  }
 });
 
 // Relacionamento Many-to-Many entre Professor e Disciplina
@@ -57,5 +70,10 @@ Disciplina.belongsToMany(Professor, {
   through: 'professor_id',
   as: 'professores'
 });
+
+// Método para verificar senha
+Professor.prototype.verifyPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 module.exports = Professor;
