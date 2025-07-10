@@ -19,7 +19,6 @@ const disciplinaSchema = z.object({
   estagio_supervisionado: z
     .string()
     .min(1, { message: "Selecione se tem estágio supervisionado" }),
-  duracao: z.number().min(1, { message: "A duração precisa ser maior que 0" }),
   curso_id: z.number().min(1, { message: "Selecione um curso" }),
   professor_id: z.number().min(1, { message: "Selecione um professor" })
 });
@@ -31,7 +30,6 @@ const AddDisciplina = () => {
   const [carga_horaria, setCarga_horaria] = useState("");
   const [carga_horaria_estagio, setCarga_horaria_estagio] = useState("");
   const [estagio_supervisionado, setEstagio_supervisionado] = useState("");
-  const [duracao, setDuracao] = useState("");
   const [curso_id, setCurso_id] = useState("");
   const [professor_id, setProfessor_id] = useState("");
   const [errors, setErrors] = useState({});
@@ -66,7 +64,6 @@ const AddDisciplina = () => {
       carga_horaria_estagio:
         estagio_supervisionado === "Sim" ? Number(carga_horaria_estagio) : 0,
       estagio_supervisionado,
-      duracao: Number(duracao),
       curso_id: Number(curso_id),
       professor_id: Number(professor_id)
     };
@@ -81,14 +78,13 @@ const AddDisciplina = () => {
         carga_horaria: fieldErrors.carga_horaria?._errors[0],
         carga_horaria_estagio: fieldErrors.carga_horaria_estagio?._errors[0],
         estagio_supervisionado: fieldErrors.estagio_supervisionado?._errors[0],
-        duracao: fieldErrors.duracao?._errors[0],
         curso_id: fieldErrors.curso_id?._errors[0],
         professor_id: fieldErrors.professor_id?._errors[0]
       });
     } else {
       setIsLoading(true);
       try {
-        const response = await api.post(
+        await api.post(
           "/disciplinas/create",
           disciplinaresult.data
         );
@@ -98,7 +94,6 @@ const AddDisciplina = () => {
         setCarga_horaria("");
         setCarga_horaria_estagio("");
         setEstagio_supervisionado("");
-        setDuracao("");
         setCurso_id("");
         setProfessor_id("");
         navigate("/disciplinas");
@@ -174,6 +169,7 @@ const AddDisciplina = () => {
               <option value="1">Módulo 1</option>
               <option value="2">Módulo 2</option>
               <option value="3">Módulo 3</option>
+              <option value="3">Módulo 4</option>
             </select>
           </div>
           {errors.modulo && (
@@ -193,43 +189,35 @@ const AddDisciplina = () => {
             {errors.carga_horaria}
           </p>
         )}
-        <input
-          type="number"
-          value={carga_horaria_estagio}
-          onChange={(e) => setCarga_horaria_estagio(e.target.value)}
-          placeholder="Carga Horária Estágio"
-        />
-        {errors.carga_horaria_estagio && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.carga_horaria_estagio}
-          </p>
-        )}
-        <div className="custom-select-wrapper">
-          <select
-            value={estagio_supervisionado}
-            onChange={(e) => setEstagio_supervisionado(e.target.value)}
-          >
-            <option value="">Tem Estágio Supervisionado?</option>
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-          </select>
+        <div className="input-three-columns">
+          <div className="custom-select-wrapper">
+            <select
+              value={estagio_supervisionado}
+              onChange={(e) => setEstagio_supervisionado(e.target.value)}
+            >
+              <option value="">Tem Estágio Supervisionado?</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+          {errors.estagio_supervisionado && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.estagio_supervisionado}
+            </p>
+          )}
+          <input
+            type="number"
+            value={carga_horaria_estagio}
+            onChange={(e) => setCarga_horaria_estagio(e.target.value)}
+            placeholder="Carga Horária Estágio"
+            disabled={estagio_supervisionado === "Não"}
+          />
+          {errors.carga_horaria_estagio && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.carga_horaria_estagio}
+            </p>
+          )}
         </div>
-        {errors.estagio_supervisionado && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.estagio_supervisionado}
-          </p>
-        )}
-        <input
-          type="number"
-          value={duracao}
-          onChange={(e) => setDuracao(e.target.value)}
-          placeholder="Duração (em semanas)"
-        />
-        {errors.duracao && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.duracao}
-          </p>
-        )}
         <button
           className="aluno-btn"
           type="submit"
