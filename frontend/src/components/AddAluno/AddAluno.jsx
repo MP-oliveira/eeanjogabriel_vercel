@@ -318,24 +318,7 @@ const AddAluno = () => {
           )}
         </div>
         <div className="input-three-columns">
-          <div className="custom-select-wrapper">
-            <select onChange={(e) => setGrupo_sanguineo(e.target.value)}>
-              <option value="">Grupo Sanguineo</option>
-              <option value="A-">A-</option>
-              <option value="A+">A+</option>
-              <option value="B-">B-</option>
-              <option value="B+">B+</option>
-              <option value="AB-">AB-</option>
-              <option value="AB+">AB+</option>
-              <option value="O-">O-</option>
-              <option value="O+">O+</option>
-            </select>
-            {errors.estado_civil && (
-              <p className="error_message" style={{ color: "red" }}>
-                {errors.grupo_sanguineo}
-              </p>
-            )}
-          </div>
+          {/* Removido grupo sanguíneo */}
           <input
             type="text"
             value={naturalidade}
@@ -492,17 +475,6 @@ const AddAluno = () => {
               </p>
             )}
           </div>
-          <input
-            type="date"
-            value={data_matricula}
-            onChange={(e) => setData_matricula(e.target.value)}
-            className="custom-date-input"
-          />
-          {errors.data_matricula && (
-            <p className="error_message" style={{ color: "red" }}>
-              {errors.data_matricula}
-            </p>
-          )}
           <div className="custom-select-wrapper">
             <select
               value={curso_id}
@@ -544,17 +516,7 @@ const AddAluno = () => {
             />
             Adicione seu Histórico (.pdf até 10Mb)
           </div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite a senha"
-          />
-          {errors.password && (
-            <p className="error_message" style={{ color: "red" }}>
-              {errors.password._errors?.[0]}
-            </p>
-          )}
+          {/* Removido campo de senha */}
         </div>
         <div className="form-btn-container">
           <button className="form-btn" type="submit">
