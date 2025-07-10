@@ -11,7 +11,9 @@
     "dev": "NODE_ENV=development node index.js",
     "build": "echo 'Build completo' && exit 0",
     "vercel-build": "echo 'Build step completed'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:sync": "node db/init.js",
+    "db:reset": "node db/init.js --force"
   },
   "keywords": [
     "academico",

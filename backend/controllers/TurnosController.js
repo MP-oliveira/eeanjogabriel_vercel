@@ -36,28 +36,19 @@ module.exports = class TurnosController {
   }
 
   static async createTurno(req, res) {
-    const {
-      nome,
-      inicio,
-      termino,
-    } = req.body;
+    const { nome, inicio, termino } = req.body;
+
+    // Validação simples
+    if (!nome || !inicio || !termino) {
+      return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+    }
 
     try {
-      const turno = {
-        nome,
-        inicio,
-        termino,
-      };
-
-      const turnoLowercase = Object.fromEntries(
-        Object.entries(turno).map(([key, value]) => [key, typeof value === 'string' ? value.toLowerCase() : value])
-      );
-
-      const createdTurno = await Turno.create(turnoLowercase);
+      const createdTurno = await Turno.create({ nome, inicio, termino });
       res.status(201).json(createdTurno);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erro ao criar turno' });
+      console.error('Erro ao criar turno:', error);
+      res.status(500).json({ error: 'Erro ao criar turno', details: error.message });
     }
   }
 

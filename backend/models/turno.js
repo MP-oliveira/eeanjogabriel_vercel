@@ -4,15 +4,15 @@ const db = require('../db/db');
 const Turno = db.define('Turno', {
   nome: {
     type: DataTypes.STRING,
-    // allowNull: false,
+    allowNull: false,
   },
   inicio: {
     type: DataTypes.STRING,
-    // allowNull: false,
+    allowNull: false,
   },
   termino: {
     type: DataTypes.STRING,
-    // allowNull: false,
+    allowNull: false,
   },
 },
   {
