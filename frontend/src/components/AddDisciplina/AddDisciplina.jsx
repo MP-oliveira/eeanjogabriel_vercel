@@ -178,6 +178,7 @@ const AddDisciplina = () => {
             </p>
           )}
         </div>
+        <div className="input-three-columns">
         <input
           type="number"
           value={carga_horaria}
@@ -189,7 +190,6 @@ const AddDisciplina = () => {
             {errors.carga_horaria}
           </p>
         )}
-        <div className="input-three-columns">
           <div className="custom-select-wrapper">
             <select
               value={estagio_supervisionado}
