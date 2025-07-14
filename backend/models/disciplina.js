@@ -18,23 +18,11 @@ const Disciplina = db.define('disciplina', {
   estagio_supervisionado: {
     type: DataTypes.STRING,
   },
-  duracao: {
-    type: DataTypes.INTEGER,
-  },
   curso_id: {
     type: DataTypes.INTEGER,
   },
   professor_id: {
     type: DataTypes.INTEGER,
-  },
-  horario_inicio: {
-    type: DataTypes.STRING,
-  },
-  horario_fim: {
-    type: DataTypes.STRING,
-  },
-  dias_semana: {
-    type: DataTypes.STRING,
   },
 }, {
   tableName: 'disciplinas',

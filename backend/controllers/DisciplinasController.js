@@ -31,12 +31,8 @@ module.exports = class DisciplinasController {
       carga_horaria,
       carga_horaria_estagio,
       estagio_supervisionado,
-      duracao,
       curso_id,
       professor_id,
-      horario_inicio,
-      horario_fim,
-      dias_semana,
     } = req.body
 
     try {
@@ -46,12 +42,8 @@ module.exports = class DisciplinasController {
         carga_horaria,
         carga_horaria_estagio,
         estagio_supervisionado,
-        duracao,
         curso_id,
         professor_id,
-        horario_inicio,
-        horario_fim,
-        dias_semana: Array.isArray(dias_semana) ? dias_semana.join(',') : dias_semana,
       };
       console.log('disciplina', disciplina)
       const createDisciplina = await Disciplina.create(disciplina)
@@ -65,11 +57,6 @@ module.exports = class DisciplinasController {
   static async updateDisciplina(req, res) {
     const { id } = req.params
     const updatedData = { ...req.body };
-    if (updatedData.dias_semana) {
-      updatedData.dias_semana = Array.isArray(updatedData.dias_semana)
-        ? updatedData.dias_semana.join(',')
-        : updatedData.dias_semana;
-    }
 
     try {
       const disciplina = await Disciplina.findByPk(id)
