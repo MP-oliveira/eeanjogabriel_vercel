@@ -156,7 +156,7 @@ module.exports = class AdminsController {
 
       // Salvar a senha original se estiver sendo atualizada
       const senhaOriginal = password;
-      
+
       await admin.update({
         nome,
         email,

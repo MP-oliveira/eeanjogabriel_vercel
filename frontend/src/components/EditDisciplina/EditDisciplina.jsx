@@ -218,58 +218,58 @@ const EditDisciplina = () => {
             </p>
           )}
         </div>
-        <input
+          <input
           type="number"
-          name="carga_horaria"
-          value={disciplinaData.carga_horaria}
-          onChange={handleChange}
-          placeholder="Carga Horária"
-        />
-        {errors.carga_horaria && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.carga_horaria._errors?.[0]}
-          </p>
-        )}
-        <input
-          type="number"
-          name="carga_horaria_estagio"
-          value={disciplinaData.carga_horaria_estagio}
-          onChange={handleChange}
-          placeholder="Carga Horária Estágio"
-        />
-        {errors.carga_horaria_estagio && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.carga_horaria_estagio._errors?.[0]}
-          </p>
-        )}
-        <div className="custom-select-wrapper">
-          <select
-            name="estagio_supervisionado"
-            value={disciplinaData.estagio_supervisionado}
+            name="carga_horaria"
+            value={disciplinaData.carga_horaria}
             onChange={handleChange}
-          >
+          placeholder="Carga Horária"
+          />
+          {errors.carga_horaria && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.carga_horaria._errors?.[0]}
+            </p>
+          )}
+          <input
+          type="number"
+            name="carga_horaria_estagio"
+            value={disciplinaData.carga_horaria_estagio}
+            onChange={handleChange}
+          placeholder="Carga Horária Estágio"
+          />
+          {errors.carga_horaria_estagio && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.carga_horaria_estagio._errors?.[0]}
+            </p>
+          )}
+          <div className="custom-select-wrapper">
+            <select
+              name="estagio_supervisionado"
+              value={disciplinaData.estagio_supervisionado}
+              onChange={handleChange}
+            >
             <option value="">Tem Estágio Supervisionado?</option>
-            <option value="Sim">Sim</option>
+              <option value="Sim">Sim</option>
             <option value="Não">Não</option>
-          </select>
-        </div>
-        {errors.estagio_supervisionado && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.estagio_supervisionado._errors?.[0]}
-          </p>
-        )}
-        <input
+            </select>
+          </div>
+          {errors.estagio_supervisionado && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.estagio_supervisionado._errors?.[0]}
+            </p>
+          )}
+          <input
           type="number"
           name="duracao"
           value={disciplinaData.duracao}
-          onChange={handleChange}
+            onChange={handleChange}
           placeholder="Duração (em semanas)"
-        />
+          />
         {errors.duracao && (
-          <p className="error_message" style={{ color: "red" }}>
+            <p className="error_message" style={{ color: "red" }}>
             {errors.duracao._errors?.[0]}
-          </p>
-        )}
+            </p>
+          )}
         <button className="aluno-btn" type="submit">
           Salvar Alterações
         </button>

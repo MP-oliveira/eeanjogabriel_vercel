@@ -7,7 +7,7 @@ import VoltarButton from "../VoltarButton/VoltarButton";
 
 
 // Regex para CPF com ou sem pontuação
-const cpfRegex = /^(\d{3}.?\d{3}.?\d{3}-?\d{2})$/;
+const cpfRegex = /^\d{3}.?\d{3}.?\d{3}-?\d{2}$/;
 
 // Regex para RG com ou sem pontuação
 
@@ -18,48 +18,25 @@ const celularRegex = /^(\d{2})?\s?\d{5}-?\d{4}$/;
 const cepRegex = /^\d{5}-?\d{3}$/;
 
 const alunoSchema = z.object({
-  nome: z
-    .string()
-    .min(3, { message: "O nome precisa ter no minimo 3 caracteres." }),
-  email: z.coerce.string().email({ message: "Digite um email valido." }).min(5),
-  data_nascimento: z
-    .date()
-    .max(new Date(), { message: "Digite uma data valida" }),
+  nome: z.string().min(3, { message: "O nome precisa ter no mínimo 3 caracteres." }),
+  email: z.coerce.string().email({ message: "Digite um email válido." }).min(5),
+  data_nascimento: z.string().min(1, { message: "Informe a data de nascimento" }),
   estado_civil: z.string({ message: "Selecione uma opção" }),
-  grupo_sanguineo: z.string({ message: "Selecione uma opção" }),
-  naturalidade: z
-    .string()
-    .min(3, { message: "Digite uma naturalizade valida" }),
-  nacionalidade: z
-    .string()
-    .min(3, { message: "Digite uma nacionalidade valida" }),
+  naturalidade: z.string().min(3, { message: "Digite uma naturalidade válida" }),
+  nacionalidade: z.string().min(3, { message: "Digite uma nacionalidade válida" }),
   pai: z.string(),
   mae: z.string(),
-  cpf: z.string().refine((value) => cpfRegex.test(value), {
-    message: "CPF inválido",
-  }),
+  cpf: z.string().refine((value) => cpfRegex.test(value), { message: "CPF inválido" }),
   endereco: z.string(),
   n_casa: z.string(),
   bairro: z.string(),
-  celular: z.string().refine((value) => celularRegex.test(value), {
-    message: "Celular inválido",
-  }),
-  cep: z.string().refine((value) => cepRegex.test(value), {
-    message: "CEP inválido",
-  }),
+  celular: z.string().refine((value) => celularRegex.test(value), { message: "Celular inválido" }),
+  cep: z.string().refine((value) => cepRegex.test(value), { message: "CEP inválido" }),
   cidade: z.string(),
   estado: z.string(),
-  curso: z.string(),
-  turno: z.string(),
-  data_matricula: z
-    .date()
-    .max(new Date(), { message: "Digite uma data matricula valida" }),
-  // data_termino_curso: z
-  //   .date()
-  //   .max(new Date(), { message: "Digite uma data termino valida" }),
-  password: z.string().min(6, {
-    message: "Senha Invalida. A senha de ter pelo menos 6 caracteres. ",
-  }),
+  curso_id: z.string().min(1, { message: "Selecione um curso" }),
+  turno_id: z.string().min(1, { message: "Selecione um turno" }),
+  data_matricula: z.string().min(1, { message: "Informe a data de matrícula" })
 });
 
 const AddAluno = () => {
@@ -69,7 +46,6 @@ const AddAluno = () => {
   const [email, setEmail] = useState("");
   const [data_nascimento, setData_nascimento] = useState("");
   const [estado_civil, setEstado_civil] = useState("");
-  const [grupo_sanguineo, setGrupo_sanguineo] = useState("");
   const [naturalidade, setNaturalidade] = useState("");
   const [nacionalidade, setNacionalidade] = useState("");
   const [pai, setPai] = useState("");
@@ -82,17 +58,14 @@ const AddAluno = () => {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
-  const [curso, setCurso] = useState("");
-  const [turno, setTurno] = useState("");
+  const [curso_id, setCurso_id] = useState(0);
+  const [turno_id, setTurno_id] = useState("");
   const [data_matricula, setData_matricula] = useState("");
   // const [data_termino_curso, setData_termino_curso] = useState("");
   const [file, setFile] = useState(null);
   const [historico, setHistorico] = useState(null);
-  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [cursos, setCursos] = useState([]);
-  const [curso_id, setCurso_id] = useState(0);
-  const [turno_id, setTurno_id] = useState("");
   const [turnos, setTurnos] = useState([]);
 
   useEffect(() => {
@@ -123,13 +96,13 @@ const AddAluno = () => {
   // Função para lidar com o envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Enviando formulário");
 
     const alunoFormValues = {
       nome,
       email,
-      data_nascimento: new Date(data_nascimento),
+      data_nascimento,
       estado_civil,
-      grupo_sanguineo,
       naturalidade,
       nacionalidade,
       pai,
@@ -142,15 +115,14 @@ const AddAluno = () => {
       cep,
       cidade,
       estado,
-      curso,
-      turno,
-      data_matricula: new Date(data_matricula),
-      // data_termino_curso: new Date(data_termino_curso),
-      password,
+      curso_id,
+      turno_id,
+      data_matricula,
     };
 
     // Validando os dados com o esquema do Zod
     const alunoresult = alunoSchema.safeParse(alunoFormValues);
+    console.log("Resultado da validação:", alunoresult);
 
     // Se houver erros, eles serão exibidos
     if (!alunoresult.success) {
@@ -158,9 +130,8 @@ const AddAluno = () => {
       setErrors({
         nome: fieldErrors.nome?._errors[0],
         email: fieldErrors.email?._errors[0],
-        data_nascimento: fieldErrors.email?._errors[0],
+        data_nascimento: fieldErrors.data_nascimento?._errors[0],
         estado_civil: fieldErrors.estado_civil?._errors[0],
-        grupo_sanguineo: fieldErrors.grupo_sanguineo?._errors[0],
         naturalidade: fieldErrors.naturalidade?._errors[0],
         nacionalidade: fieldErrors.nacionalidade?._errors[0],
         pai: fieldErrors.pai?._errors[0],
@@ -173,11 +144,9 @@ const AddAluno = () => {
         cep: fieldErrors.cep?._errors[0],
         cidade: fieldErrors.cidade?._errors[0],
         estado: fieldErrors.estado?._errors[0],
-        curso: fieldErrors.curso?._errors[0],
-        turno: fieldErrors.turno?._errors[0],
+        curso_id: fieldErrors.curso_id?._errors[0],
+        turno_id: fieldErrors.turno_id?._errors[0],
         data_matricula: fieldErrors.data_matricula?._errors[0],
-        // data_termino_curso: fieldErrors.data_termino_curso?._errors[0],
-        password: fieldErrors.password?._errors[0],
       });
     } else {
       try {
@@ -186,7 +155,6 @@ const AddAluno = () => {
         formData.append("email", alunoresult.data.email);
         formData.append("data_nascimento", alunoresult.data.data_nascimento);
         formData.append("estado_civil", alunoresult.data.estado_civil);
-        formData.append("grupo_sanguineo", alunoresult.data.grupo_sanguineo);
         formData.append("naturalidade", alunoresult.data.naturalidade);
         formData.append("nacionalidade", alunoresult.data.nacionalidade);
         formData.append("pai", alunoresult.data.pai);
@@ -199,8 +167,8 @@ const AddAluno = () => {
         formData.append("cep", alunoresult.data.cep);
         formData.append("cidade", alunoresult.data.cidade);
         formData.append("estado", alunoresult.data.estado);
-        formData.append("curso", alunoresult.data.curso);
-        formData.append("turno", alunoresult.data.turno);
+        formData.append("curso_id", alunoresult.data.curso_id);
+        formData.append("turno_id", alunoresult.data.turno_id);
         formData.append("data_matricula", alunoresult.data.data_matricula);
         // formData.append(
         //   "data_termino_curso",
@@ -208,7 +176,8 @@ const AddAluno = () => {
         // );
         formData.append("file", file);
         formData.append("historico", historico);
-        formData.append("password", alunoresult.data.password);
+
+        console.log("form data",formData)
 
         // Enviar os dados para a API
         // const response = await api.post("/alunos/create", alunoFormValues);
@@ -228,7 +197,6 @@ const AddAluno = () => {
           setEmail(""),
           setData_nascimento(""),
           setEstado_civil("Estado Civil"),
-          setGrupo_sanguineo("Grupo Sanguineo"),
           setNaturalidade(""),
           setNacionalidade(""),
           setPai(""),
@@ -241,11 +209,10 @@ const AddAluno = () => {
           setCep(""),
           setCidade(""),
           setEstado("Selecione o estado"),
-          setCurso("Curso"),
-          setTurno("Turno"),
+          setCurso_id(""),
+          setTurno_id(""),
           setData_matricula(""),
           // setData_termino_curso("");
-          setPassword("");
         navigate("/alunos");
       } catch (error) {
         console.error("Erro ao adicionar usuário", error);
@@ -469,7 +436,7 @@ const AddAluno = () => {
                 </option>
               ))}
             </select>
-            {errors.turnos_id && (
+            {errors.turno_id && (
               <p className="error_message" style={{ color: "red" }}>
                 {errors.turno_id}
               </p>
@@ -482,7 +449,7 @@ const AddAluno = () => {
             >
               <option value="">Selecione o Curso</option>
               {cursos.map((curso) => (
-                <option key={curso.id} value={curso.nome}>
+                <option key={curso.id} value={curso.id}>
                   {curso.nome}
                 </option>
               ))}
@@ -493,6 +460,20 @@ const AddAluno = () => {
               {errors.curso_id}
             </p>
           )}
+          <div className="input-date-wrapper">
+            <label htmlFor="data_matricula">Data de Matrícula</label>
+            <input
+              type="date"
+              id="data_matricula"
+              value={data_matricula}
+              onChange={(e) => setData_matricula(e.target.value)}
+            />
+            {errors.data_matricula && (
+              <p className="error_message" style={{ color: "red" }}>
+                {errors.data_matricula}
+              </p>
+            )}
+          </div>
         </div>
         <div className="input-file">
           <div className="input-file input-file-button">

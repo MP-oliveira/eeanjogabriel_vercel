@@ -185,7 +185,7 @@ module.exports = class ProfessoresController {
 
       // Salvar a senha original se estiver sendo atualizada
       const senhaOriginal = password;
-      
+
       await professor.update({
         nome,
         especialidade,

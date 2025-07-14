@@ -179,17 +179,17 @@ const AddDisciplina = () => {
           )}
         </div>
         <div className="input-three-columns">
-        <input
-          type="number"
-          value={carga_horaria}
-          onChange={(e) => setCarga_horaria(e.target.value)}
+          <input
+            type="number"
+            value={carga_horaria}
+            onChange={(e) => setCarga_horaria(e.target.value)}
           placeholder="Carga Horária"
-        />
-        {errors.carga_horaria && (
-          <p className="error_message" style={{ color: "red" }}>
-            {errors.carga_horaria}
-          </p>
-        )}
+          />
+          {errors.carga_horaria && (
+            <p className="error_message" style={{ color: "red" }}>
+              {errors.carga_horaria}
+            </p>
+          )}
           <div className="custom-select-wrapper">
             <select
               value={estagio_supervisionado}
@@ -218,13 +218,13 @@ const AddDisciplina = () => {
             </p>
           )}
         </div>
-        <button
+          <button
           className="aluno-btn"
-          type="submit"
+            type="submit"
           disabled={isLoading}
-        >
-          {isLoading ? "Adicionando..." : "Adicionar Disciplina"}
-        </button>
+          >
+            {isLoading ? "Adicionando..." : "Adicionar Disciplina"}
+          </button>
       </form>
     </div>
   );

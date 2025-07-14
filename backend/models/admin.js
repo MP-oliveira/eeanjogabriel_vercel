@@ -33,7 +33,7 @@ const Admin = db.define('Admin', {
       }
     }
   }
-  },
+},
   {
     tableName: "admins",
     timestamps: false,
