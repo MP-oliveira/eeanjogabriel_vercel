@@ -15,6 +15,23 @@ const Diploma = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+
+
+  // Função para formatar a data de nascimento
+  const formatarData = (dataString) => {
+    if (!dataString) return '';
+    
+    const data = new Date(dataString);
+    if (isNaN(data.getTime())) return dataString; // Se não for uma data válida, retorna a string original
+    
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const ano = data.getFullYear();
+    
+    return `${dia}/${mes}/${ano}`;
+  };
+
   useEffect(() => {
     if (!id) {
       setError('ID do aluno não encontrado na URL.');
@@ -29,6 +46,7 @@ const Diploma = () => {
           throw new Error('Nenhum dado retornado pela API.');
         }
         setAluno(response.data);
+        console.log('aluno response', response.data)
       } catch (error) {
         console.error('Erro ao buscar aluno no diploma:', error);
         setError('Erro ao carregar os dados do aluno. Verifique a API.');
@@ -39,7 +57,6 @@ const Diploma = () => {
 
     fetchAluno();
   }, [id]);
-
   const handlePrint = () => {
     // Create a style element for print settings
     const style = document.createElement('style');
@@ -106,7 +123,6 @@ const Diploma = () => {
         </button>
 
       </div>
-      
       {/* Frente do Diploma */}
       <div className='diploma_container print-page'>
         <div className="diploma_impressao">
@@ -123,21 +139,23 @@ const Diploma = () => {
                 </div>
                 <img src={LogoAnjo} alt="Logo Anjo" />
               </div>
-              <p>Av. Altamirando de Araújo Ramos, 278 - 1º andar - Centro - Simões Filho - Bahia
+              <p>Av. Altamirando de Araújo Ramos, 278 - 1º andar - Centro - Simões Filho - Bahia <br/>
                 ENTIDADE MANTENEDORA: SOCIEDADE CIVIL ESCOLA DE AUXILIAR DE ENFERMAGEM ANJO GABRIEL LTDA.
-                PARECER CEE- Nº 58/2018, RESOLUÇÃO CEE- Nº 36/2018, D.O. DE 03/03/2018
+                <br/>PARECER CEE- Nº 58/2018, RESOLUÇÃO CEE- Nº 36/2018, D.O. DE 03/03/2018
                 CNPJ 02.422.402/0001-00
               </p>
+              {/* Marca d'água */}
+              <img src={LogoAnjo} alt="Marca d'água" className="marca-dagua" />
               <h3>DIPLOMA</h3>
             </div>
             <img className='anjo2' src={LogoAnjo2} alt="Logo Anjo 2" />
             <div className="diploma_content">
               {aluno ? (
                 <p>A DIRETORA da Escola de Enfermagem Anjo Gabriel, de acordo com a Lei 9394/96,
-                  confere o título de <strong>{aluno.curso}</strong> a <strong>{aluno.nome}</strong>, RG nº. <strong>{aluno.rg}</strong>,
+                  confere o título de <strong>Técnico de Enfermagem</strong> a <strong>{aluno.nome}</strong>, CPF nº. <strong>{aluno.cpf}</strong>,
                   filho(a) de <strong>{aluno.pai}</strong> e de <strong>{aluno.mae}</strong>, natural de <strong>{aluno.naturalidade}</strong>,
-                  nascido(a) em <strong>{aluno.dataNascimento}</strong>, nacionalidade <strong>{aluno.nacionalidade}</strong>,
-                  por haver concluído o Curso de <strong>Educação Profissional Técnica de Nível Médio em Enfermagem</strong>
+                  nascido(a) em <strong>{formatarData(aluno.data_nascimento)}</strong>, nacionalidade <strong>{aluno.nacionalidade}</strong>,
+                  por haver concluído o Curso de <strong>Educação Profissional Técnica de Nível Médio em Enfermagem </strong>
                   no eixo tecnológico ambiente e saúde no ano de 2023.
                   O presente Diploma outorga-lhe os direitos e prerrogativas estabelecidas nas Leis Vigentes do País.
                 </p>

@@ -319,6 +319,7 @@ const AddAluno = () => {
               {errors.cpf}
             </p>
           )}
+     
         </div>
         <input
           type="text"

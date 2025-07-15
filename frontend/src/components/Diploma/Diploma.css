@@ -1,3 +1,44 @@
+.diploma_headers h3 {
+  font-family: 'EB Garamond', Garamond, serif !important;
+  font-size: 40px !important;
+  margin-bottom: -20px !important;
+  margin-top: -10px !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.diploma_headers p {
+  font-size: 16px !important;
+  margin-top: 20px !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+/* Logo e imagens - mantém posicionamento original */
+.logo_anjo {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 30px !important;
+  margin-bottom: 0 !important;
+}
+
+.logo_anjo .bandeira {
+  width: 100px !important;
+  margin-bottom: 0 !important;
+}
+
+.logo_anjo img:not(.bandeira) {
+  width: 100px !important;
+  margin-top: 0 !important;
+}
+
+.logo_anjo_text {
+  text-align: center !important;
+  margin: 0 8px !important;
+}
+
 .diploma_container {
   width: 1169px;
   height: 827px;
@@ -22,6 +63,11 @@
   color: #1C65D1;
 }
 
+.logo_anjo_text h2 {
+  font-style: italic;
+  margin-top: -20px;
+}
+
 .diploma_headers h1 {
   margin-bottom: 10px;
 }
@@ -29,41 +75,39 @@
 .diploma_headers p {
   font-size: 16px;
   margin-top: 20px;
+  font-weight: 600;
 }
 
 .diploma_headers h3 {
-  font-size: 28px;
+  font-family: 'EB Garamond', Garamond, serif;
+  font-size: 40px;
+  margin-bottom: -20px;
+  margin-top: -10px;
 }
 
 /* Logo e imagens - ajustados conforme a imagem de referência */
 .logo_anjo {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
-  padding: 0;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 1000px; /* Limitando largura para manter proporções */
-}
-
-.logo_anjo_text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.logo_anjo img {
-  width: 100px;
-  height: auto;
+  gap: 30px;
+  margin-bottom: 0;
 }
 
 .logo_anjo .bandeira {
   width: 100px;
-  height: auto;
-  margin-right: 20px;
+  margin-bottom: 0;
+}
+
+.logo_anjo_text {
+  text-align: center;
+  margin: 0 8px;
+}
+
+.logo_anjo img:not(.bandeira) {
+  width: 100px;
+  margin-top: 0;
 }
 
 .anjo2 {
@@ -74,6 +118,31 @@
   opacity: 0.2;
   z-index: -1;
   width: 300px;
+}
+
+.logo_anjo_text h1 {
+  font-family: 'Bookman Old Style', 'Bookman', 'URW Bookman', 'Book Antiqua', Georgia, serif;
+  font-size: 28px;
+  background: radial-gradient(circle, #3959d8 40%, #3a5ca8 50%, #5a96fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.logo_anjo_text h2 {
+  font-family: 'Monotype Corsiva', cursive;
+  font-size: 34px;
+}
+
+.logo_anjo_text p {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 46px;
+}
+
+.logo_anjo_text h3 {
+  font-family: 'EB Garamond', Garamond, serif;
+  font-size: 20px;
 }
 
 /* Conteúdo do diploma */
@@ -96,7 +165,7 @@
 }
 
 .diploma_assinatura_top-frente {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   text-align: center;
   padding-left: 60px;
 }
@@ -105,10 +174,10 @@
   display: flex;
   justify-content: space-around;
   width: 100%;
-  margin-top: 20px;
+  margin-bottom: -20px;
 }
 
-.assinaturas_bottom-frente > div {
+.assinaturas_bottom-frente>div {
   width: 220px;
   text-align: center;
 }
@@ -126,11 +195,30 @@
 
 /* Borda do diploma */
 .diploma_borda {
-  border: 50px solid transparent;
+  border: 55px solid transparent;
   border-image: url("../../assets/fundoazul.png") 150;
-  padding: 40px;
+  padding: 20px 40px;
+  margin: 20px 20px 40px 20px;
   position: relative;
   background-color: white;
+}
+
+.marca-dagua {
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  transform: translate(-50%, -50%);
+  width: 25%;
+  height: 52%;
+  max-width: 900px;
+  max-height: 1200px;
+  opacity: 0.38;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.diploma_borda {
+  position: relative;
 }
 
 /* Botão de impressão */
@@ -169,15 +257,17 @@
   width: 100%;
 }
 
-/* Estilos para impressão - COM CENTRALIZAÇÃO AJUSTADA */
+/* Estilos para impressão - CORRIGIDO PARA FICAR IGUAL À PRIMEIRA IMAGEM */
 @media print {
+
   /* Configuração da orientação paisagem */
   @page {
     size: landscape !important;
     margin: 0 !important;
   }
-  
-  html, body {
+
+  html,
+  body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -186,20 +276,20 @@
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
-  
+
   /* Hide non-printable elements */
   .no-print {
     display: none !important;
   }
-  
-  /* Ajuste para evitar corte na borda direita */
+
+  /* Container principal */
   .diploma-wrapper {
     width: 100% !important;
     height: 100% !important;
   }
-  
-  /* Ensure each diploma part fills and centers on the page */
-  .diploma_container, 
+
+  /* Página de impressão centralizada */
+  .diploma_container,
   .print-page {
     display: flex !important;
     align-items: center !important;
@@ -213,56 +303,160 @@
     margin: 0 !important;
     padding: 0 !important;
   }
-  
-  /* Movendo o conteúdo um pouco para a esquerda para evitar corte na borda direita */
+
+  /* Conteúdo do diploma - mantém proporções originais */
   .diploma_impressao {
-    width: 88% !important;
-    height: 95% !important;
-    max-width: 88% !important;
-    max-height: 95% !important;
-    margin: auto !important;
-    transform: translateX(-5%) !important; /* Move ligeiramente para a esquerda */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  .diploma_borda {
-    border-width: 30px !important;
-    padding: 20px !important;
-    margin: auto !important;
-    width: 100% !important;
-    height: 100% !important;
+    width: 1169px !important;
+    height: 827px !important;
+    max-width: 1169px !important;
+    max-height: 827px !important;
+    margin: 0 auto !important;
+    transform: none !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important;
+    text-align: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    background-color: white !important;
   }
-  
-  /* Ensure images print correctly */
-  .logo_anjo img, 
-  .logo_anjo .bandeira, 
+
+  /* Borda do diploma - aumenta margens exteriores mantendo simetria interna */
+  .diploma_borda {
+    border: 55px solid transparent !important;
+    border-image: url("../../assets/fundoazul.png") 150 !important;
+    padding: 20px 40px !important;
+    margin: 20px 20px 40px 20px !important;
+    position: relative !important;
+    background-color: white !important;
+    width: auto !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  /* Headers - mantém tamanhos originais e remove linha entre h1 e h2 */
+  .diploma_headers {
+    margin-top: 0 !important;
+  }
+
+  .diploma_headers h1 {
+    font-size: 24px !important;
+    margin-bottom: 0 !important;
+    border: none !important;
+    text-decoration: none !important;
+  }
+
+  .diploma_headers h2 {
+    font-size: 24px !important;
+    margin: 0 !important;
+    border: none !important;
+    text-decoration: none !important;
+  }
+
+  .logo_anjo_text h1 {
+    font-family: 'Bookman Old Style', 'Bookman', 'URW Bookman', 'Book Antiqua', Georgia, serif !important;
+    font-size: 28px !important;
+    background: radial-gradient(circle, #3959d8 40%, #3a5ca8 50%, #5a96fd 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+    margin-bottom: 0 !important;
+    border: none !important;
+    text-decoration: none !important;
+  }
+
+  .logo_anjo_text h2 {
+    font-family: 'Monotype Corsiva', cursive !important;
+    font-size: 34px !important;
+    font-style: italic !important;
+    margin-top: -20px !important;
+    margin-bottom: 0 !important;
+    border: none !important;
+    text-decoration: none !important;
+  }
+
+  /* Conteúdo do diploma - mantém formatação original */
+  .diploma_content {
+    margin-top: 30px !important;
+    padding: 0 20px !important;
+    text-align: justify !important;
+  }
+
+  .diploma_content p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Assinaturas - mantém posicionamento original */
+  .assinaturas-frente {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-top: 40px !important;
+  }
+
+  .diploma_assinatura_top-frente {
+    margin-bottom: 30px !important;
+    text-align: center !important;
+    padding-left: 60px !important;
+  }
+
+  .assinaturas_bottom-frente {
+    display: flex !important;
+    justify-content: space-around !important;
+    width: 100% !important;
+    margin-bottom: -20px !important;
+  }
+
+  .assinaturas_bottom-frente>div {
+    width: 220px !important;
+    text-align: center !important;
+  }
+
+  .assinaturas_line-frente {
+    width: 250px !important;
+    border-bottom: 1px solid #1C65D1 !important;
+    margin: 0 auto !important;
+  }
+
+  .assinaturas-frente p {
+    font-size: 16px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Marca d'água - mantém posicionamento original */
+  .marca-dagua {
+    position: absolute !important;
+    left: 50% !important;
+    top: 65% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 25% !important;
+    height: 52% !important;
+    max-width: 900px !important;
+    max-height: 1200px !important;
+    opacity: 0.38 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
   .anjo2 {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    opacity: 0.2 !important;
+    z-index: -1 !important;
+    width: 300px !important;
+  }
+
+  /* Ensure images print correctly */
+  .logo_anjo img,
+  .logo_anjo .bandeira,
+  .anjo2,
+  .marca-dagua {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
-  /* Adjust content sizes for print */
-  .diploma_headers h1 {
-    font-size: 22px !important;
-  }
-  
-  .diploma_headers h2 {
-    font-size: 20px !important;
-  }
-  
-  .diploma_headers p {
-    font-size: 14px !important;
-  }
-  
-  .diploma_content p {
-    font-size: 14px !important;
-  }
-  
+
   /* Ensure each part prints on a new page with proper centering */
   .fundo_diploma_container {
     page-break-before: always !important;
@@ -270,6 +464,5 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transform: translateX(-2%) !important; /* Move ligeiramente para a esquerda */
   }
 }
