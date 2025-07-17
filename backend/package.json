@@ -32,9 +32,10 @@
     "express-handlebars": "^7.1.2",
     "joi": "^17.13.3",
     "multer": "^2.0.0-rc.1",
+    "path-to-regexp": "6.2.1",
     "pg": "^8.11.0",
     "pg-hstore": "^2.3.4",
-    "path-to-regexp": "6.2.1",
+    "react-input-mask": "^2.0.4",
     "sequelize": "^6.37.4"
   },
   "files": [

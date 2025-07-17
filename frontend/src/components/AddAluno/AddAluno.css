@@ -52,6 +52,21 @@ input::placeholder {
   margin-bottom: 15px;
 }
 
+.input-three-columns {
+  display: flex;
+  gap: 16px;
+}
+
+.input-three-columns > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.input-date-wrapper input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .aluno-btn-container {
   margin-top: 30px;
   display: flex;

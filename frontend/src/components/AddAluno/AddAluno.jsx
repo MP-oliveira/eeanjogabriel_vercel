@@ -3,7 +3,7 @@ import api from "../../services/api"; // Importando o serviço de API
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import VoltarButton from "../VoltarButton/VoltarButton";
-
+import InputMask from 'react-input-mask';
 
 
 // Regex para CPF com ou sem pontuação
@@ -98,10 +98,23 @@ const AddAluno = () => {
     e.preventDefault();
     console.log("Enviando formulário");
 
+    // Converter data_nascimento para YYYY-MM-DD se estiver no formato DD/MM/AAAA
+    let dataNascimentoFormatada = data_nascimento;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data_nascimento)) {
+      const [dia, mes, ano] = data_nascimento.split('/');
+      dataNascimentoFormatada = `${ano}-${mes}-${dia}`;
+    }
+    // Converter data_matricula para YYYY-MM-DD se estiver no formato DD/MM/AAAA
+    let dataMatriculaFormatada = data_matricula;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data_matricula)) {
+      const [dia, mes, ano] = data_matricula.split('/');
+      dataMatriculaFormatada = `${ano}-${mes}-${dia}`;
+    }
+
     const alunoFormValues = {
       nome,
       email,
-      data_nascimento,
+      data_nascimento: dataNascimentoFormatada,
       estado_civil,
       naturalidade,
       nacionalidade,
@@ -117,7 +130,7 @@ const AddAluno = () => {
       estado,
       curso_id,
       turno_id,
-      data_matricula,
+      data_matricula: dataMatriculaFormatada,
     };
 
     // Validando os dados com o esquema do Zod
@@ -153,7 +166,7 @@ const AddAluno = () => {
         const formData = new FormData();
         formData.append("nome", alunoresult.data.nome);
         formData.append("email", alunoresult.data.email);
-        formData.append("data_nascimento", alunoresult.data.data_nascimento);
+        formData.append("data_nascimento", dataNascimentoFormatada);
         formData.append("estado_civil", alunoresult.data.estado_civil);
         formData.append("naturalidade", alunoresult.data.naturalidade);
         formData.append("nacionalidade", alunoresult.data.nacionalidade);
@@ -169,7 +182,7 @@ const AddAluno = () => {
         formData.append("estado", alunoresult.data.estado);
         formData.append("curso_id", alunoresult.data.curso_id);
         formData.append("turno_id", alunoresult.data.turno_id);
-        formData.append("data_matricula", alunoresult.data.data_matricula);
+        formData.append("data_matricula", dataMatriculaFormatada);
         // formData.append(
         //   "data_termino_curso",
         //   alunoresult.data.data_termino_curso
@@ -258,18 +271,23 @@ const AddAluno = () => {
               {errors.email}
             </p>
           )}
-          <input
-            type="date"
-            value={data_nascimento}
-            onChange={(e) => setData_nascimento(e.target.value)}
-            placeholder="Data de nascimento"
-            className="custom-date-input"
-          />
-          {errors.data_nascimento && (
-            <p className="error_message" style={{ color: "red" }}>
-              {errors.data_nascimento}
-            </p>
-          )}
+          <div className="input-date-wrapper">
+            <InputMask
+              mask="99/99/9999"
+              value={data_nascimento}
+              onChange={(e) => setData_nascimento(e.target.value)}
+              placeholder="Data de Nascimento"
+              id="data_nascimento"
+              name="data_nascimento"
+            >
+              {(inputProps) => <input type="text" {...inputProps} />}
+            </InputMask>
+            {errors.data_nascimento && (
+              <p className="error_message" style={{ color: "red" }}>
+                {errors.data_nascimento}
+              </p>
+            )}
+          </div>
           <div className="custom-select-wrapper">
             <select onChange={(e) => setEstado_civil(e.target.value)}>
               <option value="">Estado civil</option>
@@ -462,13 +480,16 @@ const AddAluno = () => {
             </p>
           )}
           <div className="input-date-wrapper">
-            <label htmlFor="data_matricula">Data de Matrícula</label>
-            <input
-              type="date"
-              id="data_matricula"
+            <InputMask
+              mask="99/99/9999"
               value={data_matricula}
               onChange={(e) => setData_matricula(e.target.value)}
-            />
+              placeholder="Data de Matrícula"
+              id="data_matricula"
+              name="data_matricula"
+            >
+              {(inputProps) => <input type="text" {...inputProps} />}
+            </InputMask>
             {errors.data_matricula && (
               <p className="error_message" style={{ color: "red" }}>
                 {errors.data_matricula}
