@@ -80,8 +80,8 @@ module.exports = class AlunosController {
       cep,
       cidade,
       estado,
-      curso,
-      turno,
+      curso_id,
+      turno_id,
       data_matricula,
       // data_termino_curso,
       password
@@ -155,25 +155,26 @@ module.exports = class AlunosController {
         cep,
         cidade,
         estado,
-        curso,
-        turno,
+        curso_id,
+        turno_id,
         data_matricula,
         // data_termino_curso,
         foto_url: imagePublicUrl,
         historico_url: historicoPublicUrl,
         password
       };
+      console.log('aluno no controller', aluno)
 
       // Converter campos específicos para minúsculas
       const alunoLowercase = Object.fromEntries(
         Object.entries(aluno).map(([key, value]) => [
           key,
           typeof value === "string" && key !== "nome" && key !== "pai" && key !== "mae"
-            ? value.toLowerCase()
-            : value,
+          ? value.toLowerCase()
+          : value,
         ])
       );
-
+      
       // Criar aluno no banco de dados
       const createdUser = await Aluno.create(alunoLowercase);
       res.status(200).json(createdUser);

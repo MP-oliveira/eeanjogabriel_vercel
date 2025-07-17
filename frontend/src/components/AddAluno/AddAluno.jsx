@@ -85,6 +85,8 @@ const AddAluno = () => {
     fetchData();
   }, []);
 
+  console.log('turno e curso no add aluno', cursos, turnos)
+
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
@@ -132,7 +134,7 @@ const AddAluno = () => {
       turno_id,
       data_matricula: dataMatriculaFormatada,
     };
-
+ 
     // Validando os dados com o esquema do Zod
     const alunoresult = alunoSchema.safeParse(alunoFormValues);
     console.log("Resultado da validação:", alunoresult);

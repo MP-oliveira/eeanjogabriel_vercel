@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../db/db');
 const Curso = require('../models/curso') 
+const Turno = require('../models/turno') 
 
 const Aluno = db.define('Aluno', {
   nome: {
@@ -87,8 +88,12 @@ const Aluno = db.define('Aluno', {
 
 
 
-// Curso.hasMany(Aluno);
-// Aluno.hasMany(Curso);
+Curso.hasMany(Aluno);
+Aluno.hasMany(Curso);
+
+
+Turno.hasMany(Aluno);
+Aluno.hasMany(Turno);
 
 
 module.exports = Aluno;
