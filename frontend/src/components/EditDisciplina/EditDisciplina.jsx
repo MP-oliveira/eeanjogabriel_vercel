@@ -210,7 +210,7 @@ const EditDisciplina = () => {
               <option value="1">Módulo 1</option>
               <option value="2">Módulo 2</option>
               <option value="3">Módulo 3</option>
-              <option value="">Módulo 4</option>
+              <option value="4">Módulo 4</option>
             </select>
           </div>
           {errors.modulo && (
