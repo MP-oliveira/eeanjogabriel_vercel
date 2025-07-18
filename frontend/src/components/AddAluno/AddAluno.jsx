@@ -36,7 +36,8 @@ const alunoSchema = z.object({
   estado: z.string(),
   curso_id: z.string().min(1, { message: "Selecione um curso" }),
   turno_id: z.string().min(1, { message: "Selecione um turno" }),
-  data_matricula: z.string().min(1, { message: "Informe a data de matrícula" })
+  data_matricula: z.string().min(1, { message: "Informe a data de matrícula" }),
+  data_termino_curso: z.string().min(1, { message: "Informe a data de termino do curso" })
 });
 
 const AddAluno = () => {
@@ -61,7 +62,7 @@ const AddAluno = () => {
   const [curso_id, setCurso_id] = useState(0);
   const [turno_id, setTurno_id] = useState("");
   const [data_matricula, setData_matricula] = useState("");
-  // const [data_termino_curso, setData_termino_curso] = useState("");
+  const [data_termino_curso, setData_termino_curso] = useState("");
   const [file, setFile] = useState(null);
   const [historico, setHistorico] = useState(null);
   const [errors, setErrors] = useState({});
@@ -113,6 +114,12 @@ const AddAluno = () => {
       dataMatriculaFormatada = `${ano}-${mes}-${dia}`;
     }
 
+    let dataTerminoCursoFormatada = data_termino_curso;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data_termino_curso)) {
+      const [dia, mes, ano] = data_matricula.split('/');
+      dataTerminoCursoFormatada = `${ano}-${mes}-${dia}`;
+    }
+
     const alunoFormValues = {
       nome,
       email,
@@ -133,6 +140,7 @@ const AddAluno = () => {
       curso_id,
       turno_id,
       data_matricula: dataMatriculaFormatada,
+      data_termino_curso: dataTerminoCursoFormatada,
     };
  
     // Validando os dados com o esquema do Zod
@@ -162,6 +170,7 @@ const AddAluno = () => {
         curso_id: fieldErrors.curso_id?._errors[0],
         turno_id: fieldErrors.turno_id?._errors[0],
         data_matricula: fieldErrors.data_matricula?._errors[0],
+        data_termino_curso: fieldErrors.data_termino_curso?._errors[0],
       });
     } else {
       try {
@@ -185,10 +194,7 @@ const AddAluno = () => {
         formData.append("curso_id", alunoresult.data.curso_id);
         formData.append("turno_id", alunoresult.data.turno_id);
         formData.append("data_matricula", dataMatriculaFormatada);
-        // formData.append(
-        //   "data_termino_curso",
-        //   alunoresult.data.data_termino_curso
-        // );
+        formData.append( "data_termino_curso",dataTerminoCursoFormatada );
         formData.append("file", file);
         formData.append("historico", historico);
 
@@ -495,6 +501,23 @@ const AddAluno = () => {
             {errors.data_matricula && (
               <p className="error_message" style={{ color: "red" }}>
                 {errors.data_matricula}
+              </p>
+            )}
+          </div>
+          <div className="input-date-wrapper">
+            <InputMask
+              mask="99/99/9999"
+              value={data_termino_curso}
+              onChange={(e) => setData_termino_curso(e.target.value)}
+              placeholder="Data de Término do Curso"
+              id="data_termino_curso"
+              name="data_termino_curso"
+            >
+              {(inputProps) => <input type="text" {...inputProps} />}
+            </InputMask>
+            {errors.data_termino_curso && (
+              <p className="error_message" style={{ color: "red" }}>
+                {errors.data_termino_curso}
               </p>
             )}
           </div>

@@ -60,11 +60,11 @@ const Aluno = db.define('Aluno', {
   estado: {
     type: DataTypes.STRING,
   },
-  curso: { // relacionar com tabela curso
-    type: DataTypes.STRING,
+  curso_id: { // relacionar com tabela curso
+    type: DataTypes.INTEGER,
   },
-  turno: { // relacionar com tabela curso
-    type: DataTypes.STRING,
+  turno_id: { // relacionar com tabela curso
+    type: DataTypes.INTEGER,
   },
   foto_url: {
     type: DataTypes.STRING,
@@ -76,10 +76,9 @@ const Aluno = db.define('Aluno', {
     // quando colocar curso pra funcionar mudar para date
     type: DataTypes.STRING,
   },
-  // data_termino_curso: {
-  //   // quando colocar curso pra funcionar mudar para date
-  //   type: DataTypes.STRING,
-  // },
+   data_termino_curso: {
+    type: DataTypes.STRING,
+   },
 },
 {
   tableName: "alunos"
@@ -88,12 +87,11 @@ const Aluno = db.define('Aluno', {
 
 
 
-Curso.hasMany(Aluno);
-Aluno.hasMany(Curso);
+Curso.hasMany(Aluno, { foreignKey: 'curso_id' });
+Aluno.belongsTo(Curso, { foreignKey: 'curso_id' });
 
-
-Turno.hasMany(Aluno);
-Aluno.hasMany(Turno);
+Turno.hasMany(Aluno, { foreignKey: 'turno_id' });
+Aluno.belongsTo(Turno, { foreignKey: 'turno_id' });
 
 
 module.exports = Aluno;

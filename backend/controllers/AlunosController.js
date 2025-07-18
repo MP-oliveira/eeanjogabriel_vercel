@@ -83,7 +83,7 @@ module.exports = class AlunosController {
       curso_id,
       turno_id,
       data_matricula,
-      // data_termino_curso,
+      data_termino_curso,
       password
     } = req.body;
 
@@ -158,7 +158,7 @@ module.exports = class AlunosController {
         curso_id,
         turno_id,
         data_matricula,
-        // data_termino_curso,
+        data_termino_curso,
         foto_url: imagePublicUrl,
         historico_url: historicoPublicUrl,
         password
@@ -211,6 +211,7 @@ module.exports = class AlunosController {
         return res.status(404).json({ error: "Aluno não encontrado" });
       }
 
+      // Garantir que data_termino_curso seja atualizado se enviado
       await aluno.update(updatedData);
       res.status(200).json({ message: "Dados do aluno atualizados com sucesso" });
     } catch (error) {
