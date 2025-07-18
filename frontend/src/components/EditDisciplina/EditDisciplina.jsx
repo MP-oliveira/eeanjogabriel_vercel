@@ -210,6 +210,7 @@ const EditDisciplina = () => {
               <option value="1">Módulo 1</option>
               <option value="2">Módulo 2</option>
               <option value="3">Módulo 3</option>
+              <option value="">Módulo 4</option>
             </select>
           </div>
           {errors.modulo && (
@@ -218,12 +219,13 @@ const EditDisciplina = () => {
             </p>
           )}
         </div>
+        <div className="input-three-columns">
           <input
-          type="number"
+            type="number"
             name="carga_horaria"
             value={disciplinaData.carga_horaria}
             onChange={handleChange}
-          placeholder="Carga Horária"
+            placeholder="Carga Horária"
           />
           {errors.carga_horaria && (
             <p className="error_message" style={{ color: "red" }}>
@@ -231,11 +233,11 @@ const EditDisciplina = () => {
             </p>
           )}
           <input
-          type="number"
+            type="number"
             name="carga_horaria_estagio"
             value={disciplinaData.carga_horaria_estagio}
             onChange={handleChange}
-          placeholder="Carga Horária Estágio"
+            placeholder="Carga Horária Estágio"
           />
           {errors.carga_horaria_estagio && (
             <p className="error_message" style={{ color: "red" }}>
@@ -248,9 +250,9 @@ const EditDisciplina = () => {
               value={disciplinaData.estagio_supervisionado}
               onChange={handleChange}
             >
-            <option value="">Tem Estágio Supervisionado?</option>
+              <option value="">Tem Estágio Supervisionado?</option>
               <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
+              <option value="Não">Não</option>
             </select>
           </div>
           {errors.estagio_supervisionado && (
@@ -258,18 +260,7 @@ const EditDisciplina = () => {
               {errors.estagio_supervisionado._errors?.[0]}
             </p>
           )}
-          <input
-          type="number"
-          name="duracao"
-          value={disciplinaData.duracao}
-            onChange={handleChange}
-          placeholder="Duração (em semanas)"
-          />
-        {errors.duracao && (
-            <p className="error_message" style={{ color: "red" }}>
-            {errors.duracao._errors?.[0]}
-            </p>
-          )}
+        </div>
         <button className="aluno-btn" type="submit">
           Salvar Alterações
         </button>
