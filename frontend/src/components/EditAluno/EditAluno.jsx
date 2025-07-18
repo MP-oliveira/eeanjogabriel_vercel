@@ -74,20 +74,20 @@ const EditAluno = () => {
       try {
         const response = await api.get(`/alunos/${id}`);
         const aluno = response.data;
-        
+
         console.log("Dados do aluno:", aluno);
-        
+
         // Buscar cursos e turnos primeiro
         const cursosResponse = await api.get('/cursos');
         const turnosResponse = await api.get('/turnos');
-        
+
         setCursos(cursosResponse.data);
         setTurnos(turnosResponse.data);
-        
+
         // Se o aluno tem o nome do curso/turno em vez do ID, encontra o ID correspondente
         let curso_id = aluno.curso_id || "";
         let turno_id = aluno.turno_id || "";
-        
+
         if (!curso_id && aluno.curso) {
           // Procura o curso pelo nome
           const cursoEncontrado = cursosResponse.data.find(c => c.nome === aluno.curso);
@@ -95,7 +95,7 @@ const EditAluno = () => {
             curso_id = cursoEncontrado.id;
           }
         }
-        
+
         if (!turno_id && aluno.turno) {
           // Procura o turno pelo nome
           const turnoEncontrado = turnosResponse.data.find(t => t.nome === aluno.turno);
@@ -103,7 +103,7 @@ const EditAluno = () => {
             turno_id = turnoEncontrado.id;
           }
         }
-        
+
         setAlunoData({
           ...aluno,
           data_nascimento: aluno.data_nascimento.slice(0, 10),
@@ -131,12 +131,12 @@ const EditAluno = () => {
     e.preventDefault();
 
     console.log("Dados a serem enviados:", alunoData);
-    
+
     // Preparar dados para envio, incluindo curso e turno para compatibilidade
     const dadosParaEnvio = {
       ...alunoData
     };
-    
+
     // Se temos curso_id e turno_id, adicionar também os nomes de curso e turno
     if (alunoData.curso_id) {
       const cursoSelecionado = cursos.find(c => c.id === alunoData.curso_id);
@@ -144,7 +144,7 @@ const EditAluno = () => {
         dadosParaEnvio.curso = cursoSelecionado.nome;
       }
     }
-    
+
     if (alunoData.turno_id) {
       const turnoSelecionado = turnos.find(t => t.id === alunoData.turno_id);
       if (turnoSelecionado) {
@@ -221,7 +221,7 @@ const EditAluno = () => {
             </p>
           )}
           <div className="custom-select-wrapper">
-            <select 
+            <select
               name="estado_civil"
               value={alunoData.estado_civil}
               onChange={handleChange}
@@ -240,7 +240,7 @@ const EditAluno = () => {
         </div>
         <div className="input-three-columns">
           <div className="custom-select-wrapper">
-            <select 
+            <select
               name="grupo_sanguineo"
               value={alunoData.grupo_sanguineo}
               onChange={handleChange}
@@ -361,13 +361,13 @@ const EditAluno = () => {
         <div className="input-three-columns">
           <div className="custom-select-wrapper">
             <select
-              name="curso"
-              value={alunoData.curso}
+              name="curso_id"
+              value={alunoData.curso_id}
               onChange={handleChange}
             >
-              <option value="curso">{alunoData.curso}</option>
+              <option value="">Selecione o curso</option>
               {cursos.map(curso => (
-                <option key={curso.id} value={curso.nome}>
+                <option key={curso.curso_id} value={curso.curso_id}>
                   {curso.nome}
                 </option>
               ))}
@@ -379,14 +379,14 @@ const EditAluno = () => {
             </p>
           )}
           <div className="custom-select-wrapper">
-              <select 
-              name="turno"
-              value={alunoData.turno}
+            <select
+              name="turno_id"
+              value={alunoData.turno_id}
               onChange={handleChange}
             >
-              <option value="turno">{alunoData.turno}</option>
+              <option value="">Selecione o turno</option>
               {turnos.map(turno => (
-                <option key={turno.id} value={turno.nome}>
+                <option key={turno.turno_id} value={turno.turno_id}>
                   {turno.nome}
                 </option>
               ))}
