@@ -92,7 +92,7 @@ const EditAluno = () => {
           // Procura o curso pelo nome
           const cursoEncontrado = cursosResponse.data.find(c => c.nome === aluno.curso);
           if (cursoEncontrado) {
-            curso_id = cursoEncontrado.id;
+            curso_id = cursoEncontrado.curso_id; // <-- aqui pode ser cursoEncontrado.curso_id
           }
         }
 
@@ -100,7 +100,7 @@ const EditAluno = () => {
           // Procura o turno pelo nome
           const turnoEncontrado = turnosResponse.data.find(t => t.nome === aluno.turno);
           if (turnoEncontrado) {
-            turno_id = turnoEncontrado.id;
+            turno_id = turnoEncontrado.turno_id;
           }
         }
 
@@ -111,6 +111,7 @@ const EditAluno = () => {
           curso_id: curso_id ? String(curso_id) : "",
           turno_id: turno_id ? String(turno_id) : ""
         });
+        console.log("curso_id final:", curso_id, "turno_id final:", turno_id);
 
       } catch (error) {
         console.error("Erro ao carregar os dados do aluno", error);
@@ -139,14 +140,14 @@ const EditAluno = () => {
 
     // Se temos curso_id e turno_id, adicionar também os nomes de curso e turno
     if (alunoData.curso_id) {
-      const cursoSelecionado = cursos.find(c => c.id === alunoData.curso_id);
+      const cursoSelecionado = cursos.find(c => String(c.curso_id) === alunoData.curso_id);
       if (cursoSelecionado) {
         dadosParaEnvio.curso = cursoSelecionado.nome;
       }
     }
 
     if (alunoData.turno_id) {
-      const turnoSelecionado = turnos.find(t => t.id === alunoData.turno_id);
+      const turnoSelecionado = turnos.find(t => String(t.turno_id) === alunoData.turno_id);
       if (turnoSelecionado) {
         dadosParaEnvio.turno = turnoSelecionado.nome;
       }
@@ -187,6 +188,9 @@ const EditAluno = () => {
     return <div className="loading">Carregando...</div>;
   }
 
+  console.log("alunoData.curso_id", alunoData.curso_id, typeof alunoData.curso_id);
+  console.log("cursos", cursos);
+  console.log("turnos", turnos);
 
 
   return (
