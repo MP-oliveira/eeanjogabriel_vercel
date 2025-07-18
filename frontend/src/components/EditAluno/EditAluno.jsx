@@ -108,8 +108,8 @@ const EditAluno = () => {
           ...aluno,
           data_nascimento: aluno.data_nascimento.slice(0, 10),
           data_matricula: aluno.data_matricula.slice(0, 10),
-          curso_id: curso_id,
-          turno_id: turno_id
+          curso_id: curso_id ? String(curso_id) : "",
+          turno_id: turno_id ? String(turno_id) : ""
         });
 
       } catch (error) {
@@ -367,7 +367,7 @@ const EditAluno = () => {
             >
               <option value="">Selecione o curso</option>
               {cursos.map(curso => (
-                <option key={curso.curso_id} value={curso.curso_id}>
+                <option key={curso.curso_id} value={String(curso.curso_id)}>
                   {curso.nome}
                 </option>
               ))}
@@ -386,7 +386,7 @@ const EditAluno = () => {
             >
               <option value="">Selecione o turno</option>
               {turnos.map(turno => (
-                <option key={turno.turno_id} value={turno.turno_id}>
+                <option key={turno.turno_id} value={String(turno.turno_id)}>
                   {turno.nome}
                 </option>
               ))}
