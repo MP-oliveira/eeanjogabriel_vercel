@@ -92,7 +92,7 @@ const EditAluno = () => {
           // Procura o curso pelo nome
           const cursoEncontrado = cursosResponse.data.find(c => c.nome === aluno.curso);
           if (cursoEncontrado) {
-            curso_id = cursoEncontrado.curso_id; // <-- aqui pode ser cursoEncontrado.curso_id
+            curso_id = cursoEncontrado.id; // <-- aqui pode ser cursoEncontrado.curso_id
           }
         }
 
@@ -100,7 +100,7 @@ const EditAluno = () => {
           // Procura o turno pelo nome
           const turnoEncontrado = turnosResponse.data.find(t => t.nome === aluno.turno);
           if (turnoEncontrado) {
-            turno_id = turnoEncontrado.turno_id;
+            turno_id = turnoEncontrado.id;
           }
         }
 
@@ -140,14 +140,14 @@ const EditAluno = () => {
 
     // Se temos curso_id e turno_id, adicionar também os nomes de curso e turno
     if (alunoData.curso_id) {
-      const cursoSelecionado = cursos.find(c => String(c.curso_id) === alunoData.curso_id);
+      const cursoSelecionado = cursos.find(c => String(c.id) === alunoData.curso_id);
       if (cursoSelecionado) {
         dadosParaEnvio.curso = cursoSelecionado.nome;
       }
     }
 
     if (alunoData.turno_id) {
-      const turnoSelecionado = turnos.find(t => String(t.turno_id) === alunoData.turno_id);
+      const turnoSelecionado = turnos.find(t => String(t.id) === alunoData.turno_id);
       if (turnoSelecionado) {
         dadosParaEnvio.turno = turnoSelecionado.nome;
       }
@@ -243,28 +243,6 @@ const EditAluno = () => {
           )}
         </div>
         <div className="input-three-columns">
-          <div className="custom-select-wrapper">
-            <select
-              name="grupo_sanguineo"
-              value={alunoData.grupo_sanguineo}
-              onChange={handleChange}
-            >
-              <option value="">Grupo Sanguineo</option>
-              <option value="A-">A-</option>
-              <option value="A+">A+</option>
-              <option value="B-">B-</option>
-              <option value="B+">B+</option>
-              <option value="AB-">AB-</option>
-              <option value="AB+">AB+</option>
-              <option value="O-">O-</option>
-              <option value="O+">O+</option>
-            </select>
-            {errors.grupo_sanguineo && (
-              <p className="error_message" style={{ color: "red" }}>
-                {errors.grupo_sanguineo._errors?.[0]}
-              </p>
-            )}
-          </div>
           <input
             type="text"
             value={alunoData.naturalidade}
@@ -371,7 +349,7 @@ const EditAluno = () => {
             >
               <option value="">Selecione o curso</option>
               {cursos.map(curso => (
-                <option key={curso.curso_id} value={String(curso.curso_id)}>
+                <option key={curso.id} value={String(curso.id)}>
                   {curso.nome}
                 </option>
               ))}
@@ -390,7 +368,7 @@ const EditAluno = () => {
             >
               <option value="">Selecione o turno</option>
               {turnos.map(turno => (
-                <option key={turno.turno_id} value={String(turno.turno_id)}>
+                <option key={turno.id} value={String(turno.id)}>
                   {turno.nome}
                 </option>
               ))}
@@ -401,16 +379,6 @@ const EditAluno = () => {
               {errors.turno_id._errors?.[0]}
             </p>
           )}
-          {/* <InputPassword /> */}
-          <input
-            type="password"
-            value={alunoData.password}
-            onChange={handleChange}
-            placeholder="Digite a senha"
-          />
-          {errors.password &&
-            <p className="error_message" style={{ color: "red" }}>
-              {errors.password._errors?.[0]}</p>}
         </div>
         <button className="aluno-btn" type="submit">Salvar</button>
       </form>
