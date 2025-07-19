@@ -82,3 +82,7 @@ input::placeholder {
   margin: 0 auto;
 }
 
+.edit-input {
+  width: 200px;
+}
+

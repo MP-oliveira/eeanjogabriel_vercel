@@ -10,6 +10,7 @@ const FundoDiploma = () => {
   const [registrosAcademicos, setRegistrosAcademicos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cursos, setCursos] = useState([]);
 
   useEffect(() => {
     const fetchDados = async () => {
@@ -32,6 +33,13 @@ const FundoDiploma = () => {
           throw new Error('Nenhum dado de disciplinas retornado pela API.');
         }
         setDisciplinas(disciplinasResponse.data);
+
+        // Buscando todos os cursos
+        const cursosResponse = await api.get('/cursos');
+        if (!cursosResponse.data) {
+          throw new Error('Nenhum dado de cursos retornado pela API.');
+        }
+        setCursos(cursosResponse.data);
       } catch (error) {
         console.error('Erro ao buscar dados para o diploma:', error);
         setError('Erro ao carregar os dados necessários para o diploma.');
@@ -152,6 +160,11 @@ const FundoDiploma = () => {
     return disciplina?.carga_horaria_estagio || '';
   };
 
+  const getNomeCurso = (cursoId) => {
+    const curso = cursos.find(c => c.id === cursoId);
+    return curso ? curso.nome : '';
+  };
+
   if (loading) {
     return <div>Carregando...</div>;
   }
@@ -162,7 +175,7 @@ const FundoDiploma = () => {
 
   return (
     <div className="diploma-container">
-      <div className="page-border"></div>
+      {/* <div className="page-border"></div> */}
 
       <div className="diploma-content">
         {/* Seção Superior */}
@@ -184,7 +197,7 @@ const FundoDiploma = () => {
         <section className="curso-atual">
           <div className="info-row">
             <span className="label">CURSO:</span>
-            <span className="value">Educação Profissional Técnica de Nível Médio em Enfermagem</span>
+            <span className="value">{getNomeCurso(aluno?.curso_id)}</span>
           </div>
           <div className="info-row">
             <span className="label">Eixo Tecnológico:</span>
@@ -196,8 +209,8 @@ const FundoDiploma = () => {
               <span className="value">{aluno?.data_matricula ? new Date(aluno.data_matricula).toLocaleDateString('pt-BR') : ''}</span>
             </div>
             <div className="info-row">
-              <span className="label">TERMINO:</span>
-              <span className="value"></span>
+              <span className="label">TERMINO DO CURSO:</span>
+              <span className="value value_pad">{aluno?.data_termino_curso ? new Date(aluno.data_termino_curso).toLocaleDateString('pt-BR') : ''}</span>
             </div>
           </div>
         </section>

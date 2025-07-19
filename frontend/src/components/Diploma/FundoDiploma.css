@@ -293,11 +293,36 @@
 
 /* Ajustes de Impressão */
 @media print {
-  .diploma-container {
-    margin: 0;
-    padding: 15mm;
+  body, html {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-
+  .diploma-container, .diploma-content {
+    font-family: Arial, sans-serif !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+  .diploma-container {
+    margin: 0 !important;
+    padding: 2mm !important;
+    box-sizing: border-box;
+    page-break-after: avoid;
+    page-break-before: avoid;
+    page-break-inside: avoid;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .diploma-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .inner-table td {
+    padding: 4px 4px !important;
+  }
   @page {
     size: A4 landscape;
     margin: 0;
@@ -318,4 +343,14 @@
 .autenticacao-content {
   display: block;
   width: 100%;
+}
+
+.subtotal-row td {
+  border-bottom: none !important;
+  border-top: 2px solid #000 !important;
+  font-weight: bold;
+}
+
+.inner-table tr:not(.subtotal-row):last-child td {
+  border-bottom: none !important;
 }

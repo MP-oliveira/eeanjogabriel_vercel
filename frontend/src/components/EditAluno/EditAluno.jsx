@@ -3,6 +3,7 @@ import api from "../../services/api";
 import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
 
+
 import './Edit.css'
 import VoltarButton from '../VoltarButton/VoltarButton';
 
@@ -17,7 +18,6 @@ const alunoSchema = z.object({
   email: z.string().email({ message: "Digite um email válido." }).min(5),
   data_nascimento: z.string().refine((value) => !isNaN(Date.parse(value)), { message: "Data inválida" }),
   estado_civil: z.string(),
-  grupo_sanguineo: z.string(),
   naturalidade: z.string().min(3),
   nacionalidade: z.string().min(3),
   pai: z.string(),
@@ -33,7 +33,7 @@ const alunoSchema = z.object({
   curso_id: z.string(),
   turno_id: z.string(),
   data_matricula: z.string().refine((value) => !isNaN(Date.parse(value)), { message: "Data inválida" }),
-  // data_termino_curso: z.string().refine((value) => !isNaN(Date.parse(value)), { message: "Data inválida" }),
+  data_termino_curso: z.string().refine((value) => !isNaN(Date.parse(value)), { message: "Data inválida" }),
 });
 
 const EditAluno = () => {
@@ -49,7 +49,6 @@ const EditAluno = () => {
     email: "",
     data_nascimento: "",
     estado_civil: "",
-    grupo_sanguineo: "",
     naturalidade: "",
     nacionalidade: "",
     pai: "",
@@ -65,7 +64,7 @@ const EditAluno = () => {
     curso_id: "",
     turno_id: "",
     data_matricula: "",
-    // data_termino_curso: "",
+    data_termino_curso: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -107,7 +106,8 @@ const EditAluno = () => {
         setAlunoData({
           ...aluno,
           data_nascimento: aluno.data_nascimento.slice(0, 10),
-          data_matricula: aluno.data_matricula.slice(0, 10),
+          // data_matricula: aluno.data_matricula.slice(0, 10),
+          // data_termino_curso: aluno.data_termino_curso.slice(0, 10),
           curso_id: curso_id ? String(curso_id) : "",
           turno_id: turno_id ? String(turno_id) : ""
         });
@@ -188,9 +188,9 @@ const EditAluno = () => {
     return <div className="loading">Carregando...</div>;
   }
 
-  console.log("alunoData.curso_id", alunoData.curso_id, typeof alunoData.curso_id);
-  console.log("cursos", cursos);
-  console.log("turnos", turnos);
+  // console.log("alunoData.curso_id", alunoData.curso_id, typeof alunoData.curso_id);
+  // console.log("cursos", cursos);
+  // console.log("turnos", turnos);
 
 
   return (
@@ -379,6 +379,27 @@ const EditAluno = () => {
               {errors.turno_id._errors?.[0]}
             </p>
           )}
+            <input
+              type="date"
+              name="data_matricula"
+              value={alunoData.data_matricula}
+              onChange={handleChange} />
+            {errors.data_matricula && (
+              <p className="error_message" style={{ color: "red" }}>
+                {errors.data_matricula}
+              </p>
+            )}
+            <input
+              type="date"
+              name="data_termino_curso"
+              value={alunoData.data_termino_curso}
+              onChange={handleChange} />
+            {errors.data_termino_curso && (
+              <p className="error_message" style={{ color: "red" }}>
+                {errors.data_termino_curso}
+              </p>
+            )}
+
         </div>
         <button className="aluno-btn" type="submit">Salvar</button>
       </form>
