@@ -50,6 +50,9 @@ const AddRegistroAcademico = () => {
     navigate("/registroacademico"); // Redirecionar após a submissão
   };
 
+  const disciplinasComEstagio = [/* IDs das disciplinas com estágio, ex: 5, 7, 10 */];
+  const temEstagio = disciplinasComEstagio.includes(Number(registroAcademicoData.disciplinaId));
+
   return (
     <div className="addaluno-container">
       <form className="form-addaluno" onSubmit={handleSubmit}>
@@ -151,6 +154,16 @@ const AddRegistroAcademico = () => {
           value={registroAcademicoData.trabalhoDescricao}
           onChange={handleInputChange}
           placeholder="Descrição do Trabalho"
+        />
+
+        <label>Nota de Estágio</label>
+        <input
+          type="number"
+          name="notaEstagio"
+          value={registroAcademicoData.notaEstagio || ''}
+          onChange={handleInputChange}
+          placeholder="Nota de Estágio"
+          disabled={!temEstagio}
         />
 
         <button className='aluno-btn' type="submit">Salvar</button>

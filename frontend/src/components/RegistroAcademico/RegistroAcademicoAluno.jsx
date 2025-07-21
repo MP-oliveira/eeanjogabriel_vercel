@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from "../../services/api";
 import Delete from '../../assets/trash.svg';
 import Edit from '../../assets/pencil.svg';
 import '../Alunos/Alunos.css'; // Importando o CSS da tabela de alunos
+import { UserContext } from '../../context/UseContext';
 
 const RegistroAcademicoAluno = () => {
+  const { user } = useContext(UserContext);
   const [registros, setRegistros] = useState([]);
   const [filteredRegistros, setFilteredRegistros] = useState([]);
   const [search, setSearch] = useState('');
@@ -131,6 +133,8 @@ const RegistroAcademicoAluno = () => {
               <th>Datas das Faltas</th>
               <th>Total de Faltas</th>
               <th>Total de Aulas</th>
+              {/* Só mostra Mensalidades se não for professor */}
+              {user?.role !== 'professor' && <th>Mensalidades</th>}
               <th>Ações</th>
             </tr>
           </thead>
@@ -175,6 +179,8 @@ const RegistroAcademicoAluno = () => {
                     {registro.faltaQuantidade.reduce((acc, val) => acc + (parseInt(val) || 0), 0)}
                   </td>
                   <td>{registro.totalAulas}</td>
+                  {/* Só mostra Mensalidades se não for professor */}
+                  {user?.role !== 'professor' && <td>{/* Coloque aqui o campo/botão de Mensalidades */}</td>}
                   <td className="for-list-acoes">
                     <Link to={`/registroacademico/edit/${registro.id}`}>
                       <img src={Edit} alt="Editar" />
