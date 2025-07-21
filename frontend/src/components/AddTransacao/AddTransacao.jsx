@@ -42,9 +42,14 @@ function AddTransacao() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let newValue = value;
+    if (name === "valor") {
+      // Troca vírgula por ponto e remove separador de milhar
+      newValue = value.replace(/\./g, '').replace(',', '.');
+    }
     setFormData({
       ...formData,
-      [name]: value
+      [name]: newValue
     });
     
     // Limpar erro quando o campo for preenchido

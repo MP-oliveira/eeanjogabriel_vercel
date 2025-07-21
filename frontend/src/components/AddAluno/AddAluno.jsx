@@ -19,7 +19,7 @@ const cepRegex = /^\d{5}-?\d{3}$/;
 
 const alunoSchema = z.object({
   nome: z.string().min(3, { message: "O nome precisa ter no mínimo 3 caracteres." }),
-  email: z.coerce.string().email({ message: "Digite um email válido." }).min(5),
+  email: z.string().optional().or(z.literal('')),
   data_nascimento: z.string().min(1, { message: "Informe a data de nascimento" }),
   estado_civil: z.string({ message: "Selecione uma opção" }),
   naturalidade: z.string().min(3, { message: "Digite uma naturalidade válida" }),
@@ -530,7 +530,6 @@ const AddAluno = () => {
               name="file"
               accept="image/*"
               onChange={handleFileChange}
-              required
             />
             Adicione sua Foto
           </div>

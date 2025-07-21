@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { ContaBancaria } = require('../models/transicaoFinanceira');
+const { ContaBancaria, TransacaoFinanceira } = require('../models/transicaoFinanceira');
 
 // Listar todas as contas
 router.get('/', async (req, res) => {
@@ -88,6 +88,17 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao deletar conta:', error);
     res.status(500).json({ error: 'Erro ao deletar conta' });
+  }
+});
+
+// Endpoint temporário para resetar financeiro
+router.post('/reset-financeiro', async (req, res) => {
+  try {
+    await TransacaoFinanceira.destroy({ where: {} });
+    await ContaBancaria.update({ saldo_atual: 0 }, { where: {} });
+    res.json({ message: 'Transações excluídas e saldos zerados com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao resetar financeiro.' });
   }
 });
 

@@ -133,7 +133,7 @@ function Transacoes() {
                 <div key={conta.id} className="conta-card">
                   <h3>{conta.nome}</h3>
                   <p className={`saldo ${parseFloat(conta.saldo_atual) >= 0 ? 'positivo' : 'negativo'}`}>
-                    Saldo: R$ {parseFloat(conta.saldo_atual).toFixed(2)}
+                    Saldo: {parseFloat(conta.saldo_atual).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
               ))}
@@ -151,7 +151,7 @@ function Transacoes() {
                     <span className="transacao-descricao">{transacao.descricao}</span>
                     <span className="transacao-data">{formatarData(transacao.data)}</span>
                     <span className={`transacao-valor ${transacao.tipo === 'receita' ? 'positivo' : 'negativo'}`}>
-                      R$ {parseFloat(transacao.valor).toFixed(2)}
+                      {parseFloat(transacao.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>
                   </li>
                 ))}

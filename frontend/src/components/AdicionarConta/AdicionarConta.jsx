@@ -28,7 +28,15 @@ function AdicionarConta() {
     setError('');
 
     try {
-      await api.post('/financeiro/contas', formData);
+      let saldoFormatado = formData.saldo_atual
+        .replace(/\./g, '') // remove pontos de milhar
+        .replace(',', '.'); // troca vírgula por ponto
+
+      const dataToSend = {
+        ...formData,
+        saldo_atual: parseFloat(saldoFormatado) || 0
+      };
+      await api.post('/financeiro/contas', dataToSend);
       navigate('/transacoes'); // Redireciona para a página de transações após adicionar a conta
     } catch (err) {
       console.error('Erro ao adicionar conta:', err);
@@ -67,12 +75,11 @@ function AdicionarConta() {
         <div className="form-group">
           <label>Saldo Atual</label>
           <input
-            type="number"
+            type="text"
             name="saldo_atual"
             value={formData.saldo_atual}
             onChange={handleChange}
             required
-            min="0"
           />
         </div>
         <button className='edit-btn' type="submit" disabled={loading}>

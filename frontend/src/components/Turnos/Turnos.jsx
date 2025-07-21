@@ -32,9 +32,16 @@ const Turnos = () => {
     setFilteredTurnos(filtered);
   };
 
-  const handleDelete = (id) => {
-    // Implemente a lógica para deletar um turno
-    console.log(`Deletando turno com ID: ${id}`);
+  const handleDelete = async (id) => {
+    if (window.confirm("Tem certeza que deseja deletar este turno?")) {
+      try {
+        await api.delete(`/turnos/${id}`);
+        setTurnos(turnos.filter((turno) => turno.id !== id));
+        setFilteredTurnos(filteredTurnos.filter((turno) => turno.id !== id));
+      } catch (error) {
+        console.error("Erro ao deletar turno:", error);
+      }
+    }
   };
 
   return (

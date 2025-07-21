@@ -88,54 +88,52 @@ module.exports = class AlunosController {
     } = req.body;
 
     try {
-      if (!req.files || !req.files.file || !req.files.historico) {
-        return res.status(400).json({ message: "Nenhum arquivo enviado." });
-      }
+      // Permitir criar aluno sem foto e/ou histórico
+      let imagePublicUrl = null;
+      let historicoPublicUrl = null;
 
       const normalizeFileName = (fileName) => {
         return fileName
-          .normalize("NFD") // Normaliza caracteres Unicode
-          .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-          .replace(/[^a-zA-Z0-9.]/g, "_"); // Substitui caracteres especiais por "_"
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9.]/g, "_");
       };
 
-      // Subir a foto do aluno para o Supabase
-      const { originalname: imageName, buffer: imageBuffer } = req.files.file[0];
-      const normalizedImageName = normalizeFileName(imageName);
-
-      const { data: imageData, error: fileError } = await supabase.storage
-        .from("aluno_foto")
-        .upload(`aluno_foto/${Date.now()}-${normalizedImageName}`, imageBuffer, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: req.files.file[0].mimetype,
-        });
-
-      if (fileError) {
-        console.error("Erro ao fazer upload da foto no Supabase:", fileError.message);
-        return res.status(500).json({ error: "Erro ao fazer upload da foto" });
+      // Upload da foto se enviada
+      if (req.files && req.files.file && req.files.file[0]) {
+        const { originalname: imageName, buffer: imageBuffer } = req.files.file[0];
+        const normalizedImageName = normalizeFileName(imageName);
+        const { data: imageData, error: fileError } = await supabase.storage
+          .from("aluno_foto")
+          .upload(`aluno_foto/${Date.now()}-${normalizedImageName}`, imageBuffer, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: req.files.file[0].mimetype,
+          });
+        if (fileError) {
+          console.error("Erro ao fazer upload da foto no Supabase:", fileError.message);
+          return res.status(500).json({ error: "Erro ao fazer upload da foto" });
+        }
+        imagePublicUrl = supabase.storage.from("aluno_foto").getPublicUrl(imageData.path).data.publicUrl;
       }
 
-      // Subir o histórico do aluno para o Supabase
-      const { originalname: historicoName, buffer: historicoBuffer } = req.files.historico[0];
-      const normalizedHistoricoName = normalizeFileName(historicoName);
-
-      const { data: historicoData, error: historicoError } = await supabase.storage
-        .from("aluno_historico")
-        .upload(`aluno_historico/${Date.now()}-${normalizedHistoricoName}`, historicoBuffer, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: req.files.historico[0].mimetype,
-        });
-
-      if (historicoError) {
-        console.error("Erro ao fazer upload do histórico no Supabase:", historicoError.message);
-        return res.status(500).json({ error: "Erro ao fazer upload do histórico" });
+      // Upload do histórico se enviado
+      if (req.files && req.files.historico && req.files.historico[0]) {
+        const { originalname: historicoName, buffer: historicoBuffer } = req.files.historico[0];
+        const normalizedHistoricoName = normalizeFileName(historicoName);
+        const { data: historicoData, error: historicoError } = await supabase.storage
+          .from("aluno_historico")
+          .upload(`aluno_historico/${Date.now()}-${normalizedHistoricoName}`, historicoBuffer, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: req.files.historico[0].mimetype,
+          });
+        if (historicoError) {
+          console.error("Erro ao fazer upload do histórico no Supabase:", historicoError.message);
+          return res.status(500).json({ error: "Erro ao fazer upload do histórico" });
+        }
+        historicoPublicUrl = supabase.storage.from("aluno_historico").getPublicUrl(historicoData.path).data.publicUrl;
       }
-
-      // Obter a URL pública dos arquivos
-      const imagePublicUrl = supabase.storage.from("aluno_foto").getPublicUrl(imageData.path).data.publicUrl;
-      const historicoPublicUrl = supabase.storage.from("aluno_historico").getPublicUrl(historicoData.path).data.publicUrl;
 
       const aluno = {
         nome,
