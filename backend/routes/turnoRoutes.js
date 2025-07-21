@@ -9,7 +9,7 @@ router.get('/', turnoController.listTurnos);
 
 router.get('/:id', turnoController.getTurnoById);
 
-
+router.delete('/:id', turnoController.deleteTurno);
 
 
 module.exports = router;

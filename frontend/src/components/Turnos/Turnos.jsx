@@ -16,6 +16,7 @@ const Turnos = () => {
         const response = await api.get('/turnos'); // Verifique se a rota está correta
         setTurnos(response.data);
         setFilteredTurnos(response.data);
+        console.log('Turnos recebidos:', response.data);
       } catch (error) {
         console.error('Erro ao buscar turnos:', error);
       }
@@ -73,9 +74,9 @@ const Turnos = () => {
             {filteredTurnos.length > 0 ? (
               filteredTurnos.map((turno) => (
                 <tr key={turno.id}>
-                  <td>{turno.nome}</td>
-                  <td>{turno.descricao}</td>
-                  <td>{turno.status}</td>
+                  <td>{typeof turno.nome === 'string' ? turno.nome : ''}</td>
+                  <td>{typeof turno.descricao === 'string' ? turno.descricao : ''}</td>
+                  <td>{typeof turno.status === 'string' ? turno.status : ''}</td>
                   <td className="for-list-acoes">
                     <Link to={`/turnos/edit/${turno.id}`}>
                       <img src={Edit} alt="Editar" />
