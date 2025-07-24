@@ -141,7 +141,7 @@ const Diploma = () => {
               </div>
               <p>Av. Altamirando de Araújo Ramos, 278 - 1º andar - Centro - Simões Filho - Bahia <br/>
                 ENTIDADE MANTENEDORA: SOCIEDADE CIVIL ESCOLA DE AUXILIAR DE ENFERMAGEM ANJO GABRIEL LTDA.
-                <br/>PARECER CEE- Nº 58/2018, RESOLUÇÃO CEE- Nº 36/2018, D.O. DE 03/03/2018
+                <br/>PARECER CEE- Nº 196/2025, RESOLUÇÃO CEE- Nº 148/2025, D.O. DE 16/06/2025
                 CNPJ 02.422.402/0001-00
               </p>
               {/* Marca d'água */}
