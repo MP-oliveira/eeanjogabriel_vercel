@@ -37,7 +37,7 @@ const alunoSchema = z.object({
   curso_id: z.string().min(1, { message: "Selecione um curso" }),
   turno_id: z.string().min(1, { message: "Selecione um turno" }),
   data_matricula: z.string().min(1, { message: "Informe a data de matrícula" }),
-  data_termino_curso: z.string().min(1, { message: "Informe a data de termino do curso" }),
+  data_termino_curso: z.string().optional().or(z.literal('')),
   // Foto e histórico são opcionais - não precisam de validação no schema
 });
 
@@ -171,7 +171,6 @@ const AddAluno = () => {
         curso_id: fieldErrors.curso_id?._errors[0],
         turno_id: fieldErrors.turno_id?._errors[0],
         data_matricula: fieldErrors.data_matricula?._errors[0],
-        data_termino_curso: fieldErrors.data_termino_curso?._errors[0],
       });
     } else {
       try {
@@ -195,7 +194,11 @@ const AddAluno = () => {
         formData.append("curso_id", alunoresult.data.curso_id);
         formData.append("turno_id", alunoresult.data.turno_id);
         formData.append("data_matricula", dataMatriculaFormatada);
-        formData.append( "data_termino_curso",dataTerminoCursoFormatada );
+        
+        // Adicionar data de término apenas se existir
+        if (data_termino_curso) {
+          formData.append("data_termino_curso", dataTerminoCursoFormatada);
+        }
         
         // Adicionar foto apenas se existir
         if (file) {
@@ -529,11 +532,6 @@ const AddAluno = () => {
             >
               {(inputProps) => <input type="text" {...inputProps} />}
             </InputMask>
-            {errors.data_termino_curso && (
-              <p className="error_message" style={{ color: "red" }}>
-                {errors.data_termino_curso}
-              </p>
-            )}
           </div>
         </div>
         <div className="input-file">
