@@ -86,7 +86,12 @@ const Boletim = () => {
   // Organizar as disciplinas por módulo e adicionar notas dos registros acadêmicos
   const getModuloDisciplinas = (moduloNumero) => {
     const modulo = `Modulo ${moduloNumero}`;
-    const disciplinasModulo = disciplinas.filter(disciplina => disciplina.modulo === modulo) || [];
+    let disciplinasModulo = disciplinas.filter(disciplina => disciplina.modulo === modulo) || [];
+    
+    // Se não há disciplinas cadastradas no banco, usar disciplinas padrão
+    if (disciplinasModulo.length === 0) {
+      disciplinasModulo = getDisciplinasPadrao(moduloNumero);
+    }
     
     // Adicionar notas dos registros acadêmicos às disciplinas
     return disciplinasModulo.map(disciplina => {
@@ -106,8 +111,46 @@ const Boletim = () => {
         };
       }
       
-      return disciplina;
+      // Se não encontrou registro, retorna a disciplina sem notas
+      return {
+        ...disciplina,
+        nota_teorica: '',
+        nota_pratica: ''
+      };
     });
+  };
+
+  // Função para retornar disciplinas padrão caso não existam no banco
+  const getDisciplinasPadrao = (moduloNumero) => {
+    const disciplinasPadrao = {
+      1: [
+        { id: 'mod1_1', nome: 'Anatomia e Fisiologia Humanas', modulo: 'Modulo 1' },
+        { id: 'mod1_2', nome: 'Microbiologia e Parasitologia', modulo: 'Modulo 1' },
+        { id: 'mod1_3', nome: 'Higiene e Profilaxia', modulo: 'Modulo 1' },
+        { id: 'mod1_4', nome: 'Nutrição e Dietética', modulo: 'Modulo 1' },
+        { id: 'mod1_5', nome: 'Psicologia Aplicada e Ética Profissional', modulo: 'Modulo 1' }
+      ],
+      2: [
+        { id: 'mod2_1', nome: 'Farmacologia', modulo: 'Modulo 2' },
+        { id: 'mod2_2', nome: 'Introdução a Enfermagem', modulo: 'Modulo 2' },
+        { id: 'mod2_3', nome: 'Noções de Administração na Unidade de Enfermagem', modulo: 'Modulo 2' },
+        { id: 'mod2_4', nome: 'Biossegurança', modulo: 'Modulo 2' }
+      ],
+      3: [
+        { id: 'mod3_1', nome: 'Enfermagem em Saúde Mental', modulo: 'Modulo 3' },
+        { id: 'mod3_2', nome: 'Enfermagem em Saúde da Criança e do Adolescente', modulo: 'Modulo 3' },
+        { id: 'mod3_3', nome: 'Enfermagem em Saúde da Mulher', modulo: 'Modulo 3' },
+        { id: 'mod3_4', nome: 'Enfermagem em Saúde do Adulto', modulo: 'Modulo 3' }
+      ],
+      4: [
+        { id: 'mod4_1', nome: 'Enfermagem em Urgência e Emergência', modulo: 'Modulo 4' },
+        { id: 'mod4_2', nome: 'Enfermagem em Centro Cirúrgico', modulo: 'Modulo 4' },
+        { id: 'mod4_3', nome: 'Enfermagem em Unidade de Terapia Intensiva', modulo: 'Modulo 4' },
+        { id: 'mod4_4', nome: 'Estágio Supervisionado', modulo: 'Modulo 4' }
+      ]
+    };
+    
+    return disciplinasPadrao[moduloNumero] || [];
   };
   
   // Função para calcular a nota teórica com base nas notas de prova, teste e trabalho
@@ -209,23 +252,13 @@ const Boletim = () => {
                 </tr>
               </thead>
               <tbody>
-                {getModuloDisciplinas(1).length > 0 ? (
-                  getModuloDisciplinas(1).map((disciplina) => (
-                    <tr key={disciplina.id}>
-                      <td>{disciplina.nome}</td>
-                      <td>{disciplina.nota_teorica || ''}</td>
-                      <td>{disciplina.nota_pratica || ''}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <>
-                    <tr><td>Sem disciplinas cadastradas</td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                  </>
-                )}
+                {getModuloDisciplinas(1).map((disciplina) => (
+                  <tr key={disciplina.id}>
+                    <td>{disciplina.nome}</td>
+                    <td>{disciplina.nota_teorica || ''}</td>
+                    <td>{disciplina.nota_pratica || ''}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -242,22 +275,13 @@ const Boletim = () => {
                 </tr>
               </thead>
               <tbody>
-                {getModuloDisciplinas(2).length > 0 ? (
-                  getModuloDisciplinas(2).map((disciplina) => (
-                    <tr key={disciplina.id}>
-                      <td>{disciplina.nome}</td>
-                      <td>{disciplina.nota_teorica || ''}</td>
-                      <td>{disciplina.nota_pratica || ''}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <>
-                    <tr><td>Sem disciplinas cadastradas</td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                  </>
-                )}
+                {getModuloDisciplinas(2).map((disciplina) => (
+                  <tr key={disciplina.id}>
+                    <td>{disciplina.nome}</td>
+                    <td>{disciplina.nota_teorica || ''}</td>
+                    <td>{disciplina.nota_pratica || ''}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -274,22 +298,13 @@ const Boletim = () => {
                 </tr>
               </thead>
               <tbody>
-                {getModuloDisciplinas(3).length > 0 ? (
-                  getModuloDisciplinas(3).map((disciplina) => (
-                    <tr key={disciplina.id}>
-                      <td>{disciplina.nome}</td>
-                      <td>{disciplina.nota_teorica || ''}</td>
-                      <td>{disciplina.nota_pratica || ''}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <>
-                    <tr><td>Sem disciplinas cadastradas</td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                  </>
-                )}
+                {getModuloDisciplinas(3).map((disciplina) => (
+                  <tr key={disciplina.id}>
+                    <td>{disciplina.nome}</td>
+                    <td>{disciplina.nota_teorica || ''}</td>
+                    <td>{disciplina.nota_pratica || ''}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -306,22 +321,13 @@ const Boletim = () => {
                 </tr>
               </thead>
               <tbody>
-                {getModuloDisciplinas(4).length > 0 ? (
-                  getModuloDisciplinas(4).map((disciplina) => (
-                    <tr key={disciplina.id}>
-                      <td>{disciplina.nome}</td>
-                      <td>{disciplina.nota_teorica || ''}</td>
-                      <td>{disciplina.nota_pratica || ''}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <>
-                    <tr><td>Sem disciplinas cadastradas</td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                  </>
-                )}
+                {getModuloDisciplinas(4).map((disciplina) => (
+                  <tr key={disciplina.id}>
+                    <td>{disciplina.nome}</td>
+                    <td>{disciplina.nota_teorica || ''}</td>
+                    <td>{disciplina.nota_pratica || ''}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
