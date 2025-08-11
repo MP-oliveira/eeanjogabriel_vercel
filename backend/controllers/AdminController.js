@@ -53,6 +53,15 @@ module.exports = class AdminsController {
       password
     } = req.body;
 
+    // Log para debug
+    console.log('Dados recebidos no createAdmin:');
+    console.log('Nome:', nome);
+    console.log('Email:', email);
+    console.log('Telefone:', telefone);
+    console.log('Role:', role);
+    console.log('Password:', password ? '***' : 'null');
+    console.log('Body completo:', req.body);
+
     try {
       const adminExists = await Admin.findOne({
         where: { email: email },
@@ -72,6 +81,8 @@ module.exports = class AdminsController {
         password,
       };
 
+      console.log('Objeto admin antes do lowercase:', admin);
+
       // Converter para minúsculas com exceções (não converter senha)
       const adminLowercase = Object.fromEntries(
         Object.entries(admin).map(([key, value]) => [
@@ -84,6 +95,8 @@ module.exports = class AdminsController {
         ])
       );
       
+      console.log('Objeto admin depois do lowercase:', adminLowercase);
+      
       // Salvar a senha original antes de criar o admin (que vai hashear)
       const senhaOriginal = adminLowercase.password;
       
@@ -92,6 +105,7 @@ module.exports = class AdminsController {
       console.log(adminLowercase, 'antes do await');
 
       const createdAdmin = await Admin.create(adminLowercase);
+      console.log('Admin criado:', createdAdmin);
       console.log('depois do create', createdAdmin)
       
       // Usar a senha original para o Supabase Auth
@@ -100,6 +114,8 @@ module.exports = class AdminsController {
       const newAdmin = await Admin.findOne({
         where: { id: createdAdmin.id }
       });
+
+      console.log('Admin final retornado:', newAdmin);
 
       res.status(201).json(newAdmin);
     } catch (error) {

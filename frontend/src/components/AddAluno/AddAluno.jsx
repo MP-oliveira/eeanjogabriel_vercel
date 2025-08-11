@@ -37,7 +37,8 @@ const alunoSchema = z.object({
   curso_id: z.string().min(1, { message: "Selecione um curso" }),
   turno_id: z.string().min(1, { message: "Selecione um turno" }),
   data_matricula: z.string().min(1, { message: "Informe a data de matrícula" }),
-  data_termino_curso: z.string().min(1, { message: "Informe a data de termino do curso" })
+  data_termino_curso: z.string().min(1, { message: "Informe a data de termino do curso" }),
+  // Foto e histórico são opcionais - não precisam de validação no schema
 });
 
 const AddAluno = () => {
@@ -195,8 +196,16 @@ const AddAluno = () => {
         formData.append("turno_id", alunoresult.data.turno_id);
         formData.append("data_matricula", dataMatriculaFormatada);
         formData.append( "data_termino_curso",dataTerminoCursoFormatada );
-        formData.append("file", file);
-        formData.append("historico", historico);
+        
+        // Adicionar foto apenas se existir
+        if (file) {
+          formData.append("file", file);
+        }
+        
+        // Adicionar histórico apenas se existir
+        if (historico) {
+          formData.append("historico", historico);
+        }
 
         console.log("form data",formData)
 
@@ -210,7 +219,12 @@ const AddAluno = () => {
         // .then((res) => console.log(res))
         // .catch((err) => console.log(err));
 
-        alert(`Upload bem-sucedido: ${response.data.fileUrl}`);
+        // Mensagem de sucesso mais genérica, já que arquivos são opcionais
+        if (file || historico) {
+          alert(`Upload bem-sucedido: ${response.data.fileUrl}`);
+        } else {
+          alert("Aluno adicionado com sucesso!");
+        }
         console.log("Usuário adicionado com sucesso!", response.data);
 
         // zerar os inputs
