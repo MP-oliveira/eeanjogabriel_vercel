@@ -4,7 +4,6 @@ const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const path = require('path');
 const db = require("./db/db");
-const corsMiddleware = require('./middleware/cors');
 
 // Inicialização do Express
 const app = express();
@@ -49,9 +48,6 @@ const corsOptions = {
 // CORS primeiro
 app.use(cors(corsOptions));
 
-// Middleware personalizado para CORS
-app.use(corsMiddleware);
-
 // Body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -72,10 +68,18 @@ const dbMiddleware = async (req, res, next) => {
 
 // Rota de teste para CORS
 app.get('/api/test-cors', (req, res) => {
+  console.log('Teste CORS - Origin:', req.headers.origin);
+  console.log('Teste CORS - Method:', req.method);
+  console.log('Teste CORS - Headers:', req.headers);
+  
   res.json({ 
     message: 'CORS está funcionando!',
     origin: req.headers.origin,
     method: req.method,
+    corsHeaders: {
+      'Access-Control-Allow-Origin': res.getHeader('Access-Control-Allow-Origin'),
+      'Access-Control-Allow-Credentials': res.getHeader('Access-Control-Allow-Credentials')
+    },
     timestamp: new Date().toISOString()
   });
 });

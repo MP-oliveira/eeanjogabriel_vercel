@@ -27,9 +27,7 @@ function Login() {
       // Salvar token e informações do usuário
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data));
-      const newUser = JSON.stringify(localStorage.getItem("user"));
-      console.log("newUseer", newUser);
-      setUser(JSON.stringify(localStorage.getItem("user"))); // Defina o usuário no contexto
+      setUser(response.data); // Definir o usuário no contexto
       // Redirecionar baseado no papel
       switch (role) {
         case "admin":

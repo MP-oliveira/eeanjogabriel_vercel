@@ -43,9 +43,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setUser(null);
+      logout(); // Usar a função de logout do contexto
       navigate("/login");
     } catch (err) {
       console.error("Erro ao fazer logout:", err);
