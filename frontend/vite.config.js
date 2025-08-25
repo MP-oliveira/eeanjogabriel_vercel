@@ -7,6 +7,14 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        format: 'es',
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    }
   },
   chunkSizeWarningLimit: 1000,
 
@@ -14,7 +22,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api": {
-        target: "https://back-eeanjogabriel-vercel-nine.vercel.app",
+        target: "https://backend-nhw7n6sha-mauricio-silva-oliveiras-projects.vercel.app",
         changeOrigin: true,
         secure: false,
       },

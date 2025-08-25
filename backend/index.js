@@ -4,6 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
 const path = require('path');
 const db = require("./db/db");
+const corsMiddleware = require('./middleware/cors');
 
 // Inicialização do Express
 const app = express();
@@ -16,32 +17,40 @@ const supabase = createClient(
 );
 
 // =============================================
-// CONFIGURAÇÃO COMPLETA DE CORS
+// CONFIGURAÇÃO SIMPLIFICADA DE CORS
 // =============================================
 
-const allowedOrigins = [
-  'https://front-eeanjogabriel-vercel-gamma.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3001'
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Origem não permitida no cors!"));
-  },
+  origin: [
+    'https://eeanjogabriel.vercel.app',
+    'https://frontend-five-silk-40.vercel.app',
+    'https://frontend-owgak21pk-mauricio-silva-oliveiras-projects.vercel.app',
+    'https://front-eeanjogabriel-vercel-gamma.vercel.app',
+    'https://eeag.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3001',
+    'http://localhost:3000'
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["X-Requested-With", "Content-Type", "Accept"],
+  allowedHeaders: [
+    "X-Requested-With", 
+    "Content-Type", 
+    "Accept", 
+    "Authorization",
+    "Origin",
+    "Access-Control-Request-Method",
+    "Access-Control-Request-Headers"
+  ],
   credentials: true,
-  
+  optionsSuccessStatus: 204
 };
 
 
 // CORS primeiro
 app.use(cors(corsOptions));
+
+// Middleware personalizado para CORS
+app.use(corsMiddleware);
 
 // Body parser
 app.use(express.json({ limit: '10mb' }));
@@ -60,6 +69,28 @@ const dbMiddleware = async (req, res, next) => {
     res.status(500).json({ error: "Erro na conexão com o banco de dados" });
   }
 };
+
+// Rota de teste para CORS
+app.get('/api/test-cors', (req, res) => {
+  res.json({ 
+    message: 'CORS está funcionando!',
+    origin: req.headers.origin,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Rota de teste para login (sem autenticação)
+app.post('/api/test-login', (req, res) => {
+  console.log('Teste de login recebido:', req.body);
+  res.json({ 
+    message: 'Teste de login funcionando!',
+    body: req.body,
+    origin: req.headers.origin,
+    method: req.method,
+    timestamp: new Date().toISOString()
+  });
+});
 
 const routes = require('./routes/Routes.js');
 app.use('/api', dbMiddleware, routes);

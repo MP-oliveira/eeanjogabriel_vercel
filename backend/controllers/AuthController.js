@@ -4,10 +4,17 @@ const supabase = require("../db/supabaseCilent");
 
 module.exports = class AuthController {
   static async login(req, res) {
+    console.log('=== LOGIN CONTROLLER INICIADO ===');
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    
     const { email, password } = req.body;
   
     // Validação básica das entradas
     if (!email || !password) {
+      console.log('Erro: Email ou senha ausentes');
       return res.status(400).json({ message: "Email e senha são obrigatórios" });
     }
   
