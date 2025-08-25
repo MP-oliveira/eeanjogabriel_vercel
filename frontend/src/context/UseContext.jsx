@@ -17,11 +17,15 @@ export const UserProvider = ({ children }) => {
         
         if (storedUser && token) {
           const userData = JSON.parse(storedUser);
-          setUser(userData);
+          // Se userData tem a estrutura completa da resposta, usar apenas o user
+          if (userData.user) {
+            setUser(userData.user);
+          } else {
+            setUser(userData);
+          }
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
-        // Limpar dados inválidos
         localStorage.removeItem('user');
         localStorage.removeItem('token');
       }

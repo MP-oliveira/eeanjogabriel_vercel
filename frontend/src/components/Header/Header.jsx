@@ -28,22 +28,11 @@ const Header = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userLog = JSON.parse(localStorage.getItem("user"));
-
-    if (userLog) {
-      setUser(userLog.role);
-    }
-
-    if (!token || !userLog) {
-      setUser(null);
-    }
-  }, [setUser]);
-
   const handleLogout = async () => {
     try {
-      logout(); // Usar a função de logout do contexto
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
       navigate("/login");
     } catch (err) {
       console.error("Erro ao fazer logout:", err);
@@ -150,7 +139,7 @@ const Header = () => {
               Dashboard
             </NavLink>
             <div className="dropdown-menu">
-              {user && user.role === "admin" ? (
+              {user && (user.role?.role === "admin" || user.role === "admin") ? (
                 <>
                   <NavLink
                     to="/admins"
@@ -210,7 +199,7 @@ const Header = () => {
                     Financeiro
                   </NavLink>
                 </>
-              ) : user && user.role === "professor" ? (
+              ) : user && (user.role?.role === "professor" || user.role === "professor") ? (
                 <>
                   <NavLink
                     to="/alunos"
@@ -235,7 +224,7 @@ const Header = () => {
               <div className="icon">
                 <UserCircle size={26} color="#C6D6F3" />
                 <div className="user-text">
-                  <span>{user.nome || user.email}</span>
+                  <span>{user.role?.nome || user.email}</span>
                 </div>
               </div>
               <div className="login-button-container">

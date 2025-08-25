@@ -14,7 +14,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Iniciando login..."); // Log de depuração
 
     try {
       const response = await api.post("/auth/login", {
@@ -23,11 +22,10 @@ function Login() {
         role,
       });
 
-      console.log("response data", response.data)
       // Salvar token e informações do usuário
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data));
-      setUser(response.data); // Definir o usuário no contexto
+      localStorage.setItem("user", JSON.stringify(response.data.user)); // Salvar apenas o user
+      setUser(response.data.user); // Definir apenas o user no contexto
       // Redirecionar baseado no papel
       switch (role) {
         case "admin":
@@ -38,7 +36,6 @@ function Login() {
           break;
       }
     } catch (error) {
-      console.error("Erro no login:", error); // Log de erro detalhado
       alert(error.response?.data?.error || "Erro no login");
     }
   };
