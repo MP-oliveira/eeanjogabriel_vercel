@@ -52,6 +52,11 @@ import Pagamento from './components/Pagamento/Pagamento';
 
 function App() {
   const { user } = useContext(UserContext);
+  
+  // Debug: Log para verificar o usuário nas rotas
+  console.log('🔍 DEBUG - App.jsx - Usuário nas rotas:', user);
+  console.log('🔍 DEBUG - App.jsx - user.role?.role:', user?.role?.role);
+  console.log('🔍 DEBUG - App.jsx - Verificação admin:', user && (user.role?.role === 'admin' || user.role === 'admin'));
 
   return (
     <>
