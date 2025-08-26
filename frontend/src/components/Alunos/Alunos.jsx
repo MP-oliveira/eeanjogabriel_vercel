@@ -14,6 +14,7 @@ const Alunos = () => {
   console.log('🔍 DEBUG - Alunos.jsx - Usuário completo:', user);
   console.log('🔍 DEBUG - Alunos.jsx - user.role:', user?.role);
   console.log('🔍 DEBUG - Alunos.jsx - user.role?.role:', user?.role?.role);
+  console.log('🔍 DEBUG - Alunos.jsx - Conteúdo completo do role:', JSON.stringify(user?.role, null, 2));
   console.log('🔍 DEBUG - Alunos.jsx - Verificação admin:', user && (user.role?.role === "admin" || user.role === "admin"));
   const [alunos, setAlunos] = useState([]);
   const [filteredAlunos, setFilteredAlunos] = useState([]);
