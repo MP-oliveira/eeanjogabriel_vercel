@@ -10,12 +10,7 @@ const Alunos = () => {
   const { user } = useContext(UserContext); // Obter o estado do usuário
   const role = user;
   
-  // Debug: Log do usuário para verificar a estrutura
-  console.log('🔍 DEBUG - Alunos.jsx - Usuário completo:', user);
-  console.log('🔍 DEBUG - Alunos.jsx - user.role:', user?.role);
-  console.log('🔍 DEBUG - Alunos.jsx - user.role?.role:', user?.role?.role);
-  console.log('🔍 DEBUG - Alunos.jsx - Conteúdo completo do role:', JSON.stringify(user?.role, null, 2));
-  console.log('🔍 DEBUG - Alunos.jsx - Verificação admin:', user && (user.role?.role === "admin" || user.role === "admin"));
+
   const [alunos, setAlunos] = useState([]);
   const [filteredAlunos, setFilteredAlunos] = useState([]);
   const [search, setSearch] = useState("");
@@ -117,7 +112,7 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
-                        {user && (user.role?.role === "admin" || user.role === "admin") ? (
+                        {user?.role?.role === "admin" ? (
                           <>
                             <Link
                               className="edit-btn-aluno"
@@ -195,7 +190,7 @@ const Alunos = () => {
                     <Link className="edit-btn-aluno" to={`/registroacademico/${aluno.id}`}>
                       <button>RA</button>
                     </Link>
-                    {user && (user.role?.role === "admin" || user.role === "admin") ? (
+                    {user?.role?.role === "admin" ? (
                       <>
                         <Link className="edit-btn-aluno" to={`/mensalidade/${aluno.id}`}>
                           <button>M</button>
