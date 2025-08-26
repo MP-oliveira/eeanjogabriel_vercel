@@ -10,6 +10,10 @@ const Alunos = () => {
   const { user } = useContext(UserContext); // Obter o estado do usuário
   const role = user;
   
+  console.log('🔍 DEBUG - Alunos.jsx - Componente renderizado');
+  console.log('🔍 DEBUG - Alunos.jsx - user:', user);
+  console.log('🔍 DEBUG - Alunos.jsx - user.role?.role:', user?.role?.role);
+  
 
   const [alunos, setAlunos] = useState([]);
   const [filteredAlunos, setFilteredAlunos] = useState([]);
