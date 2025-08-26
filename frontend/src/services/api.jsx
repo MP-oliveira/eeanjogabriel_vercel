@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configurando a URL base do backend
 const api = axios.create({
-  baseURL: 'https://backend-4yks51315-mauricio-silva-oliveiras-projects.vercel.app/api',
+  baseURL: 'http://localhost:3001/api', // Local backend for development
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

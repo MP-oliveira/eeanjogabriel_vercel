@@ -10,9 +10,7 @@ const Alunos = () => {
   const { user } = useContext(UserContext); // Obter o estado do usuário
   const role = user;
   
-  console.log('🔍 DEBUG - Alunos.jsx - Componente renderizado');
-  console.log('🔍 DEBUG - Alunos.jsx - user:', user);
-  console.log('🔍 DEBUG - Alunos.jsx - user.role?.role:', user?.role?.role);
+
   
 
   const [alunos, setAlunos] = useState([]);
@@ -116,18 +114,12 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
-                        <button style={{backgroundColor: 'green', color: 'white', margin: '2px'}}>FORA DA CONDIÇÃO</button>
-                        {true ? (
+                        {user?.role?.role === "admin" ? (
                           <>
-                            <button style={{backgroundColor: 'red', color: 'white', margin: '2px'}}>TESTE</button>
                             <Link
                               className="edit-btn-aluno"
                               to={`/mensalidade/${aluno.id}`}
-                              onClick={(e) => {
-                                console.log('🔍 DEBUG - Clicou em Mensalidade para aluno:', aluno.id);
-                                console.log('🔍 DEBUG - Usuário atual:', user);
-                                console.log('🔍 DEBUG - user.role?.role:', user?.role?.role);
-                              }}
+
                             >
                               <button>Mensalidade</button>
                             </Link>
