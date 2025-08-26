@@ -24,7 +24,7 @@ const alunoSchema = z.object({
   estado_civil: z.string({ message: "Selecione uma opção" }),
   naturalidade: z.string().min(3, { message: "Digite uma naturalidade válida" }),
   nacionalidade: z.string().min(3, { message: "Digite uma nacionalidade válida" }),
-  pai: z.string(),
+  pai: z.string().optional().or(z.literal('')),
   mae: z.string(),
   cpf: z.string().refine((value) => cpfRegex.test(value), { message: "CPF inválido" }),
   endereco: z.string(),

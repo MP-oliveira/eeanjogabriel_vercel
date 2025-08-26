@@ -153,7 +153,7 @@ const Diploma = () => {
               {aluno ? (
                 <p>A DIRETORA da Escola de Enfermagem Anjo Gabriel, de acordo com a Lei 9394/96,
                   confere o título de <strong>Técnico de Enfermagem</strong> a <strong>{aluno.nome}</strong>, CPF nº. <strong>{aluno.cpf}</strong>,
-                  filho(a) de <strong>{aluno.pai}</strong> e de <strong>{aluno.mae}</strong>, natural de <strong>{aluno.naturalidade}</strong>,
+                  filho(a) de {aluno.pai ? <><strong>{aluno.pai}</strong> e de <strong>{aluno.mae}</strong></> : <strong>{aluno.mae}</strong>}, natural de <strong>{aluno.naturalidade}</strong>,
                   nascido(a) em <strong>{formatarData(aluno.data_nascimento)}</strong>, nacionalidade <strong>{aluno.nacionalidade}</strong>,
                   por haver concluído o Curso de <strong>Educação Profissional Técnica de Nível Médio em Enfermagem </strong>
                   no eixo tecnológico ambiente e saúde no ano de 2023.
