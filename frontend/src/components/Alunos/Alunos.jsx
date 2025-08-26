@@ -112,7 +112,7 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
-                        {user?.role?.role === "admin" ? (
+                        {user && (user.role?.role === "admin" || user.role === "admin") ? (
                           <>
                             <Link
                               className="edit-btn-aluno"
@@ -190,7 +190,7 @@ const Alunos = () => {
                     <Link className="edit-btn-aluno" to={`/registroacademico/${aluno.id}`}>
                       <button>RA</button>
                     </Link>
-                    {user?.role?.role === "admin" ? (
+                    {user && (user.role?.role === "admin" || user.role === "admin") ? (
                       <>
                         <Link className="edit-btn-aluno" to={`/mensalidade/${aluno.id}`}>
                           <button>M</button>
