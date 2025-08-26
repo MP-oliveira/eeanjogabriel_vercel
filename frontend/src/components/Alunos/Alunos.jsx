@@ -110,22 +110,22 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
-                        {user && role.role === "admin" ? (
+                        {user && (user.role?.role === "admin" || user.role === "admin") ? (
                           <>
                             <Link
-                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              className="edit-btn-aluno"
                               to={`/mensalidade/${aluno.id}`}
                             >
                               <button>Mensalidade</button>
                             </Link>
                             <Link
-                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              className="edit-btn-aluno"
                               to={`/boletim/${aluno.id}`}
                             >
                               <button>Boletim</button>
                             </Link>
                             <Link
-                              className={user.role === "admin" ? "edit-btn-aluno": "disable"}
+                              className="edit-btn-aluno"
                               to={`/diplomas/${aluno.id}`}
                             >
                               <button>Diploma</button>
@@ -188,15 +188,15 @@ const Alunos = () => {
                     <Link className="edit-btn-aluno" to={`/registroacademico/${aluno.id}`}>
                       <button>RA</button>
                     </Link>
-                    {user && role.role === "admin" ? (
+                    {user && (user.role?.role === "admin" || user.role === "admin") ? (
                       <>
-                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/mensalidade/${aluno.id}`}>
+                        <Link className="edit-btn-aluno" to={`/mensalidade/${aluno.id}`}>
                           <button>M</button>
                         </Link>
-                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/boletim/${aluno.id}`}>
+                        <Link className="edit-btn-aluno" to={`/boletim/${aluno.id}`}>
                           <button>B</button>
                         </Link>
-                        <Link className={user.role === "admin" ? "edit-btn-aluno": "disable"} to={`/diplomas/${aluno.id}`}>
+                        <Link className="edit-btn-aluno" to={`/diplomas/${aluno.id}`}>
                           <button>D</button>
                         </Link>
                       </>
