@@ -117,6 +117,11 @@ const Alunos = () => {
                             <Link
                               className="edit-btn-aluno"
                               to={`/mensalidade/${aluno.id}`}
+                              onClick={(e) => {
+                                console.log('🔍 DEBUG - Clicou em Mensalidade para aluno:', aluno.id);
+                                console.log('🔍 DEBUG - Usuário atual:', user);
+                                console.log('🔍 DEBUG - user.role?.role:', user?.role?.role);
+                              }}
                             >
                               <button>Mensalidade</button>
                             </Link>
