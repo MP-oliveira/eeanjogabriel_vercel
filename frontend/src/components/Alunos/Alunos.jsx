@@ -116,6 +116,7 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
+                        <button style={{backgroundColor: 'green', color: 'white', margin: '2px'}}>FORA DA CONDIÇÃO</button>
                         {true ? (
                           <>
                             <button style={{backgroundColor: 'red', color: 'white', margin: '2px'}}>TESTE</button>
