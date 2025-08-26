@@ -118,6 +118,7 @@ const Alunos = () => {
                         </Link>
                         {true ? (
                           <>
+                            <button style={{backgroundColor: 'red', color: 'white', margin: '2px'}}>TESTE</button>
                             <Link
                               className="edit-btn-aluno"
                               to={`/mensalidade/${aluno.id}`}
