@@ -68,7 +68,14 @@ function App() {
 
           <Route path="/alunos/add" element={user && (user.role?.role === 'admin' || user.role === 'admin') ? <AddAluno /> : <Navigate to="/login" />} />
           <Route path="/alunos/edit/:id" element={user && (user.role?.role === 'admin' || user.role === 'admin') ? <EditAluno /> : <Navigate to="/login" />} />
-          <Route path="/alunos" element={user && ((user.role?.role === 'admin' || user.role === 'admin') || (user.role?.role === 'professor' || user.role === 'professor')) ? <Alunos /> : <Navigate to="/login" />} />
+          <Route path="/alunos" element={(() => {
+            console.log('🔍 DEBUG - App.jsx - Rota /alunos sendo acessada');
+            console.log('🔍 DEBUG - App.jsx - user:', user);
+            console.log('🔍 DEBUG - App.jsx - user.role?.role:', user?.role?.role);
+            const hasAccess = user && ((user.role?.role === 'admin' || user.role === 'admin') || (user.role?.role === 'professor' || user.role === 'professor'));
+            console.log('🔍 DEBUG - App.jsx - hasAccess:', hasAccess);
+            return hasAccess ? <Alunos /> : <Navigate to="/login" />;
+          })()} />
 
           <Route path="/cursos/add" element={user && (user.role?.role === 'admin' || user.role === 'admin') ? <AddCurso /> : <Navigate to="/login" />} />
           <Route path="/cursos/edit/:id" element={user && (user.role?.role === 'admin' || user.role === 'admin') ? <EditCurso /> : <Navigate to="/login" />} />
