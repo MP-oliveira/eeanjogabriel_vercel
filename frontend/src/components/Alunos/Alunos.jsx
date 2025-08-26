@@ -116,16 +116,7 @@ const Alunos = () => {
                         >
                           <button>Reg Aca</button>
                         </Link>
-                        {(() => {
-                          const isAdmin = user?.role?.role === "admin";
-                          console.log('🔍 DEBUG - Verificação de admin para botões:');
-                          console.log('🔍 DEBUG - user:', user);
-                          console.log('🔍 DEBUG - user.role:', user?.role);
-                          console.log('🔍 DEBUG - user.role?.role:', user?.role?.role);
-                          console.log('🔍 DEBUG - isAdmin:', isAdmin);
-                          console.log('🔍 DEBUG - Vai mostrar botões?', isAdmin);
-                          return isAdmin;
-                        })() ? (
+                        {true ? (
                           <>
                             <Link
                               className="edit-btn-aluno"
